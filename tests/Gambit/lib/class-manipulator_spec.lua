@@ -43,6 +43,16 @@ describe("cycle_class_list()", function()
     end)
 end)
 
+describe("replace_classes()", function()
+    it("works", function()
+        local input = "text-gray-500 flex bg-pink-300"
+        local want = "flex flex-row text-gray-500 bg-pink-300"
+        local got = module.replace_classes(input, list, { "flex", "flex-row" })
+
+        assert.equals(want, got)
+    end)
+end)
+
 describe("remove_all_classes()", function()
     it("works", function()
         local input = "text-gray-400 flex flex-row px-20 py-10 example-400 text-center"

@@ -22,6 +22,14 @@ local find_matching_list = function(input, list)
     return nil, remaining_classes
 end
 
+local function append_remaining_classes(output, remaining_classes)
+    local joined_remaining_classes = table.concat(remaining_classes, " ")
+    if joined_remaining_classes ~= "" then
+        output = string.format("%s %s", output, joined_remaining_classes)
+    end
+    return output
+end
+
 M.cycle_class_list = function(input, list)
     local matched_list_index, remaining_classes = find_matching_list(input, list)
 
@@ -31,13 +39,13 @@ M.cycle_class_list = function(input, list)
     end
 
     local output = table.concat(list[next_index], " ")
+    return append_remaining_classes(output, remaining_classes)
+end
 
-    local old_remaining_classes = table.concat(remaining_classes, " ")
-    if old_remaining_classes ~= "" then
-        output = string.format("%s %s", output, old_remaining_classes)
-    end
-
-    return output
+M.replace_classes = function(input, list, replacement)
+    local _, remaining_classes = find_matching_list(input, list)
+    local output = table.concat(replacement, " ")
+    return append_remaining_classes(output, remaining_classes)
 end
 
 M.remove_all_classes = function(input, pattern)
