@@ -3,9 +3,8 @@ local ts = vim.treesitter
 
 local M = {}
 
-local find_parent_on_cursor = function(...)
-    local desired_parent_types = { ... }
-    local node = ts_utils.get_node_at_cursor()
+local find_parent_on_cursor = function(winnr, desired_parent_types)
+    local node = ts_utils.get_node_at_cursor(winnr)
 
     while true do
         if not node then
@@ -64,8 +63,9 @@ end
 
 --------------------------------------------
 
-M.get_className_prop_string_node = function()
-    local jsx_element_node = find_parent_on_cursor("jsx_element", "jsx_self_closing_element")
+M.get_className_prop_string_node = function(winnr)
+    local jsx_element_node =
+        find_parent_on_cursor(winnr, { "jsx_element", "jsx_self_closing_element" })
 
     if jsx_element_node then
         local tag_node = get_tag_node(jsx_element_node, "tsx")
