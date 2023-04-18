@@ -9,6 +9,7 @@ local find_matching_list = function(input, list)
     for list_index, sub_list in ipairs(list) do
         local score = 0
         remaining_classes = {}
+
         for _, input_class in ipairs(input_classes) do
             if vim.tbl_contains(sub_list, input_class) then
                 score = score + 1
@@ -16,6 +17,7 @@ local find_matching_list = function(input, list)
                 table.insert(remaining_classes, input_class)
             end
         end
+
         if score == #sub_list and score > highest_score then
             highest_score, return_index = score, list_index
         end

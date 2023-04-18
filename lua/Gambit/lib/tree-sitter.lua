@@ -63,7 +63,7 @@ end
 
 --------------------------------------------
 
-M.get_className_prop_string_node = function(winnr)
+M.get_className_related_nodes = function(winnr)
     local jsx_element_node =
         find_parent_on_cursor(winnr, { "jsx_element", "jsx_self_closing_element" })
 
@@ -71,15 +71,26 @@ M.get_className_prop_string_node = function(winnr)
         local tag_node = get_tag_node(jsx_element_node, "tsx")
         local className_prop_identifier_node =
             get_className_prop_identifier_node(jsx_element_node, "tsx")
-
-        if not className_prop_identifier_node then
-            local _, _, end_row, end_col = tag_node:range()
-            vim.api.nvim_buf_set_text(0, end_row, end_col, end_row, end_col, { ' className=""' })
-        end
-
         local className_prop_string_node = get_className_prop_string_node(jsx_element_node, "tsx")
-        return className_prop_string_node
+
+        return tag_node, className_prop_identifier_node, className_prop_string_node
     end
+end
+
+--------------------------------------------
+
+M.replace_node_text = function(bufnr, node, replacement)
+    if type(replacement) == "string" then
+        if string.match(replacement, "\n") then
+            replacement = vim.split(replacement, "\n")
+        else
+            replacement = { replacement }
+        end
+    end
+
+    local start_row, start_col, end_row, end_col = node:range()
+
+    vim.api.nvim_buf_set_text(bufnr, start_row, start_col, end_row, end_col, replacement)
 end
 
 return M
