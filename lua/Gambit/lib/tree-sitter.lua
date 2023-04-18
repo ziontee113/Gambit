@@ -64,11 +64,7 @@ end
 
 --------------------------------------------
 
-M.main = function(bufnr, replacement)
-    if not replacement then
-        return
-    end
-
+M.get_className_prop_string_node = function()
     local jsx_element_node = find_parent_on_cursor("jsx_element", "jsx_self_closing_element")
 
     if jsx_element_node then
@@ -82,8 +78,7 @@ M.main = function(bufnr, replacement)
         end
 
         local className_prop_string_node = get_className_prop_string_node(jsx_element_node, "tsx")
-        local classNames = vim.treesitter.get_node_text(className_prop_string_node, bufnr or 0)
-        classNames = string.gsub(classNames, "[\"']", "")
+        return className_prop_string_node
     end
 end
 
