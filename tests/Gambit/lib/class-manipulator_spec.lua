@@ -1,4 +1,4 @@
-local module = require("Gambit")
+local module = require("Gambit.lib.class-manipulator")
 
 local list = {
     { "flex" },
