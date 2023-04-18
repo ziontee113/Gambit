@@ -22,7 +22,7 @@ local find_matching_list = function(input, list)
     return nil, remaining_classes
 end
 
-M.cycle = function(input, list)
+M.cycle_class_list = function(input, list)
     local matched_list_index, remaining_classes = find_matching_list(input, list)
 
     local next_index = (matched_list_index or 0) + 1
@@ -38,6 +38,19 @@ M.cycle = function(input, list)
     end
 
     return output
+end
+
+M.remove_all_classes = function(input, pattern)
+    local input_classes = vim.split(input, " ")
+    local remaining_classes = {}
+
+    for _, class in ipairs(input_classes) do
+        if not string.match(class, pattern) then
+            table.insert(remaining_classes, class)
+        end
+    end
+
+    return table.concat(remaining_classes, " ")
 end
 
 return M
