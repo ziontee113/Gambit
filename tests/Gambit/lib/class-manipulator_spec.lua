@@ -34,9 +34,16 @@ describe("cycle_class_list()", function()
 
         assert.equals(want, got)
     end)
-    it("can cycle when the input classes are shuffled", function()
+    it("can cycle when the input classes are shuffled, case 1", function()
         local input = "text-gray-500 flex bg-pink-300"
         local want = "flex flex-row text-gray-500 bg-pink-300"
+        local got = module.cycle_class_list(input, list)
+
+        assert.equals(want, got)
+    end)
+    it("can cycle when the input classes are shuffled, case 2", function()
+        local input = "text-gray-500 flex flex-row bg-pink-300"
+        local want = "flex text-gray-500 bg-pink-300"
         local got = module.cycle_class_list(input, list)
 
         assert.equals(want, got)
@@ -44,10 +51,17 @@ describe("cycle_class_list()", function()
 end)
 
 describe("replace_classes()", function()
-    it("works", function()
-        local input = "text-gray-500 flex bg-pink-300"
+    it("adds classes correctly", function()
+        local input = "text-gray-500 bg-pink-300"
         local want = "flex flex-row text-gray-500 bg-pink-300"
         local got = module.replace_classes(input, list, { "flex", "flex-row" })
+
+        assert.equals(want, got)
+    end)
+    it("removes classes correctly", function()
+        local input = "text-gray-500 flex flex-row bg-pink-300"
+        local want = "flex text-gray-500 bg-pink-300"
+        local got = module.replace_classes(input, list, { "flex" })
 
         assert.equals(want, got)
     end)

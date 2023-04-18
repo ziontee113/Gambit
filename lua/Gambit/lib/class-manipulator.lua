@@ -2,7 +2,9 @@ local M = {}
 
 local find_matching_list = function(input, list)
     local input_classes = vim.split(input, " ")
+
     local remaining_classes = {}
+    local highest_score, return_index = 0, 0
 
     for list_index, sub_list in ipairs(list) do
         local score = 0
@@ -14,12 +16,12 @@ local find_matching_list = function(input, list)
                 table.insert(remaining_classes, input_class)
             end
         end
-        if score == #sub_list then
-            return list_index, remaining_classes
+        if score == #sub_list and score > highest_score then
+            highest_score, return_index = score, list_index
         end
     end
 
-    return nil, remaining_classes
+    return return_index, remaining_classes
 end
 
 local function append_remaining_classes(output, remaining_classes)
@@ -33,7 +35,7 @@ end
 M.cycle_class_list = function(input, list)
     local matched_list_index, remaining_classes = find_matching_list(input, list)
 
-    local next_index = (matched_list_index or 0) + 1
+    local next_index = matched_list_index + 1
     if next_index > #list then
         next_index = 1
     end
