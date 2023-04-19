@@ -1,6 +1,8 @@
 local Menu = require("nui.menu")
+
 local lib_ts = require("Gambit.lib.tree-sitter")
 local manipulator = require("Gambit.lib.class-manipulator")
+local defaults = require("Gambit.options.defaults")
 
 local M = {}
 
@@ -12,31 +14,13 @@ local classes_groups = {
 M.show_menu = function()
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
 
-    local popup_options = {
-        relative = "cursor",
-        position = {
-            row = 1,
-            col = 0,
-        },
-        border = {
-            style = "rounded",
-            text = {
-                top = "[Choose Item]",
-                top_align = "center",
-            },
-        },
-        win_options = {
-            winhighlight = "Normal:Normal",
-        },
-    }
-
     local lines = {}
     for _, group in ipairs(classes_groups) do
         local text = table.concat(group, " ")
         table.insert(lines, Menu.item(text, { data = group }))
     end
 
-    local menu = Menu(popup_options, {
+    local menu = Menu(defaults.popup_options, {
         lines = lines,
         max_width = 40,
         keymap = {
@@ -75,8 +59,6 @@ M.show_menu = function()
             end
         end,
     })
-
-    --------------------------------------------
 
     menu:mount()
 end
