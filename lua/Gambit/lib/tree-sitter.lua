@@ -79,17 +79,21 @@ end
 
 --------------------------------------------
 
-M.replace_node_text = function(bufnr, node, replacement)
-    if type(replacement) == "string" then
-        if string.match(replacement, "\n") then
-            replacement = vim.split(replacement, "\n")
+M.string_to_string_tbl = function(str)
+    if type(str) == "string" then
+        if string.match(str, "\n") then
+            str = vim.split(str, "\n")
         else
-            replacement = { replacement }
+            str = { str }
         end
     end
+    return str
+end
+
+M.replace_node_text = function(bufnr, node, replacement)
+    replacement = M.string_to_string_tbl(replacement)
 
     local start_row, start_col, end_row, end_col = node:range()
-
     vim.api.nvim_buf_set_text(bufnr, start_row, start_col, end_row, end_col, replacement)
 end
 
