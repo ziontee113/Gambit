@@ -29,20 +29,6 @@ local hint_flower = [[
 
 local ns = vim.api.nvim_create_namespace("magic_cursor")
 
--- TODO: given a TSX buffer:
--- on Hydra initiation, highlight the opening and closing tags.
--- on pressing `j / k`, or `<C-j> / <C-k>`: update those tags highlighting.
---> we can do this by first jump the cursor to
---- the previous / next`{ "jsx_element", "jsx_self_closing_element" }`.
----> then we can call `highlight_tag_indicators()` after that.
-
---? But how do we jump like that?
---- My first instinct is to get the current opening tag first,
---- using `get_opening_and_closing_tag_nodes()`,
---- then loop through a "tag query results", find the node that matches the tag node,
---- then find the index from there.
---- from that index, we clear the old highlight and show the new highlight.
-
 local highlight_tag_indicators = function()
     local opening_tag_node, closing_tag_node = lib_ts.get_opening_and_closing_tag_nodes(0)
 
@@ -55,35 +41,48 @@ local highlight_tag_indicators = function()
 end
 
 local jump_to_previous_or_next_tag = function(direction)
-    local opening_tag_node = lib_ts.get_opening_and_closing_tag_nodes(0)
+    local opening_tag_node, closing_tag_node = lib_ts.get_opening_and_closing_tag_nodes(0)
+    local og_cursor_line = vim.api.nvim_win_get_cursor(0)[1] - 1
+    local og_parent_node = opening_tag_node:parent():parent()
 
-    local all_opening_tag_nodes = lib_ts.get_all_nodes_matches_query(
+    local queried_nodes = lib_ts.get_all_nodes_matches_query(
         [[
 (jsx_opening_element name: (identifier) @tag)
+(jsx_closing_element name: (identifier) @tag)
 (jsx_self_closing_element name: (identifier) @tag)
     ]],
         "tsx"
     )
 
     local match_index = 1
-    for i, node in ipairs(all_opening_tag_nodes) do
-        if node == opening_tag_node then
-            match_index = i
-            break
+    for i, node in ipairs(queried_nodes) do
+        if (node == opening_tag_node) or (node == closing_tag_node) then
+            local start_row, _, _, _ = node:range()
+
+            if start_row == og_cursor_line then
+                match_index = i
+                break
+            end
         end
     end
 
-    if direction == "next" then
-        match_index = match_index + 1
-    elseif direction == "previous" then
-        match_index = match_index - 1
+    local addons = direction == "next" and 1 or -1
+    match_index = match_index + addons
+
+    if
+        queried_nodes[match_index]
+        and queried_nodes[match_index]:parent():parent() == og_parent_node
+    then
+        match_index = match_index + addons
     end
 
-    if match_index < 1 or match_index > #all_opening_tag_nodes then
+    if match_index < 1 then
         match_index = 1
+    elseif match_index > #queried_nodes then
+        match_index = #queried_nodes
     end
 
-    local target_node = all_opening_tag_nodes[match_index]
+    local target_node = queried_nodes[match_index]
     local start_row, start_col, _, _ = target_node:range()
 
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
@@ -112,7 +111,7 @@ Hydra({
         end,
     },
     mode = "n",
-    body = "<Leader>f",
+    body = "<Leader><CR>",
     heads = {
         {
             "<C-j>",
