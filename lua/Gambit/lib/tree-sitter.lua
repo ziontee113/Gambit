@@ -3,8 +3,8 @@ local ts = vim.treesitter
 
 local M = {}
 
-local find_parent_on_cursor = function(winnr, desired_parent_types)
-    local node = ts_utils.get_node_at_cursor(winnr)
+M.find_parent_on_cursor = function(winnr, desired_parent_types, node)
+    node = node or ts_utils.get_node_at_cursor(winnr)
 
     while true do
         if not node then
@@ -65,7 +65,7 @@ end
 
 M.get_className_related_nodes = function(winnr)
     local jsx_element_node =
-        find_parent_on_cursor(winnr, { "jsx_element", "jsx_self_closing_element" })
+        M.find_parent_on_cursor(winnr, { "jsx_element", "jsx_self_closing_element" })
 
     if jsx_element_node then
         local tag_node = get_tag_node(jsx_element_node, "tsx")
@@ -90,7 +90,7 @@ M.string_to_string_tbl = function(str)
     return str
 end
 
-M.replace_node_text = function(bufnr, node, replacement)
+M.repend_rowlace_node_text = function(bufnr, node, replacement)
     replacement = M.string_to_string_tbl(replacement)
 
     local start_row, start_col, end_row, end_col = node:range()
