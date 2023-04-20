@@ -19,15 +19,24 @@ M.find_parent_on_cursor = function(winnr, desired_parent_types, node)
     return node
 end
 
-local get_first_node_matches_query = function(root, parser_name, query, target_capture_group)
+local get_node_matches_query = function(root, parser_name, query, target_capture_group, item_order)
+    item_order = item_order or "first"
+    local node_to_return
+
     local parsed_query = ts.query.parse(parser_name, query)
     for _, matches, _ in parsed_query:iter_matches(root, 0) do
         for i, node in ipairs(matches) do
-            if parsed_query.captures[i] == target_capture_group then
-                return node
+            if item_order == "first" then
+                if parsed_query.captures[i] == target_capture_group then
+                    return node
+                end
+            elseif item_order == "last" then
+                node_to_return = node
             end
         end
     end
+
+    return node_to_return
 end
 
 --------------------------------------------
@@ -37,7 +46,7 @@ local get_tag_node = function(root, parser_name)
         (jsx_opening_element name: (identifier) @tag)
         (jsx_self_closing_element name: (identifier) @tag)
     ]]
-    return get_first_node_matches_query(root, parser_name, query, "tag")
+    return get_node_matches_query(root, parser_name, query, "tag")
 end
 
 local get_className_prop_identifier_node = function(root, parser_name)
@@ -47,7 +56,7 @@ local get_className_prop_identifier_node = function(root, parser_name)
             (property_identifier) @prop_ident (#eq? @prop_ident "className")
         )
     ]]
-    return get_first_node_matches_query(root, parser_name, query, "prop_ident")
+    return get_node_matches_query(root, parser_name, query, "prop_ident")
 end
 
 local get_className_prop_string_node = function(root, parser_name)
@@ -58,7 +67,7 @@ local get_className_prop_string_node = function(root, parser_name)
             ((string) @className_prop_string)
         )
     ]]
-    return get_first_node_matches_query(root, parser_name, query, "className_prop_string")
+    return get_node_matches_query(root, parser_name, query, "className_prop_string")
 end
 
 --------------------------------------------
@@ -75,6 +84,25 @@ M.get_className_related_nodes = function(winnr)
 
         return tag_node, className_prop_identifier_node, className_prop_string_node
     end
+end
+
+M.get_opening_and_closing_tag_nodes = function(winnr)
+    local jsx_element_node =
+        M.find_parent_on_cursor(winnr, { "jsx_element", "jsx_self_closing_element" })
+
+    local opening_query = [[
+        (jsx_opening_element name: (identifier) @tag)
+        (jsx_self_closing_element name: (identifier) @tag)
+    ]]
+    local opening_node = get_node_matches_query(jsx_element_node, "tsx", opening_query, "tag")
+
+    local closing_query = [[
+        (jsx_closing_element name: (identifier) @tag)
+    ]]
+    local closing_node =
+        get_node_matches_query(jsx_element_node, "tsx", closing_query, "tag", "last")
+
+    return opening_node, closing_node
 end
 
 --------------------------------------------
