@@ -22,11 +22,10 @@ local create_tag_at_node = function(tag, bufnr, node, next_to)
 
     local start_row, _, end_row, _ = node:range()
 
-    if next_to then
-        vim.api.nvim_buf_set_lines(bufnr, end_row + 1, end_row + 1, false, content_tbl)
-    else
-        vim.api.nvim_buf_set_lines(bufnr, start_row, start_row, false, content_tbl)
-    end
+    local position = next_to and end_row + 1 or start_row
+
+    vim.api.nvim_buf_set_lines(bufnr, position, position, false, content_tbl)
+    vim.api.nvim_win_set_cursor(0, { position + #content_tbl, 0 })
 end
 
 M.create_tag_at_cursor = function(tag, winnr, bufnr, next_to, parent)
