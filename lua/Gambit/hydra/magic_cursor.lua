@@ -43,7 +43,13 @@ end
 local jump_to_previous_or_next_tag = function(direction)
     local opening_tag_node, closing_tag_node = lib_ts.get_opening_and_closing_tag_nodes(0)
     local og_cursor_line = vim.api.nvim_win_get_cursor(0)[1] - 1
-    local og_parent_node = opening_tag_node:parent():parent()
+
+    local og_parent_node
+    if opening_tag_node:parent():type() ~= "jsx_self_closing_element" then
+        og_parent_node = opening_tag_node:parent():parent()
+    else
+        og_parent_node = opening_tag_node:parent()
+    end
 
     local queried_nodes = lib_ts.get_all_nodes_matches_query(
         [[
@@ -59,7 +65,10 @@ local jump_to_previous_or_next_tag = function(direction)
         if (node == opening_tag_node) or (node == closing_tag_node) then
             local start_row, _, _, _ = node:range()
 
-            if start_row == og_cursor_line then
+            if
+                node:parent():type() == "jsx_self_closing_element"
+                or start_row == og_cursor_line
+            then
                 match_index = i
                 break
             end
@@ -71,6 +80,7 @@ local jump_to_previous_or_next_tag = function(direction)
 
     if
         queried_nodes[match_index]
+        and queried_nodes[match_index]:parent():type() ~= "jsx_self_closing_element"
         and queried_nodes[match_index]:parent():parent() == og_parent_node
     then
         match_index = match_index + addons
