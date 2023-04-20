@@ -1,47 +1,96 @@
-local Menu = require("nui.menu")
+local Popup = require("nui.popup")
+local NuiText = require("nui.text")
+local NuiLine = require("nui.line")
 
-local defaults = require("Gambit.options.defaults")
-
-local popup_options = defaults.popup_options
-popup_options.border.text.top = "[Add New Tag]"
+local lib_tag_creation = require("Gambit.lib.tag-creation")
 
 local M = {}
 
--- QUESTION: I'm thinking of a center focus design
--- a list item that looks like "  div | h1   "
--- where the user press `h` to add the `div` tag and `l` to add the `h1` tag
--- they can also use a "hotkey", like pressing `p` to specifically add the `p` tag
-
--- "they can also use a "hotkey", like pressing `p` to specifically add the `p` tag" --> this statement
--- should we just build around from this?
---> we should also think about the "direction / location" of where the new tag will spawn
----> those directions are ["next to", "before", "next to the parent", "before the parent"]
-
-local tag_list = {
-    "div",
-    "ul",
-    "li",
-}
-
-M.show_menu = function()
+local create_popup = function()
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
 
-    local lines = {}
-    for _, group in ipairs(classes_groups) do
-        local text = table.concat(group, " ")
-        table.insert(lines, Menu.item(text, { data = group }))
-    end
-
-    local menu = Menu(popup_options, {
-        lines = lines,
-        max_width = 40,
-        keymap = defaults.keymaps,
-        on_submit = function(item)
-            -- TODO:
-        end,
+    local popup = Popup({
+        position = {
+            row = "50%",
+            col = "100%",
+        },
+        size = {
+            width = 20,
+            height = 1,
+        },
+        enter = true,
+        focusable = true,
+        zindex = 50,
+        relative = "editor",
+        border = {
+            padding = {
+                top = 0,
+                bottom = 0,
+                left = 0,
+                right = 0,
+            },
+            style = "rounded",
+            text = {
+                top = " I am top title ",
+                top_align = "center",
+                bottom = " I am bottom title ",
+                bottom_align = "left",
+            },
+        },
+        buf_options = {
+            modifiable = true,
+            readonly = false,
+        },
+        win_options = {
+            winblend = 10,
+            winhighlight = "Normal:Normal,FloatBorder:@event",
+        },
     })
 
-    menu:mount()
+    popup:map("n", { "q", "<Esc>" }, function()
+        popup:unmount()
+    end, {})
+
+    popup:map("n", "d", function()
+        lib_tag_creation.create_tag_at_cursor("div", old_winnr, old_bufnr, true, false)
+    end, { nowait = true })
+
+    popup:map("n", "l", function()
+        lib_tag_creation.create_tag_at_cursor("li", old_winnr, old_bufnr, true, false)
+    end, { nowait = true })
+    popup:map("n", "!", function()
+        lib_tag_creation.create_tag_at_cursor("h1", old_winnr, old_bufnr, true, false)
+    end, { nowait = true })
+    popup:map("n", "@", function()
+        lib_tag_creation.create_tag_at_cursor("h2", old_winnr, old_bufnr, true, false)
+    end, { nowait = true })
+    popup:map("n", "#", function()
+        lib_tag_creation.create_tag_at_cursor("h3", old_winnr, old_bufnr, true, false)
+    end, { nowait = true })
+
+    popup:map("n", "u", function()
+        vim.api.nvim_buf_call(old_bufnr, function()
+            vim.cmd("norm! u")
+        end)
+    end, {})
+    popup:map("n", "<C-r>", function()
+        vim.api.nvim_buf_call(old_bufnr, function()
+            vim.cmd("norm! ")
+        end)
+    end, {})
+
+    popup:map("n", "<Tab>", function()
+        popup.border:set_text("top", " I'm the boss ", "center")
+        popup.border:set_text("bottom", "", "center")
+        popup.border:set_highlight("@function")
+    end, {})
+
+    return popup
+end
+
+M.show_menu = function()
+    local popup = create_popup()
+    popup:mount()
 end
 
 return M
