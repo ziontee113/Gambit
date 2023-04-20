@@ -39,6 +39,32 @@ local get_node_matches_query = function(root, parser_name, query, target_capture
     return node_to_return
 end
 
+local get_root = function(parser_name)
+    local parser_ok, parser = pcall(vim.treesitter.get_parser, 0, parser_name)
+
+    if parser_ok then
+        local trees = parser:parse()
+        local root = trees[1]:root()
+
+        return root
+    end
+end
+
+M.get_all_nodes_matches_query = function(query, parser_name)
+    local nodes = {}
+
+    local root = get_root(parser_name)
+    local parsed_query = ts.query.parse(parser_name, query)
+
+    for _, matches, _ in parsed_query:iter_matches(root, 0) do
+        for _, node in ipairs(matches) do
+            table.insert(nodes, node)
+        end
+    end
+
+    return nodes
+end
+
 --------------------------------------------
 
 local get_tag_node = function(root, parser_name)
