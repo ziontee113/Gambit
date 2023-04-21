@@ -45,7 +45,17 @@ M.jump_to_previous_or_next_tag = function(direction)
         and queried_nodes[match_index]:parent():type() ~= "jsx_self_closing_element"
         and queried_nodes[match_index]:parent():parent() == og_parent_node
     then
-        match_index = match_index + addons
+        local opening_node, closing_node = lib_ts.get_opening_and_closing_tag_nodes(
+            0,
+            queried_nodes[match_index]:parent():parent()
+        )
+
+        local opening_row = opening_node:range()
+        local closing_row = closing_node:range()
+
+        if opening_row == closing_row then
+            match_index = match_index + addons
+        end
     end
 
     if match_index < 1 then
