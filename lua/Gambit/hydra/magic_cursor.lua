@@ -1,19 +1,20 @@
 local Hydra = require("hydra")
 local lib_highlighting = require("Gambit.lib.highlighting")
 local lib_magic_cursor = require("Gambit.lib.magic-cursor")
+local lib_tag_creation = require("Gambit.lib.tag-creation")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠖⠋⠉⠉⠳⡴⠒⠒⠒⠲⠤⢤⣀⠀⠀⠀⠀  
 ⠀⠀⠀⠀⠀⠀⠀⣠⠊⠀⠀⡴⠚⡩⠟⠓⠒⡖⠲⡄⠀⠀⠈⡆⠀⠀⠀  
 ⠀⠀⠀⠀⠀⢀⡞⠁⢠⠒⠾⢥⣀⣇⣚⣹⡤⡟⠀⡇⢠⠀⢠⠇⠀⠀⠀  
-⠀⠀⠀⠀⠀⢸⣄⣀⠀⡇⠀⠀⠀⠀⠀⢀⡜⠁⣸⢠⠎⣰⣃⠀⠀⠀⠀      _<C-j>_ <C-k>
+⠀⠀⠀⠀⠀⢸⣄⣀⠀⡇⠀⠀⠀⠀⠀⢀⡜⠁⣸⢠⠎⣰⣃⠀⠀⠀⠀      _j_ _k_
 ⠀⠀⠀⠀⠸⡍⠀⠉⠉⠛⠦⣄⠀⢀⡴⣫⠴⠋⢹⡏⡼⠁⠈⠙⢦⡀⠀    
 ⠀⠀⠀⠀⣀⡽⣄⠀⠀⠀⠀⠈⠙⠻⣎⡁⠀⠀⣸⡾⠀⠀⠀⠀⣀⡹⠂    
 ⠀⠀⢀⡞⠁⠀⠈⢣⡀⠀⠀⠀⠀⠀⠀⠉⠓⠶⢟⠀⢀⡤⠖⠋⠁⠀⠀    
-⠀⠀⠀⠉⠙⠒⠦⡀⠙⠦⣀⠀⠀⠀⠀⠀⠀⢀⣴⡷⠋⠀⠀⠀⠀⠀⠀    
-⠀⠀⠀⠀⠀⠀⠀⠘⢦⣀⠈⠓⣦⣤⣤⣤⢶⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀    
-⠀⢤⣤⣤⡤⠤⠤⠤⠤⣌⡉⠉⠁⠀⠀⢸⢸⠁⡠⠖⠒⠒⢒⣒⡶⣶⠤    
+⠀⠀⠀⠉⠙⠒⠦⡀⠙⠦⣀⠀⠀⠀⠀⠀⠀⢀⣴⡷⠋⠀⠀⠀⠀⠀⠀      _d_
+⠀⠀⠀⠀⠀⠀⠀⠘⢦⣀⠈⠓⣦⣤⣤⣤⢶⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀      _U_ _l_
+⠀⢤⣤⣤⡤⠤⠤⠤⠤⣌⡉⠉⠁⠀⠀⢸⢸⠁⡠⠖⠒⠒⢒⣒⡶⣶⠤     
 ⠀⠀⠉⠲⣍⠓⠦⣄⠀⠀⠙⣆⠀⠀⠀⡞⡼⡼⢀⣠⠴⠊⢉⡤⠚⠁⠀    
 ⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀    
 ⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                                          
@@ -41,17 +42,44 @@ Hydra({
             border = "rounded",
         },
         on_enter = function()
-            lib_highlighting.highlight_tag_indicators(ns)
+            lib_highlighting.highlight_tag_braces(ns)
         end,
         on_exit = function()
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
         end,
     },
     mode = "n",
-    body = "<Leader><CR>",
+    body = "<Leader>f",
     heads = {
         {
-            "<C-j>",
+            "d",
+            function()
+                lib_tag_creation.create_tag_at_cursor("div", 0, 0, true, false)
+                lib_highlighting.highlight_tag_braces(ns)
+            end,
+            { nowait = true },
+        },
+        {
+            "U",
+            function()
+                lib_tag_creation.create_tag_at_cursor("ul", 0, 0, true, false)
+                lib_highlighting.highlight_tag_braces(ns)
+            end,
+            { nowait = true },
+        },
+        {
+            "l",
+            function()
+                lib_tag_creation.create_tag_at_cursor("li", 0, 0, true, false)
+                lib_highlighting.highlight_tag_braces(ns)
+            end,
+            { nowait = true },
+        },
+
+        --------------------------------------------
+
+        {
+            "j",
             function()
                 lib_magic_cursor.jump_to_previous_or_next_tag("next")
                 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -60,7 +88,7 @@ Hydra({
             { nowait = true },
         },
         {
-            "<C-k>",
+            "k",
             function()
                 lib_magic_cursor.jump_to_previous_or_next_tag("previous")
                 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -68,6 +96,8 @@ Hydra({
             end,
             { nowait = true },
         },
+        --------------------------------------------
+
         { "<Esc>", nil, { exit = true, nowait = true } },
         { "q", nil, { exit = true, nowait = true } },
     },
