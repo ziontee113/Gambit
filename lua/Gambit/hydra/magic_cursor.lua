@@ -55,7 +55,7 @@ Hydra({
             function()
                 lib_magic_cursor.jump_to_previous_or_next_tag("next")
                 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                lib_highlighting.highlight_tag_indicators(ns)
+                lib_highlighting.highlight_tag_braces(ns)
             end,
             { nowait = true },
         },
@@ -64,7 +64,7 @@ Hydra({
             function()
                 lib_magic_cursor.jump_to_previous_or_next_tag("previous")
                 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                lib_highlighting.highlight_tag_indicators(ns)
+                lib_highlighting.highlight_tag_braces(ns)
             end,
             { nowait = true },
         },
