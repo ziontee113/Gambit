@@ -96,6 +96,17 @@ Hydra({
             end,
             { nowait = true },
         },
+
+        --------------------------------------------
+
+        {
+            "$",
+            function()
+                lib_magic_cursor.cycle_between_opening_and_closing_tag()
+            end,
+            { nowait = true },
+        },
+
         --------------------------------------------
 
         { "<Esc>", nil, { exit = true, nowait = true } },

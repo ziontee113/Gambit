@@ -76,4 +76,32 @@ M.jump_to_previous_or_next_tag = function(direction)
     end
 end
 
+M.cycle_between_opening_and_closing_tag = function()
+    local opening_tag_node, closing_tag_node = lib_ts.get_opening_and_closing_tag_nodes(0)
+    local opening_row, opening_col = opening_tag_node:range()
+    local closing_row, _ = closing_tag_node:range()
+
+    local cursor_line, cursor_col = unpack(vim.api.nvim_win_get_cursor(0))
+
+    if opening_row == closing_row then
+        if cursor_col > opening_col then
+            vim.cmd("norm! ^")
+        else
+            vim.cmd("norm! $")
+        end
+        return
+    end
+
+    if
+        (cursor_line == closing_row + 1)
+        or (cursor_line ~= opening_row + 1 and cursor_line ~= closing_row + 1)
+    then
+        vim.api.nvim_win_set_cursor(0, { opening_row + 1, 0 })
+        vim.cmd("norm! ^")
+    else
+        vim.api.nvim_win_set_cursor(0, { closing_row + 1, 0 })
+        vim.cmd("norm! $")
+    end
+end
+
 return M
