@@ -68,12 +68,7 @@ M.jump_to_previous_or_next_tag = function(direction)
     local start_row, start_col, _, _ = target_node:range()
 
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-
-    if target_node:parent():type() == "jsx_closing_element" then
-        vim.cmd("norm! $")
-    else
-        vim.cmd("norm! ^")
-    end
+    vim.cmd("norm! ^")
 end
 
 M.cycle_between_opening_and_closing_tag = function()
