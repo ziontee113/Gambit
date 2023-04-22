@@ -3,15 +3,15 @@ local M = {}
 local ts_utils = require("nvim-treesitter.ts_utils")
 local lib_ts = require("Gambit.lib.tree-sitter")
 
-local tags_with_multi_line_format = {
+local tags_with_no_content = {
     div = true,
     ul = true,
     span = true,
 }
 
 local generate_tag_content = function(tag)
-    if tags_with_multi_line_format[tag] then
-        return string.format("<%s>\n\t###\n</%s>", tag, tag)
+    if tags_with_no_content[tag] then
+        return string.format("<%s></%s>", tag, tag)
     else
         return string.format("<%s>###</%s>", tag, tag)
     end
@@ -23,6 +23,7 @@ local create_tag_at_node = function(opts, node)
         bufnr = 0,
         next_to = true,
         new_line = false,
+        more_spaces = false,
         count = 1,
     }
     opts = vim.tbl_deep_extend("force", default_opts, opts)
@@ -41,27 +42,31 @@ local create_tag_at_node = function(opts, node)
     local node_line_text =
         vim.api.nvim_buf_get_lines(opts.bufnr, start_row, start_row + 1, false)[1]
 
-    local white_spaces = string.match(node_line_text, "^(%s*)")
-    if opts.new_line then
-        white_spaces = white_spaces .. "  "
+    local spaces = string.match(node_line_text, "^(%s*)")
+    if opts.more_spaces then
+        spaces = spaces .. "  "
     end
 
     for i, _ in ipairs(repeated_table) do
-        repeated_table[i] = white_spaces .. repeated_table[i]
+        repeated_table[i] = spaces .. repeated_table[i]
     end
 
     local position = opts.next_to and end_row + 1 or start_row
 
     if opts.new_line then
         table.insert(repeated_table, 1, "")
-        table.insert(repeated_table, string.sub(white_spaces, 1, -3))
+        table.insert(repeated_table, string.sub(spaces, 1, -3))
         vim.api.nvim_buf_set_text(opts.bufnr, end_row, end_col, end_row, end_col, repeated_table)
     else
         vim.api.nvim_buf_set_lines(opts.bufnr, position, position, false, repeated_table)
     end
 
+    local move_down_by = position + #repeated_table
+    if opts.new_line then
+        move_down_by = move_down_by - 2
+    end
     vim.schedule(function()
-        vim.api.nvim_win_set_cursor(0, { position + #repeated_table, 0 })
+        vim.api.nvim_win_set_cursor(0, { move_down_by, 0 })
         vim.cmd("norm! ^")
     end)
 end
@@ -84,19 +89,23 @@ M.create_tag_at_cursor = function(opts)
     if opts.inside then
         if jsx_node:type() ~= "jsx_self_closing_element" then
             local children = ts_utils.get_named_children(jsx_node)
-            local should_add_new_line = false
+            local target = children[#children]
+            local should_add_new_line, should_insert_next_to = false, false
 
             if #children == 2 then
                 should_add_new_line = true
+                should_insert_next_to = true
+                target = children[1]
             end
 
             create_tag_at_node({
                 tag = opts.tag,
                 bufnr = opts.bufnr,
-                next_to = true,
+                next_to = should_insert_next_to,
                 new_line = should_add_new_line,
+                more_spaces = true,
                 count = opts.count,
-            }, children[1])
+            }, target)
         end
     else
         if not opts.parent then

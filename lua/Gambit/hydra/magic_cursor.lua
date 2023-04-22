@@ -42,6 +42,10 @@ local new_tag = function(opts, namespace)
 
     lib_tag_creation.create_tag_at_cursor(opts)
     vim.schedule(function()
+        if insert_new_tags_inside then
+            insert_new_tags_inside = false
+        end
+
         vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
         lib_highlighting.highlight_tag_braces(namespace, 0, insert_new_tags_inside)
     end)
