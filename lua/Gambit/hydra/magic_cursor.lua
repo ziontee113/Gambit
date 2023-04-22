@@ -28,14 +28,22 @@ local hint_flower = [[
 --------------------------------------------
 
 local ns = vim.api.nvim_create_namespace("magic_cursor")
+local insert_new_tags_inside = false
+
+local toggle_inside_or_outside_opt = function()
+    insert_new_tags_inside = not insert_new_tags_inside
+    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+    lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
+end
 
 local new_tag = function(opts, namespace)
     opts.count = require("Gambit.lib.vim-utils").get_count()
+    opts.inside = insert_new_tags_inside
 
     lib_tag_creation.create_tag_at_cursor(opts)
     vim.schedule(function()
         vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
-        lib_highlighting.highlight_tag_braces(namespace)
+        lib_highlighting.highlight_tag_braces(namespace, 0, insert_new_tags_inside)
     end)
 end
 
@@ -45,7 +53,7 @@ local jump = function(direction)
     for _ = 1, count do
         lib_magic_cursor.jump_to_previous_or_next_tag(direction)
         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-        lib_highlighting.highlight_tag_braces(ns)
+        lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
     end
 end
 
@@ -71,6 +79,16 @@ Hydra({
     mode = "n",
     body = "<Leader>f",
     heads = {
+        {
+            "t",
+            function()
+                toggle_inside_or_outside_opt()
+            end,
+            { nowait = true },
+        },
+
+        --------------------------------------------
+
         {
             "d",
             function()

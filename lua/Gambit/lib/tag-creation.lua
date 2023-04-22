@@ -1,5 +1,6 @@
 local M = {}
 
+local ts_utils = require("nvim-treesitter.ts_utils")
 local lib_ts = require("Gambit.lib.tree-sitter")
 
 local tags_with_multi_line_format = {
@@ -8,7 +9,7 @@ local tags_with_multi_line_format = {
     span = true,
 }
 
-local generate_tag = function(tag)
+local generate_tag_content = function(tag)
     if tags_with_multi_line_format[tag] then
         return string.format("<%s>\n\t###\n</%s>", tag, tag)
     else
@@ -16,28 +17,48 @@ local generate_tag = function(tag)
     end
 end
 
-local create_tag_at_node = function(tag, bufnr, node, next_to, count)
-    local tag_content = generate_tag(tag)
+local create_tag_at_node = function(opts, node)
+    local default_opts = {
+        tag = "div",
+        bufnr = 0,
+        next_to = true,
+        new_line = false,
+        count = 1,
+    }
+    opts = vim.tbl_deep_extend("force", default_opts, opts)
+
+    local tag_content = generate_tag_content(opts.tag)
     local content_tbl = lib_ts.string_to_string_tbl(tag_content)
     local repeated_table = {}
 
-    for _ = 1, count do
+    for _ = 1, opts.count do
         for j = 1, #content_tbl do
             table.insert(repeated_table, content_tbl[j])
         end
     end
 
-    local start_row, _, end_row, _ = node:range()
-    local node_line_text = vim.api.nvim_buf_get_lines(bufnr, start_row, start_row + 1, false)[1]
+    local start_row, _, end_row, end_col = node:range()
+    local node_line_text =
+        vim.api.nvim_buf_get_lines(opts.bufnr, start_row, start_row + 1, false)[1]
+
     local white_spaces = string.match(node_line_text, "^(%s*)")
+    if opts.new_line then
+        white_spaces = white_spaces .. "  "
+    end
 
     for i, _ in ipairs(repeated_table) do
         repeated_table[i] = white_spaces .. repeated_table[i]
     end
 
-    local position = next_to and end_row + 1 or start_row
+    local position = opts.next_to and end_row + 1 or start_row
 
-    vim.api.nvim_buf_set_lines(bufnr, position, position, false, repeated_table)
+    if opts.new_line then
+        table.insert(repeated_table, 1, "")
+        table.insert(repeated_table, string.sub(white_spaces, 1, -3))
+        vim.api.nvim_buf_set_text(opts.bufnr, end_row, end_col, end_row, end_col, repeated_table)
+    else
+        vim.api.nvim_buf_set_lines(opts.bufnr, position, position, false, repeated_table)
+    end
 
     vim.schedule(function()
         vim.api.nvim_win_set_cursor(0, { position + #repeated_table, 0 })
@@ -50,6 +71,7 @@ M.create_tag_at_cursor = function(opts)
         winnr = 0,
         bufnr = 0,
         tag = "p",
+        inside = false,
         next_to = true,
         parent = false,
         count = 1,
@@ -57,16 +79,44 @@ M.create_tag_at_cursor = function(opts)
     opts = vim.tbl_deep_extend("force", default_opts, opts)
 
     local desired_parent_types = { "jsx_element", "jsx_self_closing_element" }
-
     local jsx_node = lib_ts.find_parent(opts.winnr, desired_parent_types)
 
-    if not opts.parent then
-        create_tag_at_node(opts.tag, opts.bufnr, jsx_node, opts.next_to, opts.count)
-    else
-        local parent_jsx_node = lib_ts.find_parent(opts.winnr, desired_parent_types, jsx_node)
+    if opts.inside then
+        if jsx_node:type() ~= "jsx_self_closing_element" then
+            local children = ts_utils.get_named_children(jsx_node)
+            local should_add_new_line = false
 
-        if parent_jsx_node then
-            create_tag_at_node(opts.tag, opts.bufnr, parent_jsx_node, opts.next_to, opts.count)
+            if #children == 2 then
+                should_add_new_line = true
+            end
+
+            create_tag_at_node({
+                tag = opts.tag,
+                bufnr = opts.bufnr,
+                next_to = true,
+                new_line = should_add_new_line,
+                count = opts.count,
+            }, children[1])
+        end
+    else
+        if not opts.parent then
+            create_tag_at_node({
+                tag = opts.tag,
+                bufnr = opts.bufnr,
+                next_to = opts.next_to,
+                count = opts.count,
+            }, jsx_node)
+        else
+            local parent_jsx_node = lib_ts.find_parent(opts.winnr, desired_parent_types, jsx_node)
+
+            if parent_jsx_node then
+                create_tag_at_node({
+                    tag = opts.tag,
+                    bufnr = opts.bufnr,
+                    next_to = opts.next_to,
+                    count = opts.count,
+                }, parent_jsx_node)
+            end
         end
     end
 end

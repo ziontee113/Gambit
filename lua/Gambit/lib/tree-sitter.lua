@@ -50,10 +50,10 @@ local get_root = function(parser_name)
     end
 end
 
-M.get_all_nodes_matches_query = function(query, parser_name)
+M.get_all_nodes_matches_query = function(query, parser_name, root)
     local nodes = {}
 
-    local root = get_root(parser_name)
+    root = root or get_root(parser_name)
     local parsed_query = ts.query.parse(parser_name, query)
 
     for _, matches, _ in parsed_query:iter_matches(root, 0) do
