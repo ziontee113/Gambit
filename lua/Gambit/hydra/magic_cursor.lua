@@ -9,15 +9,15 @@ local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⣠⠊⠀⠀⡴⠚⡩⠟⠓⠒⡖⠲⡄⠀⠀⠈⡆⠀⠀⠀  
 ⠀⠀⠀⠀⠀⢀⡞⠁⢠⠒⠾⢥⣀⣇⣚⣹⡤⡟⠀⡇⢠⠀⢠⠇⠀⠀⠀  
 ⠀⠀⠀⠀⠀⢸⣄⣀⠀⡇⠀⠀⠀⠀⠀⢀⡜⠁⣸⢠⠎⣰⣃⠀⠀⠀⠀      _k_ / _j_: prevous / next tag
-⠀⠀⠀⠀⠸⡍⠀⠉⠉⠛⠦⣄⠀⢀⡴⣫⠴⠋⢹⡏⡼⠁⠈⠙⢦⡀⠀    
+⠀⠀⠀⠀⠸⡍⠀⠉⠉⠛⠦⣄⠀⢀⡴⣫⠴⠋⢹⡏⡼⠁⠈⠙⢦⡀⠀        _%_
 ⠀⠀⠀⠀⣀⡽⣄⠀⠀⠀⠀⠈⠙⠻⣎⡁⠀⠀⣸⡾⠀⠀⠀⠀⣀⡹⠂    
 ⠀⠀⢀⡞⠁⠀⠈⢣⡀⠀⠀⠀⠀⠀⠀⠉⠓⠶⢟⠀⢀⡤⠖⠋⠁⠀⠀    
 ⠀⠀⠀⠉⠙⠒⠦⡀⠙⠦⣀⠀⠀⠀⠀⠀⠀⢀⣴⡷⠋⠀⠀⠀⠀⠀⠀      _d_: div
 ⠀⠀⠀⠀⠀⠀⠀⠘⢦⣀⠈⠓⣦⣤⣤⣤⢶⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀      _U_: ul    _l_: li
 ⠀⢤⣤⣤⡤⠤⠤⠤⠤⣌⡉⠉⠁⠀⠀⢸⢸⠁⡠⠖⠒⠒⢒⣒⡶⣶⠤ 
 ⠀⠀⠉⠲⣍⠓⠦⣄⠀⠀⠙⣆⠀⠀⠀⡞⡼⡼⢀⣠⠴⠊⢉⡤⠚⠁⠀    
-⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀    
-⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _u_: undo
+⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀      _u_: undo
+⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      
 ⠀⠀⠀⠀⢀⡴⠚⠉⠉⢉⣳⣄⣠⠏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _q_, _<Esc>_: exit
 ⠀⠀⣠⣴⣟⣒⣋⣉⣉⡭⠟⢡⠏⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⢀⠏⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -29,10 +29,10 @@ local hint_flower = [[
 
 local ns = vim.api.nvim_create_namespace("magic_cursor")
 
-local new_tag = function(tag, bufnr, winnr, next_to, parent, namespace)
-    local count = require("Gambit.lib.vim-utils").get_count()
+local new_tag = function(opts, namespace)
+    opts.count = require("Gambit.lib.vim-utils").get_count()
 
-    lib_tag_creation.create_tag_at_cursor(tag, winnr, bufnr, next_to, parent, count)
+    lib_tag_creation.create_tag_at_cursor(opts)
     vim.schedule(function()
         vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
         lib_highlighting.highlight_tag_braces(namespace)
@@ -74,21 +74,21 @@ Hydra({
         {
             "d",
             function()
-                new_tag("div", 0, 0, true, false, ns)
+                new_tag({ tag = "div" }, ns)
             end,
             { nowait = true },
         },
         {
             "U",
             function()
-                new_tag("ul", 0, 0, true, false, ns)
+                new_tag({ tag = "ul" }, ns)
             end,
             { nowait = true },
         },
         {
             "l",
             function()
-                new_tag("li", 0, 0, true, false, ns)
+                new_tag({ tag = "li" }, ns)
             end,
             { nowait = true },
         },
@@ -113,7 +113,7 @@ Hydra({
         --------------------------------------------
 
         {
-            "$",
+            "%",
             function()
                 lib_magic_cursor.cycle_between_opening_and_closing_tag()
             end,

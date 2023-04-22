@@ -45,18 +45,28 @@ local create_tag_at_node = function(tag, bufnr, node, next_to, count)
     end)
 end
 
-M.create_tag_at_cursor = function(tag, winnr, bufnr, next_to, parent, count)
+M.create_tag_at_cursor = function(opts)
+    local default_opts = {
+        winnr = 0,
+        bufnr = 0,
+        tag = "p",
+        next_to = true,
+        parent = false,
+        count = 1,
+    }
+    opts = vim.tbl_deep_extend("force", default_opts, opts)
+
     local desired_parent_types = { "jsx_element", "jsx_self_closing_element" }
 
-    local jsx_node = lib_ts.find_parent(winnr, desired_parent_types)
+    local jsx_node = lib_ts.find_parent(opts.winnr, desired_parent_types)
 
-    if not parent then
-        create_tag_at_node(tag, bufnr, jsx_node, next_to, count)
+    if not opts.parent then
+        create_tag_at_node(opts.tag, opts.bufnr, jsx_node, opts.next_to, opts.count)
     else
-        local parent_jsx_node = lib_ts.find_parent(winnr, desired_parent_types, jsx_node)
+        local parent_jsx_node = lib_ts.find_parent(opts.winnr, desired_parent_types, jsx_node)
 
         if parent_jsx_node then
-            create_tag_at_node(tag, bufnr, parent_jsx_node, next_to, count)
+            create_tag_at_node(opts.tag, opts.bufnr, parent_jsx_node, opts.next_to, opts.count)
         end
     end
 end
