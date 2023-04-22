@@ -14,10 +14,10 @@ local hint_flower = [[
 ⠀⠀⢀⡞⠁⠀⠈⢣⡀⠀⠀⠀⠀⠀⠀⠉⠓⠶⢟⠀⢀⡤⠖⠋⠁⠀⠀    
 ⠀⠀⠀⠉⠙⠒⠦⡀⠙⠦⣀⠀⠀⠀⠀⠀⠀⢀⣴⡷⠋⠀⠀⠀⠀⠀⠀      _d_: div
 ⠀⠀⠀⠀⠀⠀⠀⠘⢦⣀⠈⠓⣦⣤⣤⣤⢶⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀      _U_: ul    _l_: li
-⠀⢤⣤⣤⡤⠤⠤⠤⠤⣌⡉⠉⠁⠀⠀⢸⢸⠁⡠⠖⠒⠒⢒⣒⡶⣶⠤     
+⠀⢤⣤⣤⡤⠤⠤⠤⠤⣌⡉⠉⠁⠀⠀⢸⢸⠁⡠⠖⠒⠒⢒⣒⡶⣶⠤ 
 ⠀⠀⠉⠲⣍⠓⠦⣄⠀⠀⠙⣆⠀⠀⠀⡞⡼⡼⢀⣠⠴⠊⢉⡤⠚⠁⠀    
 ⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀    
-⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                                          
+⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _u_: undo
 ⠀⠀⠀⠀⢀⡴⠚⠉⠉⢉⣳⣄⣠⠏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _q_, _<Esc>_: exit
 ⠀⠀⣠⣴⣟⣒⣋⣉⣉⡭⠟⢡⠏⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⢀⠏⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -28,6 +28,26 @@ local hint_flower = [[
 --------------------------------------------
 
 local ns = vim.api.nvim_create_namespace("magic_cursor")
+
+local new_tag = function(tag, bufnr, winnr, next_to, parent, namespace)
+    local count = require("Gambit.lib.vim-utils").get_count()
+
+    lib_tag_creation.create_tag_at_cursor(tag, winnr, bufnr, next_to, parent, count)
+    vim.schedule(function()
+        vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
+        lib_highlighting.highlight_tag_braces(namespace)
+    end)
+end
+
+local jump = function(direction)
+    local count = require("Gambit.lib.vim-utils").get_count()
+
+    for _ = 1, count do
+        lib_magic_cursor.jump_to_previous_or_next_tag(direction)
+        vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+        lib_highlighting.highlight_tag_braces(ns)
+    end
+end
 
 --------------------------------------------
 
@@ -54,24 +74,21 @@ Hydra({
         {
             "d",
             function()
-                lib_tag_creation.create_tag_at_cursor("div", 0, 0, true, false)
-                lib_highlighting.highlight_tag_braces(ns)
+                new_tag("div", 0, 0, true, false, ns)
             end,
             { nowait = true },
         },
         {
             "U",
             function()
-                lib_tag_creation.create_tag_at_cursor("ul", 0, 0, true, false)
-                lib_highlighting.highlight_tag_braces(ns)
+                new_tag("ul", 0, 0, true, false, ns)
             end,
             { nowait = true },
         },
         {
             "l",
             function()
-                lib_tag_creation.create_tag_at_cursor("li", 0, 0, true, false)
-                lib_highlighting.highlight_tag_braces(ns)
+                new_tag("li", 0, 0, true, false, ns)
             end,
             { nowait = true },
         },
@@ -81,18 +98,14 @@ Hydra({
         {
             "j",
             function()
-                lib_magic_cursor.jump_to_previous_or_next_tag("next")
-                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                lib_highlighting.highlight_tag_braces(ns)
+                jump("next")
             end,
             { nowait = true },
         },
         {
             "k",
             function()
-                lib_magic_cursor.jump_to_previous_or_next_tag("previous")
-                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                lib_highlighting.highlight_tag_braces(ns)
+                jump("previous")
             end,
             { nowait = true },
         },
@@ -103,6 +116,16 @@ Hydra({
             "$",
             function()
                 lib_magic_cursor.cycle_between_opening_and_closing_tag()
+            end,
+            { nowait = true },
+        },
+
+        {
+            "u",
+            function()
+                vim.cmd("norm! u")
+                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+                lib_highlighting.highlight_tag_braces(ns)
             end,
             { nowait = true },
         },
