@@ -3,7 +3,7 @@ local ts = vim.treesitter
 
 local M = {}
 
-M.find_parent_on_cursor = function(winnr, desired_parent_types, node)
+M.find_parent = function(winnr, desired_parent_types, node)
     node = node or ts_utils.get_node_at_cursor(winnr)
 
     while true do
@@ -99,8 +99,7 @@ end
 --------------------------------------------
 
 M.get_className_related_nodes = function(winnr)
-    local jsx_element_node =
-        M.find_parent_on_cursor(winnr, { "jsx_element", "jsx_self_closing_element" })
+    local jsx_element_node = M.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" })
 
     if jsx_element_node then
         local tag_node = get_tag_node(jsx_element_node, "tsx")
@@ -112,9 +111,9 @@ M.get_className_related_nodes = function(winnr)
     end
 end
 
-M.get_opening_and_closing_tag_nodes = function(winnr)
+M.get_opening_and_closing_tag_nodes = function(winnr, node)
     local jsx_element_node =
-        M.find_parent_on_cursor(winnr, { "jsx_element", "jsx_self_closing_element" })
+        M.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" }, node)
 
     local opening_query = [[
         (jsx_opening_element name: (identifier) @tag)

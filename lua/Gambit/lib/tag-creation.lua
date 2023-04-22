@@ -38,12 +38,12 @@ end
 M.create_tag_at_cursor = function(tag, winnr, bufnr, next_to, parent)
     local desired_parent_types = { "jsx_element", "jsx_self_closing_element" }
 
-    local jsx_node = lib_ts.find_parent_on_cursor(winnr, desired_parent_types)
+    local jsx_node = lib_ts.find_parent(winnr, desired_parent_types)
 
     if not parent then
         create_tag_at_node(tag, bufnr, jsx_node, next_to)
     else
-        local parent_jsx_node = lib_ts.find_parent_on_cursor(winnr, desired_parent_types, jsx_node)
+        local parent_jsx_node = lib_ts.find_parent(winnr, desired_parent_types, jsx_node)
 
         if parent_jsx_node then
             create_tag_at_node(tag, bufnr, parent_jsx_node, next_to)
