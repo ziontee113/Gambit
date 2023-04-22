@@ -46,6 +46,10 @@ local new_tag = function(opts, namespace)
             insert_new_tags_inside = false
         end
 
+        if opts.auto_enter then
+            insert_new_tags_inside = true
+        end
+
         vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
         lib_highlighting.highlight_tag_braces(namespace, 0, insert_new_tags_inside)
     end)
@@ -84,7 +88,7 @@ Hydra({
     body = "<Leader>f",
     heads = {
         {
-            "t",
+            "i",
             function()
                 toggle_inside_or_outside_opt()
             end,
@@ -96,14 +100,14 @@ Hydra({
         {
             "d",
             function()
-                new_tag({ tag = "div" }, ns)
+                new_tag({ tag = "div", auto_enter = true }, ns)
             end,
             { nowait = true },
         },
         {
             "U",
             function()
-                new_tag({ tag = "ul" }, ns)
+                new_tag({ tag = "ul", auto_enter = true }, ns)
             end,
             { nowait = true },
         },
