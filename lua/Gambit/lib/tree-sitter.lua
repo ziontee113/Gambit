@@ -82,7 +82,21 @@ local get_className_prop_identifier_node = function(root, parser_name)
             (property_identifier) @prop_ident (#eq? @prop_ident "className")
         )
     ]]
-    return get_node_matches_query(root, parser_name, query, "prop_ident")
+    local matched_node = get_node_matches_query(root, parser_name, query, "prop_ident")
+
+    if matched_node then
+        if root:type() == "jsx_self_closing_element" then
+            if matched_node:parent():parent() ~= root then
+                return nil
+            end
+        else
+            if matched_node:parent():parent():parent() ~= root then
+                return nil
+            end
+        end
+
+        return matched_node
+    end
 end
 
 local get_className_prop_string_node = function(root, parser_name)
@@ -143,7 +157,7 @@ M.string_to_string_tbl = function(str)
     return str
 end
 
-M.repend_rowlace_node_text = function(bufnr, node, replacement)
+M.replace_node_text = function(bufnr, node, replacement)
     replacement = M.string_to_string_tbl(replacement)
 
     local start_row, start_col, end_row, end_col = node:range()
