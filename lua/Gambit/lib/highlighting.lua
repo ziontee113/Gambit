@@ -1,3 +1,5 @@
+---@diagnostic disable: need-check-nil
+
 local M = {}
 local ts_utils = require("nvim-treesitter.ts_utils")
 local lib_ts = require("Gambit.lib.tree-sitter")
@@ -31,6 +33,10 @@ M.highlight_tag_braces = function(namespace, bufnr, insert_new_tags_inside)
 
     local opening_brace, closing_brace
     local opening_tag_node, closing_tag_node = lib_ts.get_opening_and_closing_tag_nodes(0)
+
+    if not opening_tag_node then
+        return
+    end
 
     if insert_new_tags_inside and closing_tag_node then
         first_extmark_content, second_extmark_content = ">", "<"
@@ -72,6 +78,8 @@ M.highlight_tag_braces = function(namespace, bufnr, insert_new_tags_inside)
             priority = 1000,
         })
     end
+
+    return opening_tag_node
 end
 
 return M

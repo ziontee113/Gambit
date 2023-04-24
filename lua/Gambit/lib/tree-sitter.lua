@@ -39,7 +39,7 @@ local get_node_matches_query = function(root, parser_name, query, target_capture
     return node_to_return
 end
 
-local get_root = function(parser_name)
+M.get_root = function(parser_name)
     local parser_ok, parser = pcall(vim.treesitter.get_parser, 0, parser_name)
 
     if parser_ok then
@@ -53,7 +53,7 @@ end
 M.get_all_nodes_matches_query = function(query, parser_name, root)
     local nodes = {}
 
-    root = root or get_root(parser_name)
+    root = root or M.get_root(parser_name)
     local parsed_query = ts.query.parse(parser_name, query)
 
     for _, matches, _ in parsed_query:iter_matches(root, 0) do
@@ -128,6 +128,10 @@ end
 M.get_opening_and_closing_tag_nodes = function(winnr, node)
     local jsx_element_node =
         M.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" }, node)
+
+    if not jsx_element_node then
+        return
+    end
 
     local opening_query = [[
         (jsx_opening_element name: (identifier) @tag)

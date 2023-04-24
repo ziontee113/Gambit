@@ -2,6 +2,7 @@ local Hydra = require("hydra")
 local lib_highlighting = require("Gambit.lib.highlighting")
 local lib_magic_cursor = require("Gambit.lib.magic-cursor")
 local lib_tag_creation = require("Gambit.lib.tag-creation")
+local lib_ts = require("Gambit.lib.tree-sitter")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -16,12 +17,12 @@ local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠘⢦⣀⠈⠓⣦⣤⣤⣤⢶⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀      _U_: ul    _l_: li
 ⠀⢤⣤⣤⡤⠤⠤⠤⠤⣌⡉⠉⠁⠀⠀⢸⢸⠁⡠⠖⠒⠒⢒⣒⡶⣶⠤ 
 ⠀⠀⠉⠲⣍⠓⠦⣄⠀⠀⠙⣆⠀⠀⠀⡞⡼⡼⢀⣠⠴⠊⢉⡤⠚⠁⠀    
-⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀      _u_: undo
-⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      
-⠀⠀⠀⠀⢀⡴⠚⠉⠉⢉⣳⣄⣠⠏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _q_, _<Esc>_: exit
-⠀⠀⣠⣴⣟⣒⣋⣉⣉⡭⠟⢡⠏⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⢀⠏⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡞⢠⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀      _i_: change in tag
+⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _o_: toggle insert inside
+⠀⠀⠀⠀⢀⡴⠚⠉⠉⢉⣳⣄⣠⠏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _c_: change class presets 
+⠀⠀⣠⣴⣟⣒⣋⣉⣉⡭⠟⢡⠏⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _u_: undo          
+⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⢀⠏⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                         
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡞⢠⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _q_, _<Esc>_: exit 
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠓⠚
 ]]
 
@@ -78,7 +79,39 @@ Hydra({
             border = "rounded",
         },
         on_enter = function()
-            lib_highlighting.highlight_tag_braces(ns)
+            if not lib_highlighting.highlight_tag_braces(ns) then
+                local root = lib_ts.get_root("tsx")
+                local queried_nodes = lib_ts.get_all_nodes_matches_query(
+                    [[
+((jsx_opening_element) @element)
+((jsx_closing_element) @element)
+((jsx_self_closing_element) @element)
+                ]],
+                    "tsx",
+                    root
+                )
+
+                local line_numbers = {}
+                for _, node in ipairs(queried_nodes) do
+                    local start_row, _, _, _ = node:range()
+                    table.insert(line_numbers, start_row)
+                end
+
+                local current_line_number = unpack(vim.api.nvim_win_get_cursor(0))
+                local closest_line_number = line_numbers[1]
+                for _, line_number in ipairs(line_numbers) do
+                    if
+                        math.abs(line_number - current_line_number)
+                        < math.abs(closest_line_number - current_line_number)
+                    then
+                        closest_line_number = line_number
+                    end
+                end
+
+                vim.api.nvim_win_set_cursor(0, { closest_line_number + 1, 0 })
+                vim.cmd("norm! ^")
+                lib_highlighting.highlight_tag_braces(ns)
+            end
         end,
         on_exit = function()
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -88,9 +121,27 @@ Hydra({
     body = "<Leader>f",
     heads = {
         {
-            "i",
+            "o",
             function()
                 toggle_inside_or_outside_opt()
+            end,
+            { nowait = true },
+        },
+
+        {
+            "i",
+            function()
+                vim.cmd("norm! cit")
+                vim.cmd("startinsert")
+                vim.api.nvim_input("<Right>")
+            end,
+            { nowait = true },
+        },
+
+        {
+            "c",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu()
             end,
             { nowait = true },
         },
@@ -132,6 +183,15 @@ Hydra({
             "k",
             function()
                 jump("previous")
+            end,
+            { nowait = true },
+        },
+        {
+            "0",
+            function()
+                vim.cmd("norm! ^")
+                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+                lib_highlighting.highlight_tag_braces(ns)
             end,
             { nowait = true },
         },
