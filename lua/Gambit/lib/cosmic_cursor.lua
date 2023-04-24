@@ -24,29 +24,41 @@ local get_closest_node_to_cursor = function(nodes, winnr)
     return closest_node, closest_index
 end
 
-local get_previous_or_next_node = function(nodes, closest_index, direction)
-    local new_index
+local adjust_index_base_on_direction = function(nodes, old_index, direction, increment)
+    local adjust_by = direction == "next" and increment or -increment
+    local new_index = old_index + adjust_by
 
-    if direction == "next" then
-        new_index = closest_index + 1
-    elseif direction == "previous" then
-        new_index = closest_index - 1
+    new_index = new_index > #nodes and #nodes or new_index
+    new_index = new_index < 1 and 1 or new_index
+
+    return new_index
+end
+
+local get_previous_or_next_node = function(nodes, old_index, direction)
+    local new_index = adjust_index_base_on_direction(nodes, old_index, direction, 1)
+
+    local skip_index = adjust_index_base_on_direction(nodes, new_index, direction, 1)
+
+    if
+        (
+            (nodes[skip_index]:parent():type() == "jsx_opening_element")
+            or (nodes[skip_index]:parent():type() == "jsx_self_closing_element")
+        )
+        and (
+            (nodes[new_index]:parent():type() == "jsx_closing_element")
+            and (nodes[old_index]:parent():type() ~= "jsx_fragment")
+        )
+    then
+        new_index = skip_index
     end
 
-    if new_index > #nodes then
-        new_index = #nodes
-    elseif new_index < 1 then
-        new_index = 1
-    end
-
-    return nodes[new_index], new_index
+    return nodes[new_index]
 end
 
 M.get_jump_target = function(direction, winnr)
     local all_brackets = lib_ts.get_all_nodes_matches_query(
         [[
 ("<" @bracket (#has-ancestor? @bracket jsx_element jsx_self_closing_element jsx_fragment))
-(">" @bracket (#has-ancestor? @bracket jsx_element jsx_self_closing_element jsx_fragment))
     ]],
         "tsx"
     )
@@ -57,8 +69,7 @@ M.get_jump_target = function(direction, winnr)
         local closest_bracket, closest_index = get_closest_node_to_cursor(all_brackets, winnr)
 
         if jsx_parent then
-            local new_node, _ = get_previous_or_next_node(all_brackets, closest_index, direction)
-            return new_node
+            return get_previous_or_next_node(all_brackets, closest_index, direction)
         else
             return closest_bracket
         end
