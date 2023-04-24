@@ -1,8 +1,11 @@
 local Hydra = require("hydra")
+
 local lib_highlighting = require("Gambit.lib.highlighting")
-local lib_magic_cursor = require("Gambit.lib.magic-cursor")
 local lib_tag_creation = require("Gambit.lib.tag-creation")
 local lib_ts = require("Gambit.lib.tree-sitter")
+
+local lib_magic_cursor = require("Gambit.lib.magic-cursor")
+local lib_cosmic_cursor = require("Gambit.lib.cosmic_cursor")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -120,6 +123,23 @@ Hydra({
     mode = "n",
     body = "<Leader>f",
     heads = {
+        {
+            "n",
+            function()
+                lib_cosmic_cursor.jump("next", 0)
+            end,
+            { nowait = true },
+        },
+        {
+            "p",
+            function()
+                lib_cosmic_cursor.jump("previous", 0)
+            end,
+            { nowait = true },
+        },
+
+        --------------------------------------------
+
         {
             "o",
             function()
