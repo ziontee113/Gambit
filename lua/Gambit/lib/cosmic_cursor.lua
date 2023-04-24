@@ -38,15 +38,15 @@ local get_previous_or_next_node = function(nodes, old_index, direction)
     local new_index = adjust_index_base_on_direction(nodes, old_index, direction, 1)
 
     local skip_index = adjust_index_base_on_direction(nodes, new_index, direction, 1)
-
     if
-        (
+        -- we don't want to skip if the cursor is on a `jsx_fragment`
+        (nodes[old_index]:parent():type() ~= "jsx_fragment")
+        -- we only want to skip if the new node is type `jsx_closing_element`
+        and (nodes[new_index]:parent():type() == "jsx_closing_element")
+        -- check if the skip node is one of the types that we want to skip to
+        and (
             (nodes[skip_index]:parent():type() == "jsx_opening_element")
             or (nodes[skip_index]:parent():type() == "jsx_self_closing_element")
-        )
-        and (
-            (nodes[new_index]:parent():type() == "jsx_closing_element")
-            and (nodes[old_index]:parent():type() ~= "jsx_fragment")
         )
     then
         new_index = skip_index
