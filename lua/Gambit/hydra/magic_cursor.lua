@@ -47,26 +47,14 @@ local toggle_inside_or_outside_opt = function()
     else
         destination = "next-to"
     end
-    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-    jump("in-place")
+
+    jump("previous")
+    jump("next")
 end
 
 local new_tag = function(tag)
     local count = require("Gambit.lib.vim-utils").get_count()
     cosmic_creation.create_tag_at_cursor(tag, destination, count)
-
-    for _ = 1, count do
-        local target_node
-
-        if destination == "next-to" then
-            target_node = cosmic_cursor.jump("next", destination, 0)
-        else
-            target_node = cosmic_cursor.jump("previos", destination, 0)
-        end
-
-        vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-        cosmic_rays.highlight_braces(target_node, destination, ns, 0, "DiffText")
-    end
 end
 
 --------------------------------------------

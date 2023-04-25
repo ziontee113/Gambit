@@ -54,6 +54,20 @@ M.get_all_nodes_matches_query = function(query, parser_name, root)
     return nodes
 end
 
+M.get_children_that_matches_types = function(node, desired_children_types)
+    local matched_tbl = {}
+
+    for child in node:iter_children() do
+        for _, desired_type in ipairs(desired_children_types) do
+            if child:type() == desired_type then
+                table.insert(matched_tbl, child)
+            end
+        end
+    end
+
+    return matched_tbl
+end
+
 -------------------------------------------- for Cosmic Cursor and Cosmic Rays
 
 M.get_jsx_parent_of_bracket = function(bracket_node)
