@@ -34,26 +34,30 @@ local adjust_index_base_on_direction = function(nodes, old_index, direction, inc
     return new_index
 end
 
-local get_previous_or_next_node = function(nodes, old_index, direction)
+local get_previous_or_next_node = function(nodes, old_index, direction, destination)
     local new_index = adjust_index_base_on_direction(nodes, old_index, direction, 1)
 
-    local skip_index = adjust_index_base_on_direction(nodes, new_index, direction, 1)
-    if
-        (nodes[old_index]:parent():type() ~= "jsx_fragment")
-        and (nodes[new_index]:parent():type() == "jsx_closing_element")
-        and (
-            (nodes[skip_index]:parent():type() == "jsx_opening_element")
-            or (nodes[skip_index]:parent():type() == "jsx_self_closing_element")
-            or (nodes[old_index]:parent():parent() == nodes[new_index]:parent():parent())
-        )
-    then
-        new_index = skip_index
+    -- skip 1 index if it's the same jsx_element
+    local old_jsx_parent = lib_ts.get_jsx_parent_of_bracket(nodes[old_index])
+    local new_jsx_parent = lib_ts.get_jsx_parent_of_bracket(nodes[new_index])
+
+    if old_jsx_parent == new_jsx_parent then
+        new_index = adjust_index_base_on_direction(nodes, new_index, direction, 1)
+    end
+
+    -- switch target to the correct opening / closing tag
+    if destination == "next-to" then
+        local opening, closing = lib_ts.get_first_and_last_bracket(nodes[new_index], destination)
+        local opening_row, closing_row = opening:range(), closing:range()
+        if opening_row == closing_row then
+            return opening
+        end
     end
 
     return nodes[new_index]
 end
 
-M.get_jump_target = function(direction, winnr)
+M.get_jump_target = function(direction, destination, winnr)
     local opening_brackets = lib_ts.get_all_nodes_matches_query(
         [[
 ("<" @bracket (#has-ancestor? @bracket jsx_element jsx_self_closing_element jsx_fragment))
@@ -67,7 +71,12 @@ M.get_jump_target = function(direction, winnr)
         local closest_bracket, closest_index = get_closest_node_to_cursor(opening_brackets, winnr)
 
         if jsx_parent then
-            return get_previous_or_next_node(opening_brackets, closest_index, direction)
+            return get_previous_or_next_node(
+                opening_brackets,
+                closest_index,
+                direction,
+                destination
+            )
         else
             return closest_bracket
         end
@@ -76,13 +85,13 @@ M.get_jump_target = function(direction, winnr)
     end
 end
 
-M.jump = function(direction, winnr)
-    local target = M.get_jump_target(direction, winnr)
+M.jump = function(direction, destination, winnr)
+    local bracket_node = M.get_jump_target(direction, destination, winnr)
 
-    if target then
-        local start_row, start_col, _, _ = target:range()
+    if bracket_node then
+        local start_row, start_col, _, _ = bracket_node:range()
         vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-        return target -- return the target node for highlighting purposes
+        return bracket_node -- return the target node for highlighting purposes
     end
 end
 

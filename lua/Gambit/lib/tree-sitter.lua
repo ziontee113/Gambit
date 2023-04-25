@@ -27,26 +27,6 @@ M.get_children_nodes = function(parent)
     return nodes
 end
 
-local get_node_matches_query = function(root, parser_name, query, target_capture_group, item_order)
-    item_order = item_order or "first"
-    local node_to_return
-
-    local parsed_query = ts.query.parse(parser_name, query)
-    for _, matches, _ in parsed_query:iter_matches(root, 0) do
-        for i, node in ipairs(matches) do
-            if item_order == "first" then
-                if parsed_query.captures[i] == target_capture_group then
-                    return node
-                end
-            elseif item_order == "last" then
-                node_to_return = node
-            end
-        end
-    end
-
-    return node_to_return
-end
-
 M.get_root = function(parser_name)
     local parser_ok, parser = pcall(vim.treesitter.get_parser, 0, parser_name)
 
@@ -73,87 +53,55 @@ M.get_all_nodes_matches_query = function(query, parser_name, root)
     return nodes
 end
 
---------------------------------------------
+-------------------------------------------- for Cosmic Cursor and Cosmic Rays
 
-local get_tag_node = function(root, parser_name)
-    local query = [[
-        (jsx_opening_element name: (identifier) @tag)
-        (jsx_self_closing_element name: (identifier) @tag)
-    ]]
-    return get_node_matches_query(root, parser_name, query, "tag")
-end
+M.get_jsx_parent_of_bracket = function(bracket_node)
+    local parent = bracket_node:parent()
 
-local get_className_prop_identifier_node = function(root, parser_name)
-    local query = [[
-        (
-          jsx_attribute
-            (property_identifier) @prop_ident (#eq? @prop_ident "className")
-        )
-    ]]
-    local matched_node = get_node_matches_query(root, parser_name, query, "prop_ident")
-
-    if matched_node then
-        if root:type() == "jsx_self_closing_element" then
-            if matched_node:parent():parent() ~= root then
-                return nil
-            end
-        else
-            if matched_node:parent():parent():parent() ~= root then
-                return nil
-            end
-        end
-
-        return matched_node
+    if parent:type() == "jsx_self_closing_element" or parent:type() == "jsx_fragment" then
+        return parent
     end
+
+    return parent:parent()
 end
 
-local get_className_prop_string_node = function(root, parser_name)
-    local query = [[
-        (
-          jsx_attribute
-            (property_identifier) @prop_ident (#eq? @prop_ident "className")
-            ((string) @className_prop_string)
-        )
-    ]]
-    return get_node_matches_query(root, parser_name, query, "className_prop_string")
+local get_opening_and_closing_brackets = function(node)
+    local opening_brackets = M.get_all_nodes_matches_query(
+        [[
+("<" @bracket (#has-ancestor? @bracket jsx_element jsx_self_closing_element jsx_fragment))
+    ]],
+        "tsx",
+        node
+    )
+    local closing_brackets = M.get_all_nodes_matches_query(
+        [[
+(">" @bracket (#has-ancestor? @bracket jsx_element jsx_self_closing_element jsx_fragment))
+    ]],
+        "tsx",
+        node
+    )
+
+    return opening_brackets, closing_brackets
 end
 
---------------------------------------------
+M.get_first_and_last_bracket = function(bracket_node, destination)
+    local jsx_parent = M.get_jsx_parent_of_bracket(bracket_node)
+    local opening_brackets, closing_brackets = get_opening_and_closing_brackets(jsx_parent)
 
-M.get_className_related_nodes = function(winnr)
-    local jsx_element_node = M.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" })
-
-    if jsx_element_node then
-        local tag_node = get_tag_node(jsx_element_node, "tsx")
-        local className_prop_identifier_node =
-            get_className_prop_identifier_node(jsx_element_node, "tsx")
-        local className_prop_string_node = get_className_prop_string_node(jsx_element_node, "tsx")
-
-        return tag_node, className_prop_identifier_node, className_prop_string_node
-    end
-end
-
-M.get_opening_and_closing_tag_nodes = function(winnr, node)
-    local jsx_element_node =
-        M.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" }, node)
-
-    if not jsx_element_node then
+    if #opening_brackets == 0 or #closing_brackets == 0 then
         return
     end
 
-    local opening_query = [[
-        (jsx_opening_element name: (identifier) @tag)
-        (jsx_self_closing_element name: (identifier) @tag)
-    ]]
-    local opening_node = get_node_matches_query(jsx_element_node, "tsx", opening_query, "tag")
+    local opening, closing
+    if destination == "next-to" then
+        opening = opening_brackets[1]
+        closing = closing_brackets[#closing_brackets]
+    elseif destination == "inside" then
+        opening = closing_brackets[1]
+        closing = opening_brackets[#opening_brackets]
+    end
 
-    local closing_query = [[
-        (jsx_closing_element name: (identifier) @tag)
-    ]]
-    local closing_node =
-        get_node_matches_query(jsx_element_node, "tsx", closing_query, "tag", "last")
-
-    return opening_node, closing_node
+    return opening, closing
 end
 
 --------------------------------------------

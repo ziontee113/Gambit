@@ -1,7 +1,5 @@
 local Hydra = require("hydra")
 
-local lib_ts = require("Gambit.lib.tree-sitter")
-local lib_highlighting = require("Gambit.lib.highlighting")
 local lib_tag_creation = require("Gambit.lib.tag-creation")
 
 local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
@@ -35,9 +33,9 @@ local ns = vim.api.nvim_create_namespace("magic_cursor")
 local insert_new_tags_inside = false
 
 local toggle_inside_or_outside_opt = function()
-    insert_new_tags_inside = not insert_new_tags_inside
-    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-    lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
+    -- insert_new_tags_inside = not insert_new_tags_inside
+    -- vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+    -- lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
 end
 
 local new_tag = function(opts, namespace)
@@ -55,7 +53,7 @@ local new_tag = function(opts, namespace)
         end
 
         vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
-        lib_highlighting.highlight_tag_braces(namespace, 0, insert_new_tags_inside)
+        -- lib_highlighting.highlight_tag_braces(namespace, 0, insert_new_tags_inside)
     end)
 end
 
@@ -63,12 +61,8 @@ local jump = function(direction)
     local count = require("Gambit.lib.vim-utils").get_count()
 
     for _ = 1, count do
-        local target_node = cosmic_cursor.jump(direction, 0)
-
+        local target_node = cosmic_cursor.jump(direction, "next-to", 0)
         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-
-        -- lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
-
         cosmic_rays.highlight_braces(target_node, "next-to", ns, 0, "DiffText")
     end
 end
@@ -86,39 +80,7 @@ Hydra({
             border = "rounded",
         },
         on_enter = function()
-            if not lib_highlighting.highlight_tag_braces(ns) then
-                local root = lib_ts.get_root("tsx")
-                local queried_nodes = lib_ts.get_all_nodes_matches_query(
-                    [[
-((jsx_opening_element) @element)
-((jsx_closing_element) @element)
-((jsx_self_closing_element) @element)
-                ]],
-                    "tsx",
-                    root
-                )
-
-                local line_numbers = {}
-                for _, node in ipairs(queried_nodes) do
-                    local start_row, _, _, _ = node:range()
-                    table.insert(line_numbers, start_row)
-                end
-
-                local current_line_number = unpack(vim.api.nvim_win_get_cursor(0))
-                local closest_line_number = line_numbers[1]
-                for _, line_number in ipairs(line_numbers) do
-                    if
-                        math.abs(line_number - current_line_number)
-                        < math.abs(closest_line_number - current_line_number)
-                    then
-                        closest_line_number = line_number
-                    end
-                end
-
-                vim.api.nvim_win_set_cursor(0, { closest_line_number + 1, 0 })
-                vim.cmd("norm! ^")
-                lib_highlighting.highlight_tag_braces(ns)
-            end
+            jump("next")
         end,
         on_exit = function()
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -201,7 +163,7 @@ Hydra({
             function()
                 vim.cmd("norm! u")
                 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                lib_highlighting.highlight_tag_braces(ns)
+                -- lib_highlighting.highlight_tag_braces(ns)
             end,
             { nowait = true },
         },
