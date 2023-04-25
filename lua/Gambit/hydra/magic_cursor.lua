@@ -1,10 +1,9 @@
 local Hydra = require("hydra")
 
+local lib_ts = require("Gambit.lib.tree-sitter")
 local lib_highlighting = require("Gambit.lib.highlighting")
 local lib_tag_creation = require("Gambit.lib.tag-creation")
-local lib_ts = require("Gambit.lib.tree-sitter")
 
-local lib_magic_cursor = require("Gambit.lib.magic-cursor")
 local lib_cosmic_cursor = require("Gambit.lib.cosmic_cursor")
 
 local hint_flower = [[
@@ -13,7 +12,7 @@ local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⣠⠊⠀⠀⡴⠚⡩⠟⠓⠒⡖⠲⡄⠀⠀⠈⡆⠀⠀⠀  
 ⠀⠀⠀⠀⠀⢀⡞⠁⢠⠒⠾⢥⣀⣇⣚⣹⡤⡟⠀⡇⢠⠀⢠⠇⠀⠀⠀  
 ⠀⠀⠀⠀⠀⢸⣄⣀⠀⡇⠀⠀⠀⠀⠀⢀⡜⠁⣸⢠⠎⣰⣃⠀⠀⠀⠀      _k_ / _j_: prevous / next tag
-⠀⠀⠀⠀⠸⡍⠀⠉⠉⠛⠦⣄⠀⢀⡴⣫⠴⠋⢹⡏⡼⠁⠈⠙⢦⡀⠀        _%_
+⠀⠀⠀⠀⠸⡍⠀⠉⠉⠛⠦⣄⠀⢀⡴⣫⠴⠋⢹⡏⡼⠁⠈⠙⢦⡀⠀     
 ⠀⠀⠀⠀⣀⡽⣄⠀⠀⠀⠀⠈⠙⠻⣎⡁⠀⠀⣸⡾⠀⠀⠀⠀⣀⡹⠂    
 ⠀⠀⢀⡞⠁⠀⠈⢣⡀⠀⠀⠀⠀⠀⠀⠉⠓⠶⢟⠀⢀⡤⠖⠋⠁⠀⠀    
 ⠀⠀⠀⠉⠙⠒⠦⡀⠙⠦⣀⠀⠀⠀⠀⠀⠀⢀⣴⡷⠋⠀⠀⠀⠀⠀⠀      _d_: div
@@ -63,7 +62,7 @@ local jump = function(direction)
     local count = require("Gambit.lib.vim-utils").get_count()
 
     for _ = 1, count do
-        lib_magic_cursor.jump_to_previous_or_next_tag(direction)
+        lib_cosmic_cursor.jump(direction, 0)
         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
         lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
     end
@@ -123,23 +122,6 @@ Hydra({
     mode = "n",
     body = "<Leader>f",
     heads = {
-        {
-            "n",
-            function()
-                lib_cosmic_cursor.jump("next", 0)
-            end,
-            { nowait = true },
-        },
-        {
-            "p",
-            function()
-                lib_cosmic_cursor.jump("previous", 0)
-            end,
-            { nowait = true },
-        },
-
-        --------------------------------------------
-
         {
             "o",
             function()
@@ -206,25 +188,8 @@ Hydra({
             end,
             { nowait = true },
         },
-        {
-            "0",
-            function()
-                vim.cmd("norm! ^")
-                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                lib_highlighting.highlight_tag_braces(ns)
-            end,
-            { nowait = true },
-        },
 
         --------------------------------------------
-
-        {
-            "%",
-            function()
-                lib_magic_cursor.cycle_between_opening_and_closing_tag()
-            end,
-            { nowait = true },
-        },
 
         {
             "u",
