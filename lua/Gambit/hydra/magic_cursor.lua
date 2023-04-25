@@ -4,7 +4,8 @@ local lib_ts = require("Gambit.lib.tree-sitter")
 local lib_highlighting = require("Gambit.lib.highlighting")
 local lib_tag_creation = require("Gambit.lib.tag-creation")
 
-local lib_cosmic_cursor = require("Gambit.lib.cosmic-cursor")
+local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
+local cosmic_rays = require("Gambit.lib.cosmic-rays")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -62,9 +63,13 @@ local jump = function(direction)
     local count = require("Gambit.lib.vim-utils").get_count()
 
     for _ = 1, count do
-        lib_cosmic_cursor.jump(direction, 0)
+        local target_node = cosmic_cursor.jump(direction, 0)
+
         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-        lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
+
+        -- lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
+
+        cosmic_rays.highlight_braces(target_node, "next-to", ns, 0, "DiffText")
     end
 end
 

@@ -19,6 +19,14 @@ M.find_parent = function(winnr, desired_parent_types, node)
     return node
 end
 
+M.get_children_nodes = function(parent)
+    local nodes = {}
+    for node in parent:iter_children() do
+        table.insert(nodes, node)
+    end
+    return nodes
+end
+
 local get_node_matches_query = function(root, parser_name, query, target_capture_group, item_order)
     item_order = item_order or "first"
     local node_to_return

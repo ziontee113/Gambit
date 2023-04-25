@@ -54,20 +54,20 @@ local get_previous_or_next_node = function(nodes, old_index, direction)
 end
 
 M.get_jump_target = function(direction, winnr)
-    local all_brackets = lib_ts.get_all_nodes_matches_query(
+    local opening_brackets = lib_ts.get_all_nodes_matches_query(
         [[
 ("<" @bracket (#has-ancestor? @bracket jsx_element jsx_self_closing_element jsx_fragment))
     ]],
         "tsx"
     )
 
-    if all_brackets then
+    if opening_brackets then
         local jsx_parent =
             lib_ts.find_parent(winnr, { "jsx_element", "jsx_self_closing_element", "jsx_fragment" })
-        local closest_bracket, closest_index = get_closest_node_to_cursor(all_brackets, winnr)
+        local closest_bracket, closest_index = get_closest_node_to_cursor(opening_brackets, winnr)
 
         if jsx_parent then
-            return get_previous_or_next_node(all_brackets, closest_index, direction)
+            return get_previous_or_next_node(opening_brackets, closest_index, direction)
         else
             return closest_bracket
         end
@@ -82,6 +82,7 @@ M.jump = function(direction, winnr)
     if target then
         local start_row, start_col, _, _ = target:range()
         vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+        return target -- return the target node for highlighting purposes
     end
 end
 
