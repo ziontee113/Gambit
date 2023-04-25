@@ -1,9 +1,8 @@
 local Hydra = require("hydra")
 
-local lib_tag_creation = require("Gambit.lib.tag-creation")
-
 local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
 local cosmic_rays = require("Gambit.lib.cosmic-rays")
+local cosmic_creation = require("Gambit.lib.cosmic-creation")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -30,41 +29,44 @@ local hint_flower = [[
 --------------------------------------------
 
 local ns = vim.api.nvim_create_namespace("magic_cursor")
-local insert_new_tags_inside = false
+local destination = "next-to"
 
-local toggle_inside_or_outside_opt = function()
-    -- insert_new_tags_inside = not insert_new_tags_inside
-    -- vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-    -- lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
-end
-
-local jump = function(direction)
+local jump = function(direction, hl_group)
     local count = require("Gambit.lib.vim-utils").get_count()
 
     for _ = 1, count do
-        local target_node = cosmic_cursor.jump(direction, "next-to", 0)
+        local target_node = cosmic_cursor.jump(direction, destination, 0)
         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-        cosmic_rays.highlight_braces(target_node, "next-to", ns, 0, "DiffText")
+        cosmic_rays.highlight_braces(target_node, destination, ns, 0, hl_group or "DiffText")
     end
 end
 
-local new_tag = function(opts, namespace)
-    opts.count = require("Gambit.lib.vim-utils").get_count()
-    opts.inside = insert_new_tags_inside
+local toggle_inside_or_outside_opt = function()
+    if destination == "next-to" then
+        destination = "inside"
+    else
+        destination = "next-to"
+    end
+    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+    jump("in-place")
+end
 
-    lib_tag_creation.create_tag_at_cursor(opts)
-    vim.schedule(function()
-        if insert_new_tags_inside then
-            insert_new_tags_inside = false
+local new_tag = function(tag)
+    local count = require("Gambit.lib.vim-utils").get_count()
+    cosmic_creation.create_tag_at_cursor(tag, destination, count)
+
+    for _ = 1, count do
+        local target_node
+
+        if destination == "next-to" then
+            target_node = cosmic_cursor.jump("next", destination, 0)
+        else
+            target_node = cosmic_cursor.jump("previos", destination, 0)
         end
 
-        if opts.auto_enter then
-            insert_new_tags_inside = true
-        end
-
-        vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
-        jump("in-place")
-    end)
+        vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+        cosmic_rays.highlight_braces(target_node, destination, ns, 0, "DiffText")
+    end
 end
 
 --------------------------------------------
@@ -120,21 +122,21 @@ Hydra({
         {
             "d",
             function()
-                new_tag({ tag = "div", auto_enter = true }, ns)
+                new_tag("div")
             end,
             { nowait = true },
         },
         {
             "U",
             function()
-                new_tag({ tag = "ul", auto_enter = true }, ns)
+                new_tag("ul")
             end,
             { nowait = true },
         },
         {
             "l",
             function()
-                new_tag({ tag = "li" }, ns)
+                new_tag("li")
             end,
             { nowait = true },
         },

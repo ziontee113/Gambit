@@ -1,4 +1,5 @@
 local ts_utils = require("nvim-treesitter.ts_utils")
+local vim_utils = require("Gambit.lib.vim-utils")
 local ts = vim.treesitter
 
 local M = {}
@@ -106,19 +107,8 @@ end
 
 --------------------------------------------
 
-M.string_to_string_tbl = function(str)
-    if type(str) == "string" then
-        if string.match(str, "\n") then
-            str = vim.split(str, "\n")
-        else
-            str = { str }
-        end
-    end
-    return str
-end
-
 M.replace_node_text = function(bufnr, node, replacement)
-    replacement = M.string_to_string_tbl(replacement)
+    replacement = vim_utils.string_to_string_tbl(replacement)
 
     local start_row, start_col, end_row, end_col = node:range()
     vim.api.nvim_buf_set_text(bufnr, start_row, start_col, end_row, end_col, replacement)

@@ -8,4 +8,15 @@ M.get_count = function()
     return count
 end
 
+M.string_to_string_tbl = function(str)
+    if type(str) == "string" then
+        if string.match(str, "\n") then
+            str = vim.split(str, "\n")
+        else
+            str = { str }
+        end
+    end
+    return str
+end
+
 return M
