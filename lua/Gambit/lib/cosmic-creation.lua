@@ -87,6 +87,7 @@ M.create_tag_at_cursor = function(tag, destination, count)
         end
 
         create_tag_at_node(tag, target, should_add_new_line, count)
+        return should_add_new_line
     elseif destination == "next-to" then
         create_tag_at_node(tag, jsx_node, false, count)
     end

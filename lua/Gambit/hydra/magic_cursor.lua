@@ -52,9 +52,26 @@ local toggle_inside_or_outside_opt = function()
     jump("next")
 end
 
-local new_tag = function(tag)
+local new_tag = function(tag, enter)
     local count = require("Gambit.lib.vim-utils").get_count()
-    cosmic_creation.create_tag_at_cursor(tag, destination, count)
+    local added_new_lines = cosmic_creation.create_tag_at_cursor(tag, destination, count)
+
+    -- update cursor position to the newly created tag
+    if added_new_lines then
+        vim.cmd("norm! k")
+    else
+        local jump_cmd = "norm! " .. count .. "j"
+        vim.cmd(jump_cmd)
+    end
+    vim.cmd("norm! ^")
+
+    -- update destination for future tags base on `enter` argument
+    destination = enter and "inside" or "next-to"
+
+    -- update the highlighting
+    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+    local target_node = cosmic_cursor.get_jump_target("in-place", destination, 0)
+    cosmic_rays.highlight_braces(target_node, destination, ns, 0, "DiffText")
 end
 
 --------------------------------------------
@@ -110,14 +127,14 @@ Hydra({
         {
             "d",
             function()
-                new_tag("div")
+                new_tag("div", true)
             end,
             { nowait = true },
         },
         {
             "U",
             function()
-                new_tag("ul")
+                new_tag("ul", true)
             end,
             { nowait = true },
         },
