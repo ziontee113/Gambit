@@ -4,7 +4,7 @@ local lib_ts = require("Gambit.lib.tree-sitter")
 local lib_highlighting = require("Gambit.lib.highlighting")
 local lib_tag_creation = require("Gambit.lib.tag-creation")
 
-local lib_cosmic_cursor = require("Gambit.lib.cosmic_cursor")
+local lib_cosmic_cursor = require("Gambit.lib.cosmic-cursor")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
