@@ -38,6 +38,16 @@ local toggle_inside_or_outside_opt = function()
     -- lib_highlighting.highlight_tag_braces(ns, 0, insert_new_tags_inside)
 end
 
+local jump = function(direction)
+    local count = require("Gambit.lib.vim-utils").get_count()
+
+    for _ = 1, count do
+        local target_node = cosmic_cursor.jump(direction, "next-to", 0)
+        vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+        cosmic_rays.highlight_braces(target_node, "next-to", ns, 0, "DiffText")
+    end
+end
+
 local new_tag = function(opts, namespace)
     opts.count = require("Gambit.lib.vim-utils").get_count()
     opts.inside = insert_new_tags_inside
@@ -53,18 +63,8 @@ local new_tag = function(opts, namespace)
         end
 
         vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
-        -- lib_highlighting.highlight_tag_braces(namespace, 0, insert_new_tags_inside)
+        jump("in-place")
     end)
-end
-
-local jump = function(direction)
-    local count = require("Gambit.lib.vim-utils").get_count()
-
-    for _ = 1, count do
-        local target_node = cosmic_cursor.jump(direction, "next-to", 0)
-        vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-        cosmic_rays.highlight_braces(target_node, "next-to", ns, 0, "DiffText")
-    end
 end
 
 --------------------------------------------
@@ -80,7 +80,7 @@ Hydra({
             border = "rounded",
         },
         on_enter = function()
-            jump("next")
+            jump("in-place")
         end,
         on_exit = function()
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -163,7 +163,7 @@ Hydra({
             function()
                 vim.cmd("norm! u")
                 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                -- lib_highlighting.highlight_tag_braces(ns)
+                jump("in-place")
             end,
             { nowait = true },
         },

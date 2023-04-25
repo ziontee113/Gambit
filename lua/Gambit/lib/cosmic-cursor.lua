@@ -35,6 +35,10 @@ local adjust_index_base_on_direction = function(nodes, old_index, direction, inc
 end
 
 local get_previous_or_next_node = function(nodes, old_index, direction, destination)
+    if direction == "in-place" then
+        return nodes[old_index]
+    end
+
     local new_index = adjust_index_base_on_direction(nodes, old_index, direction, 1)
 
     -- skip 1 index if it's the same jsx_element
