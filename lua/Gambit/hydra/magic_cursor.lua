@@ -76,6 +76,8 @@ end
 
 --------------------------------------------
 
+table.insert(USER_MAPPINGS, "<Plug>[R1 K, R1 L] --up<Plug>")
+
 Hydra({
     name = "Telescope",
     hint = hint_flower,
@@ -96,6 +98,8 @@ Hydra({
     mode = "n",
     body = "<Leader>f",
     heads = {
+        -------------------------------------------- CIT and Toggle Destination
+
         {
             "o",
             function()
@@ -114,6 +118,8 @@ Hydra({
             { nowait = true },
         },
 
+        -------------------------------------------- Replacing Classes
+
         {
             "c",
             function()
@@ -122,7 +128,15 @@ Hydra({
             { nowait = true },
         },
 
-        --------------------------------------------
+        {
+            "<Plug>[R1 K, R1 L] --up<Plug>",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu()
+            end,
+            { nowait = true },
+        },
+
+        -------------------------------------------- Adding Tags
 
         {
             "d",
@@ -146,7 +160,7 @@ Hydra({
             { nowait = true },
         },
 
-        --------------------------------------------
+        -------------------------------------------- Jumping to Previous / Next Tag
 
         {
             "j",
@@ -163,7 +177,7 @@ Hydra({
             { nowait = true },
         },
 
-        --------------------------------------------
+        -------------------------------------------- Undo with updated highlighting
 
         {
             "u",
