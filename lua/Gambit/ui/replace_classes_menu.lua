@@ -39,7 +39,8 @@ M.show_menu = function()
                 old_classes = string.gsub(old_classes, "[\"']", "")
             end
 
-            local new_classes = manipulator.replace_classes(old_classes, classes_groups, item.data)
+            local new_classes =
+                manipulator.replace_classes_with_list_item(old_classes, classes_groups, item.data)
             new_classes = string.format('"%s"', new_classes)
 
             if tag_node then
