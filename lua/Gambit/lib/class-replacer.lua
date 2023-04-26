@@ -1,7 +1,7 @@
 local M = {}
 
 local lib_ts = require("Gambit.lib.tree-sitter")
-local classes_manipulator = require("Gambit.lib.class-manipulator")
+local classes_manipulator = require("Gambit.lib.classes-manipulator")
 
 local get_tag_and_className_string_nodes = function(winnr)
     local desired_types = { "jsx_element", "jsx_self_closing_element" }
@@ -68,6 +68,16 @@ M.apply_classes_group = function(winnr, bufnr, classes_groups, item)
 
     local new_classes =
         classes_manipulator.replace_classes_with_list_item(old_classes, classes_groups, item.data)
+    new_classes = string.format('"%s"', new_classes)
+
+    apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
+end
+
+M.change_tailwind_colors = function(winnr, bufnr, replacement)
+    local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
+    local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
+
+    local new_classes = classes_manipulator.replace_tailwind_color_classes(old_classes, replacement)
     new_classes = string.format('"%s"', new_classes)
 
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)

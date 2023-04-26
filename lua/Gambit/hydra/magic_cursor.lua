@@ -3,6 +3,7 @@ local Hydra = require("hydra")
 local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
 local cosmic_rays = require("Gambit.lib.cosmic-rays")
 local cosmic_creation = require("Gambit.lib.cosmic-creation")
+local classes_replacer = require("Gambit.lib.class-replacer")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -131,7 +132,7 @@ Hydra({
         {
             "<Plug>[R1 K, R1 L] --up<Plug>",
             function()
-                require("Gambit.ui.replace_classes_menu").show_menu()
+                classes_replacer.change_tailwind_colors(0, 0, { text = "text-gray-800" })
             end,
             { nowait = true },
         },

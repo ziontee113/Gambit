@@ -1,4 +1,4 @@
-local module = require("Gambit.lib.class-manipulator")
+local module = require("Gambit.lib.classes-manipulator")
 
 local list = {
     { "flex" },
@@ -23,10 +23,25 @@ describe("replace_classes_with_list_item()", function()
 end)
 
 describe("replace_tailwind_color_classes", function()
-    it("works", function()
+    it("adds correctly", function()
+        local input = "flex flex-row px-20 py-10 text-center"
+        local want = "flex flex-row px-20 py-10 text-center text-blue-800"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
+        assert.equals(want, got)
+    end)
+    it("replaces correctly", function()
         local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
         local want = "text-blue-800 flex flex-row px-20 py-10 text-center"
         local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
+        assert.equals(want, got)
+    end)
+    it("adds and replaces correctly", function()
+        local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
+        local want = "text-blue-800 flex flex-row px-20 py-10 text-center bg-gray-100"
+        local got = module.replace_tailwind_color_classes(
+            input,
+            { text = "text-blue-800", bg = "bg-gray-100" }
+        )
         assert.equals(want, got)
     end)
 end)
