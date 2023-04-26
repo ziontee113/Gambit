@@ -39,19 +39,31 @@ M.get_root = function(parser_name)
     end
 end
 
-M.get_all_nodes_matches_query = function(query, parser_name, root)
+M.get_all_nodes_matches_query = function(query, parser_name, root, capture_groups)
     local nodes = {}
+
+    local grouped_nodes = {}
+    for _, key in ipairs(capture_groups or {}) do
+        grouped_nodes[key] = {}
+    end
 
     root = root or M.get_root(parser_name)
     local parsed_query = ts.query.parse(parser_name, query)
 
     for _, matches, _ in parsed_query:iter_matches(root, 0) do
-        for _, node in ipairs(matches) do
+        for i, node in ipairs(matches) do
             table.insert(nodes, node)
+
+            if capture_groups then
+                local capture_group_name = parsed_query.captures[i]
+                if vim.tbl_contains(capture_groups, capture_group_name) then
+                    table.insert(grouped_nodes[capture_group_name], node)
+                end
+            end
         end
     end
 
-    return nodes
+    return nodes, grouped_nodes
 end
 
 M.get_children_that_matches_types = function(node, desired_children_types)
