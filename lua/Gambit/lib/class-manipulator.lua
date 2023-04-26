@@ -42,26 +42,18 @@ M.replace_classes_with_list_item = function(input, list, replacement)
     return append_remaining_classes(output, remaining_classes)
 end
 
-M.remove_classes_with_pattern = function(input, pattern)
-    local input_classes = vim.split(input, " ")
-    local remaining_classes = {}
-
-    for _, class in ipairs(input_classes) do
-        if not string.match(class, pattern) then
-            table.insert(remaining_classes, class)
-        end
-    end
-
-    return table.concat(remaining_classes, " "), remaining_classes
-end
-
-M.replace_first_class_matches_pattern = function(input, pattern, replacement)
+M.replace_tailwind_color_classes = function(input, replacement)
+    local tailwind_patterns = {
+        text = "text%-%a+%-%d+",
+        bg = "bg%-%a+%-%d+",
+    }
     local input_classes = vim.split(input, " ")
 
     for i, class in ipairs(input_classes) do
-        if string.match(class, pattern) then
-            input_classes[i] = replacement
-            break
+        for type, pattern in pairs(tailwind_patterns) do
+            if string.match(class, pattern) then
+                input_classes[i] = replacement[type]
+            end
         end
     end
 
