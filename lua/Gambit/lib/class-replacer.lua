@@ -3,7 +3,7 @@ local M = {}
 local lib_ts = require("Gambit.lib.tree-sitter")
 local classes_manipulator = require("Gambit.lib.class-manipulator")
 
-M.myfunc = function(winnr, bufnr, classes_groups, item)
+local get_tag_and_className_string_nodes = function(winnr)
     local desired_types = { "jsx_element", "jsx_self_closing_element" }
     local jsx_node = lib_ts.find_parent(winnr, desired_types)
 
@@ -28,20 +28,23 @@ M.myfunc = function(winnr, bufnr, classes_groups, item)
         { "string" }
     )
 
+    local jsx_tag_node = lib_ts.get_children_that_matches_types(root, { "identifier" })[1]
     local className_string_node = matched_groups["string"][1]
 
+    return className_string_node, jsx_tag_node
+end
+
+local get_classes_from_className_string_node = function(className_string_node, bufnr)
     local old_classes = ""
     if className_string_node then
         old_classes = vim.treesitter.get_node_text(className_string_node, bufnr)
         old_classes = string.gsub(old_classes, "[\"']", "")
     end
 
-    local new_classes =
-        classes_manipulator.replace_classes_with_list_item(old_classes, classes_groups, item.data)
-    new_classes = string.format('"%s"', new_classes)
+    return old_classes
+end
 
-    local jsx_tag_node = lib_ts.get_children_that_matches_types(root, { "identifier" })[1]
-
+local apply_new_classes = function(bufnr, jsx_tag_node, className_string_node, new_classes)
     if jsx_tag_node then
         if className_string_node then
             lib_ts.replace_node_text(bufnr, className_string_node, new_classes)
@@ -57,6 +60,17 @@ M.myfunc = function(winnr, bufnr, classes_groups, item)
             )
         end
     end
+end
+
+M.apply_classes_group = function(winnr, bufnr, classes_groups, item)
+    local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
+    local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
+
+    local new_classes =
+        classes_manipulator.replace_classes_with_list_item(old_classes, classes_groups, item.data)
+    new_classes = string.format('"%s"', new_classes)
+
+    apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
 end
 
 return M

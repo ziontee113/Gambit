@@ -29,7 +29,7 @@ M.show_menu = function()
             submit = { "<CR>", "<Space>", "l" },
         },
         on_submit = function(item)
-            class_replacer.myfunc(old_winnr, old_bufnr, classes_groups, item)
+            class_replacer.apply_classes_group(old_winnr, old_bufnr, classes_groups, item)
         end,
     })
 
