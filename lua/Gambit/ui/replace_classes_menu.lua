@@ -6,6 +6,7 @@ local class_replacer = require("Gambit.lib.class-replacer")
 local M = {}
 
 local classes_groups = {
+    {},
     { "flex" },
     { "flex", "flex-row" },
 }
@@ -29,9 +30,16 @@ M.show_menu = function()
             submit = { "<CR>", "<Space>", "l" },
         },
         on_submit = function(item)
-            class_replacer.apply_classes_group(old_winnr, old_bufnr, classes_groups, item)
+            class_replacer.apply_classes_group(old_winnr, old_bufnr, classes_groups, item.data)
         end,
     })
+
+    for i, group in ipairs(classes_groups) do
+        menu:map("n", tostring(i - 1), function()
+            menu:unmount()
+            class_replacer.apply_classes_group(old_winnr, old_bufnr, classes_groups, group)
+        end)
+    end
 
     menu:mount()
 end
