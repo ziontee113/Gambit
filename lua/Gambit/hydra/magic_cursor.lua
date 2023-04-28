@@ -53,6 +53,7 @@ local toggle_inside_or_outside_opt = function()
     jump("next")
 end
 
+local previous_add_tag_args
 local new_tag = function(tag, enter)
     local count = require("Gambit.lib.vim-utils").get_count()
     local added_new_lines = cosmic_creation.create_tag_at_cursor(tag, destination, count)
@@ -73,6 +74,9 @@ local new_tag = function(tag, enter)
     vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
     local target_node = cosmic_cursor.get_jump_target("in-place", destination, 0)
     cosmic_rays.highlight_braces(target_node, destination, ns, 0, "DiffText")
+
+    GAMBIT_PREVIOUS_ACTION = "add-tag"
+    previous_add_tag_args = { tag, enter }
 end
 
 --------------------------------------------
@@ -135,7 +139,13 @@ Hydra({
         {
             ".",
             function()
-                pms_menu.apply_previous_action()
+                if GAMBIT_PREVIOUS_ACTION then
+                    if GAMBIT_PREVIOUS_ACTION == "changing-classes" then
+                        pms_menu.apply_previous_action()
+                    elseif GAMBIT_PREVIOUS_ACTION == "add-tag" then
+                        new_tag(unpack(previous_add_tag_args))
+                    end
+                end
             end,
             { nowait = true },
         },

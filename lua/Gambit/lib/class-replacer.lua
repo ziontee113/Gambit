@@ -93,6 +93,7 @@ M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, r
     new_classes = string.format('"%s"', new_classes)
 
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
+    GAMBIT_PREVIOUS_ACTION = "changing-classes"
 end
 
 return M
