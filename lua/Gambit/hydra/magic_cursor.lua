@@ -132,7 +132,7 @@ Hydra({
             { nowait = true },
         },
 
-        ----- padding
+        ------------------------------------------ paddings
         {
             "P",
             function()
@@ -157,9 +157,38 @@ Hydra({
             { nowait = true },
         },
         {
+            "pY",
+            function()
+                pms_menu.show_paddings_menu("x", { "t", "b" })
+            end,
+            { nowait = true },
+        },
+        {
             "px",
             function()
                 pms_menu.show_paddings_menu("x")
+            end,
+            { nowait = true },
+        },
+        {
+            "pX",
+            function()
+                pms_menu.show_paddings_menu("x", { "l", "r" })
+            end,
+            { nowait = true },
+        },
+
+        {
+            "p<C-y>",
+            function()
+                pms_menu.show_paddings_menu("y", "all")
+            end,
+            { nowait = true },
+        },
+        {
+            "p<C-x>",
+            function()
+                pms_menu.show_paddings_menu("x", "all")
             end,
             { nowait = true },
         },
@@ -190,6 +219,99 @@ Hydra({
             "pb",
             function()
                 pms_menu.show_paddings_menu("b")
+            end,
+            { nowait = true },
+        },
+
+        ------------------------------------------ margins
+        {
+            "M",
+            function()
+                pms_menu.show_margins_menu("")
+            end,
+            { nowait = true },
+        },
+        {
+            "<C-S-P>",
+            function()
+                pms_menu.show_margins_menu("", "all")
+            end,
+            { nowait = true },
+        },
+
+        ----- padding x and y
+        {
+            "my",
+            function()
+                pms_menu.show_margins_menu("y")
+            end,
+            { nowait = true },
+        },
+        {
+            "mx",
+            function()
+                pms_menu.show_margins_menu("x")
+            end,
+            { nowait = true },
+        },
+
+        ----- padding t,b,l,r
+        {
+            "ml",
+            function()
+                pms_menu.show_margins_menu("l")
+            end,
+            { nowait = true },
+        },
+        {
+            "mr",
+            function()
+                pms_menu.show_margins_menu("r")
+            end,
+            { nowait = true },
+        },
+        {
+            "mt",
+            function()
+                pms_menu.show_margins_menu("t")
+            end,
+            { nowait = true },
+        },
+        {
+            "mb",
+            function()
+                pms_menu.show_margins_menu("b")
+            end,
+            { nowait = true },
+        },
+
+        ------------------------------------------ spacing
+        {
+            "sx",
+            function()
+                pms_menu.show_spacing_menu("x")
+            end,
+            { nowait = true },
+        },
+        {
+            "sy",
+            function()
+                pms_menu.show_spacing_menu("y")
+            end,
+            { nowait = true },
+        },
+
+        {
+            "sX",
+            function()
+                pms_menu.show_spacing_menu("x", "all")
+            end,
+            { nowait = true },
+        },
+        {
+            "sY",
+            function()
+                pms_menu.show_spacing_menu("y", "all")
             end,
             { nowait = true },
         },

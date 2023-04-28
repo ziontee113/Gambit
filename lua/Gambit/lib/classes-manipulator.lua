@@ -78,23 +78,40 @@ M.replace_tailwind_color_classes = function(input, replacements)
     return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
 end
 
-local tailwind_padding_patterns = {
-    [""] = "^p%-%d+$",
-    ["x"] = "^px%-%d+$",
-    ["y"] = "^py%-%d+$",
-    ["t"] = "^pt%-%d+$",
-    ["b"] = "^pb%-%d+$",
-    ["l"] = "^pl%-%d+$",
-    ["r"] = "^pr%-%d+$",
-    ["all"] = "^p[xytblr]?%-%d+$",
+local pms_patterns = {
+    p = {
+        [""] = "^p%-%d+$",
+        ["x"] = "^px%-%d+$",
+        ["y"] = "^py%-%d+$",
+        ["t"] = "^pt%-%d+$",
+        ["b"] = "^pb%-%d+$",
+        ["l"] = "^pl%-%d+$",
+        ["r"] = "^pr%-%d+$",
+        ["all"] = "^p[xytblr]?%-%d+$",
+    },
+    m = {
+        [""] = "^m%-%d+$",
+        ["x"] = "^mx%-%d+$",
+        ["y"] = "^my%-%d+$",
+        ["t"] = "^mt%-%d+$",
+        ["b"] = "^mb%-%d+$",
+        ["l"] = "^ml%-%d+$",
+        ["r"] = "^mr%-%d+$",
+        ["all"] = "^m[xytblr]?%-%d+$",
+    },
+    ["space-"] = {
+        ["x"] = "^space%-x%-%d+$",
+        ["y"] = "^space%-y%-%d+$",
+        ["all"] = "^space%-[xy]?%-%d+$",
+    },
 }
 
-M.replace_tailwind_padding_classes = function(input, axis, replacement)
+M.replace_pms_classes = function(input, property, axis, replacement)
     local input_classes = vim.split(input, " ")
     local replaced = false
 
     for i, class in ipairs(input_classes) do
-        if string.match(class, tailwind_padding_patterns[axis]) then
+        if string.match(class, pms_patterns[property][axis]) then
             if not replaced then
                 input_classes[i] = replacement
                 replaced = true
@@ -111,7 +128,7 @@ M.replace_tailwind_padding_classes = function(input, axis, replacement)
     return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
 end
 
-M.remove_tailwind_padding_classes = function(input, axies_to_remove)
+M.remove_pms_classes = function(input, property, axies_to_remove)
     if type(axies_to_remove) == "string" then
         axies_to_remove = { axies_to_remove }
     end
@@ -123,7 +140,7 @@ M.remove_tailwind_padding_classes = function(input, axies_to_remove)
 
     for i, class in ipairs(input_classes) do
         for _, axis in ipairs(axies_to_remove) do
-            if string.match(class, tailwind_padding_patterns[axis]) then
+            if string.match(class, pms_patterns[property][axis]) then
                 input_classes[i] = ""
             end
         end

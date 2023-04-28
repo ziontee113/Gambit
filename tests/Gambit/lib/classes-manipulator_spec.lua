@@ -46,63 +46,63 @@ describe("replace_tailwind_color_classes", function()
     end)
 end)
 
-describe("replace_tailwind_padding_classes", function()
+describe("replace_pms_classes", function()
     it("adds correctly for omni axis", function()
         local input = "flex flex-row text-center"
         local want = "flex flex-row text-center p-4"
-        local got = module.replace_tailwind_padding_classes(input, "", "p-4")
+        local got = module.replace_pms_classes(input, "p", "", "p-4")
         assert.equals(want, got)
     end)
     it("replaces correctly for omni axis", function()
         local input = "text-gray-400 flex flex-row p-20 text-center"
         local want = "text-gray-400 flex flex-row p-4 text-center"
-        local got = module.replace_tailwind_padding_classes(input, "", "p-4")
+        local got = module.replace_pms_classes(input, "p", "", "p-4")
         assert.equals(want, got)
     end)
     it("removes correctly for omni axis", function()
         local input = "text-gray-400 flex flex-row p-20 text-center"
         local want = "text-gray-400 flex flex-row text-center"
-        local got = module.replace_tailwind_padding_classes(input, "", "")
+        local got = module.replace_pms_classes(input, "p", "", "")
         assert.equals(want, got)
     end)
 
     it("adds correctly for 1 axis", function()
         local input = "flex flex-row text-center"
         local want = "flex flex-row text-center px-4"
-        local got = module.replace_tailwind_padding_classes(input, "x", "px-4")
+        local got = module.replace_pms_classes(input, "p", "x", "px-4")
         assert.equals(want, got)
     end)
     it("replaces correctly for 1 axis", function()
         local input = "text-gray-400 flex flex-row py-20 text-center"
         local want = "text-gray-400 flex flex-row py-4 text-center"
-        local got = module.replace_tailwind_padding_classes(input, "y", "py-4")
+        local got = module.replace_pms_classes(input, "p", "y", "py-4")
         assert.equals(want, got)
     end)
     it("removes correctly for 1 axis", function()
         local input = "text-gray-400 flex flex-row px-20 text-center"
         local want = "text-gray-400 flex flex-row text-center"
-        local got = module.replace_tailwind_padding_classes(input, "x", "")
+        local got = module.replace_pms_classes(input, "p", "x", "")
         assert.equals(want, got)
     end)
 end)
 
-describe("remove_tailwind_padding_classes", function()
+describe("remove_pms_classes", function()
     it("removes all padding classes if given no axis argument", function()
-        local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
-        local want = "text-gray-400 flex flex-row text-center"
-        local got = module.remove_tailwind_padding_classes(input, "all")
+        local input = "text-gray-400 flex flex-row space-x-20 space-y-4 py-10 text-center"
+        local want = "text-gray-400 flex flex-row py-10 text-center"
+        local got = module.remove_pms_classes(input, "space-", "all")
         assert.equals(want, got)
     end)
     it("removes chosen padding classes if given axis arguments", function()
-        local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
-        local want = "text-gray-400 flex flex-row py-10 text-center"
-        local got = module.remove_tailwind_padding_classes(input, "x")
+        local input = "text-gray-400 flex flex-row space-x-20 space-y-10 text-center"
+        local want = "text-gray-400 flex flex-row space-x-20 text-center"
+        local got = module.remove_pms_classes(input, "space-", "y")
         assert.equals(want, got)
     end)
     it("does nothing if no axis arguments given", function()
         local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
         local want = "text-gray-400 flex flex-row px-20 py-10 text-center"
-        local got = module.remove_tailwind_padding_classes(input)
+        local got = module.remove_pms_classes(input)
         assert.equals(want, got)
     end)
 end)

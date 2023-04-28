@@ -86,6 +86,7 @@ local show_menu = function(property, axis, axies_to_remove_beforehand)
             class_replacer.change_tailwind_paddings(
                 old_winnr,
                 old_bufnr,
+                property,
                 axis,
                 axies_to_remove_beforehand,
                 item.data
@@ -104,6 +105,7 @@ local show_menu = function(property, axis, axies_to_remove_beforehand)
                 class_replacer.change_tailwind_paddings(
                     old_winnr,
                     old_bufnr,
+                    property,
                     axis,
                     axies_to_remove_beforehand,
                     class
