@@ -35,8 +35,6 @@ local key_value_map = {
     { "v", "72" },
     { "b", "80" },
     { "n", "96" },
-
-    "",
     { "m", "0" },
 
     { ")", "0.5", hide = true },
@@ -50,16 +48,18 @@ local Menu = require("nui.menu")
 local defaults = require("Gambit.options.defaults")
 local class_replacer = require("Gambit.lib.class-replacer")
 
-local get_class = function(value)
+local get_class = function(axis, value)
     local class = ""
     if value ~= "" then
         class = "p-" .. value
+        class = string.format("p%s-%s", axis, value)
     end
     return class
 end
 
-M.show_menu = function()
+M.show_menu = function(axis)
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
+    axis = axis or ""
 
     local lines = {}
     for _, entry in ipairs(key_value_map) do
@@ -67,7 +67,7 @@ M.show_menu = function()
             table.insert(lines, Menu.separator(entry))
         elseif type(entry) == "table" and not entry.hide then
             local key, value = unpack(entry)
-            local class = get_class(value)
+            local class = get_class(axis, value)
             local display_text = string.format("%s %s", key, class)
             table.insert(lines, Menu.item(display_text, { data = class }))
         end
@@ -83,7 +83,7 @@ M.show_menu = function()
             submit = { "<CR>", "<Space>", "l" },
         },
         on_submit = function(item)
-            class_replacer.change_tailwind_paddings(old_winnr, old_bufnr, item.data)
+            class_replacer.change_tailwind_paddings(old_winnr, old_bufnr, axis, item.data)
         end,
     })
 
@@ -94,8 +94,8 @@ M.show_menu = function()
             local key, value = unpack(entry)
             menu:map("n", key, function()
                 menu:unmount()
-                local class = get_class(value)
-                class_replacer.change_tailwind_paddings(old_winnr, old_bufnr, class)
+                local class = get_class(axis, value)
+                class_replacer.change_tailwind_paddings(old_winnr, old_bufnr, axis, class)
             end, { nowait = true })
         end
     end

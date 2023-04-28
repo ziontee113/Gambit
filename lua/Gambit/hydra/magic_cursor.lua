@@ -131,9 +131,24 @@ Hydra({
         },
 
         {
-            "p",
+            "P",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu()
+                require("Gambit.ui.replace_paddings_menu").show_menu("")
+            end,
+            { nowait = true },
+        },
+
+        {
+            "py",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu("y")
+            end,
+            { nowait = true },
+        },
+        {
+            "px",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu("x")
             end,
             { nowait = true },
         },
