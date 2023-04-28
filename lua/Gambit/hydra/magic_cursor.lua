@@ -80,6 +80,8 @@ end
 REMAP({ "n", "x", "i" }, "<Plug>[R1 K, R1 L] --up<Plug>", "<Nop>")
 REMAP({ "n", "x", "i" }, "<Plug>R1 B --down<Plug>", "<Nop>")
 
+local pms_menu = require("Gambit.ui.pms_menu")
+
 Hydra({
     name = "Telescope",
     hint = hint_flower,
@@ -125,7 +127,7 @@ Hydra({
         {
             "c",
             function()
-                require("Gambit.ui.replace_classes_menu").show_menu()
+                pms_menu.show_paddings_menu()
             end,
             { nowait = true },
         },
@@ -134,14 +136,14 @@ Hydra({
         {
             "P",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("")
+                pms_menu.show_paddings_menu("")
             end,
             { nowait = true },
         },
         {
             "<C-S-P>",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("", "all")
+                pms_menu.show_paddings_menu("", "all")
             end,
             { nowait = true },
         },
@@ -150,14 +152,14 @@ Hydra({
         {
             "py",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("y")
+                pms_menu.show_paddings_menu("y")
             end,
             { nowait = true },
         },
         {
             "px",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("x")
+                pms_menu.show_paddings_menu("x")
             end,
             { nowait = true },
         },
@@ -166,28 +168,28 @@ Hydra({
         {
             "pl",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("l")
+                pms_menu.show_paddings_menu("l")
             end,
             { nowait = true },
         },
         {
             "pr",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("r")
+                pms_menu.show_paddings_menu("r")
             end,
             { nowait = true },
         },
         {
             "pt",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("t")
+                pms_menu.show_paddings_menu("t")
             end,
             { nowait = true },
         },
         {
             "pb",
             function()
-                require("Gambit.ui.replace_paddings_menu").show_menu("b")
+                pms_menu.show_paddings_menu("b")
             end,
             { nowait = true },
         },

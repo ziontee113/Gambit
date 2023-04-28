@@ -48,16 +48,15 @@ local Menu = require("nui.menu")
 local defaults = require("Gambit.options.defaults")
 local class_replacer = require("Gambit.lib.class-replacer")
 
-local get_class = function(axis, value)
+local get_class = function(property, axis, value)
     local class = ""
     if value ~= "" then
-        class = "p-" .. value
-        class = string.format("p%s-%s", axis, value)
+        class = string.format("%s%s-%s", property, axis, value)
     end
     return class
 end
 
-M.show_menu = function(axis, axies_to_remove_beforehand)
+local show_menu = function(property, axis, axies_to_remove_beforehand)
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
     axis = axis or ""
     axies_to_remove_beforehand = axies_to_remove_beforehand or {}
@@ -68,7 +67,7 @@ M.show_menu = function(axis, axies_to_remove_beforehand)
             table.insert(lines, Menu.separator(entry))
         elseif type(entry) == "table" and not entry.hide then
             local key, value = unpack(entry)
-            local class = get_class(axis, value)
+            local class = get_class(property, axis, value)
             local display_text = string.format("%s %s", key, class)
             table.insert(lines, Menu.item(display_text, { data = class }))
         end
@@ -101,7 +100,7 @@ M.show_menu = function(axis, axies_to_remove_beforehand)
             local key, value = unpack(entry)
             menu:map("n", key, function()
                 menu:unmount()
-                local class = get_class(axis, value)
+                local class = get_class(property, axis, value)
                 class_replacer.change_tailwind_paddings(
                     old_winnr,
                     old_bufnr,
@@ -116,6 +115,16 @@ M.show_menu = function(axis, axies_to_remove_beforehand)
     --------------------------------------------
 
     menu:mount()
+end
+
+M.show_paddings_menu = function(axis, axies_to_remove_beforehand)
+    show_menu("p", axis, axies_to_remove_beforehand)
+end
+M.show_margins_menu = function(axis, axies_to_remove_beforehand)
+    show_menu("m", axis, axies_to_remove_beforehand)
+end
+M.show_spacing_menu = function(axis, axies_to_remove_beforehand)
+    show_menu("space-", axis, axies_to_remove_beforehand)
 end
 
 return M
