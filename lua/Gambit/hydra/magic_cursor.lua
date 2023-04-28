@@ -130,6 +130,7 @@ Hydra({
             { nowait = true },
         },
 
+        ----- padding
         {
             "P",
             function()
@@ -137,7 +138,15 @@ Hydra({
             end,
             { nowait = true },
         },
+        {
+            "<C-S-P>",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu("", "all")
+            end,
+            { nowait = true },
+        },
 
+        ----- padding x and y
         {
             "py",
             function()
@@ -149,6 +158,36 @@ Hydra({
             "px",
             function()
                 require("Gambit.ui.replace_paddings_menu").show_menu("x")
+            end,
+            { nowait = true },
+        },
+
+        ----- padding t,b,l,r
+        {
+            "pl",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu("l")
+            end,
+            { nowait = true },
+        },
+        {
+            "pr",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu("r")
+            end,
+            { nowait = true },
+        },
+        {
+            "pt",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu("t")
+            end,
+            { nowait = true },
+        },
+        {
+            "pb",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu("b")
             end,
             { nowait = true },
         },

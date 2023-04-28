@@ -85,3 +85,24 @@ describe("replace_tailwind_padding_classes", function()
         assert.equals(want, got)
     end)
 end)
+
+describe("remove_tailwind_padding_classes", function()
+    it("removes all padding classes if given no axis argument", function()
+        local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
+        local want = "text-gray-400 flex flex-row text-center"
+        local got = module.remove_tailwind_padding_classes(input, "all")
+        assert.equals(want, got)
+    end)
+    it("removes chosen padding classes if given axis arguments", function()
+        local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
+        local want = "text-gray-400 flex flex-row py-10 text-center"
+        local got = module.remove_tailwind_padding_classes(input, "x")
+        assert.equals(want, got)
+    end)
+    it("does nothing if no axis arguments given", function()
+        local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
+        local want = "text-gray-400 flex flex-row px-20 py-10 text-center"
+        local got = module.remove_tailwind_padding_classes(input)
+        assert.equals(want, got)
+    end)
+end)

@@ -57,9 +57,10 @@ local get_class = function(axis, value)
     return class
 end
 
-M.show_menu = function(axis)
+M.show_menu = function(axis, axies_to_remove_beforehand)
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
     axis = axis or ""
+    axies_to_remove_beforehand = axies_to_remove_beforehand or {}
 
     local lines = {}
     for _, entry in ipairs(key_value_map) do
@@ -83,7 +84,13 @@ M.show_menu = function(axis)
             submit = { "<CR>", "<Space>", "l" },
         },
         on_submit = function(item)
-            class_replacer.change_tailwind_paddings(old_winnr, old_bufnr, axis, item.data)
+            class_replacer.change_tailwind_paddings(
+                old_winnr,
+                old_bufnr,
+                axis,
+                axies_to_remove_beforehand,
+                item.data
+            )
         end,
     })
 
@@ -95,7 +102,13 @@ M.show_menu = function(axis)
             menu:map("n", key, function()
                 menu:unmount()
                 local class = get_class(axis, value)
-                class_replacer.change_tailwind_paddings(old_winnr, old_bufnr, axis, class)
+                class_replacer.change_tailwind_paddings(
+                    old_winnr,
+                    old_bufnr,
+                    axis,
+                    axies_to_remove_beforehand,
+                    class
+                )
             end, { nowait = true })
         end
     end

@@ -42,6 +42,16 @@ M.replace_classes_with_list_item = function(input, list, replacement)
     return append_remaining_classes(output, remaining_classes)
 end
 
+local remove_empty_strings_from_tbl_then_concat_with_space = function(tbl)
+    local new_tbl = {}
+    for _, str in ipairs(tbl) do
+        if str ~= "" then
+            table.insert(new_tbl, str)
+        end
+    end
+    return table.concat(new_tbl, " ")
+end
+
 M.replace_tailwind_color_classes = function(input, replacements)
     local tailwind_patterns = {
         text = "text%-%a+%-%d+",
@@ -65,32 +75,26 @@ M.replace_tailwind_color_classes = function(input, replacements)
         end
     end
 
-    local new_classes = {}
-    for _, class in ipairs(input_classes) do
-        if class ~= "" then
-            table.insert(new_classes, class)
-        end
-    end
-
-    return table.concat(new_classes, " ")
+    return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
 end
 
-M.replace_tailwind_padding_classes = function(input, axis, replacement)
-    local patterns_tbl = {
-        [""] = "^p%-%d+$",
-        ["x"] = "^px%-%d+$",
-        ["y"] = "^py%-%d+$",
-        ["t"] = "^pt%-%d+$",
-        ["b"] = "^pb%-%d+$",
-        ["l"] = "^pl%-%d+$",
-        ["r"] = "^pr%-%d+$",
-    }
+local tailwind_padding_patterns = {
+    [""] = "^p%-%d+$",
+    ["x"] = "^px%-%d+$",
+    ["y"] = "^py%-%d+$",
+    ["t"] = "^pt%-%d+$",
+    ["b"] = "^pb%-%d+$",
+    ["l"] = "^pl%-%d+$",
+    ["r"] = "^pr%-%d+$",
+    ["all"] = "^p[xytblr]?%-%d+$",
+}
 
+M.replace_tailwind_padding_classes = function(input, axis, replacement)
     local input_classes = vim.split(input, " ")
     local replaced = false
 
     for i, class in ipairs(input_classes) do
-        if string.match(class, patterns_tbl[axis]) then
+        if string.match(class, tailwind_padding_patterns[axis]) then
             if not replaced then
                 input_classes[i] = replacement
                 replaced = true
@@ -104,14 +108,28 @@ M.replace_tailwind_padding_classes = function(input, axis, replacement)
         table.insert(input_classes, replacement)
     end
 
-    local new_classes = {}
-    for _, class in ipairs(input_classes) do
-        if class ~= "" then
-            table.insert(new_classes, class)
+    return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
+end
+
+M.remove_tailwind_padding_classes = function(input, axies_to_remove)
+    if type(axies_to_remove) == "string" then
+        axies_to_remove = { axies_to_remove }
+    end
+    if not axies_to_remove or #axies_to_remove == 0 then
+        return input
+    end
+
+    local input_classes = vim.split(input, " ")
+
+    for i, class in ipairs(input_classes) do
+        for _, axis in ipairs(axies_to_remove) do
+            if string.match(class, tailwind_padding_patterns[axis]) then
+                input_classes[i] = ""
+            end
         end
     end
 
-    return table.concat(new_classes, " ")
+    return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
 end
 
 return M
