@@ -132,6 +132,14 @@ Hydra({
             { nowait = true },
         },
 
+        {
+            ".",
+            function()
+                pms_menu.apply_previous_action()
+            end,
+            { nowait = true },
+        },
+
         ------------------------------------------ paddings
         {
             "P",

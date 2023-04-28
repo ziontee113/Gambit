@@ -83,7 +83,7 @@ M.change_tailwind_colors = function(winnr, bufnr, replacement)
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
 end
 
-M.change_tailwind_paddings = function(winnr, bufnr, property, axis, axies_to_remove, replacement)
+M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, replacement)
     local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
     local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
 

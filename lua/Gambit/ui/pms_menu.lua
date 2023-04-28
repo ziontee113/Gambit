@@ -56,8 +56,10 @@ local get_class = function(property, axis, value)
     return class
 end
 
+local change_arguments
+local old_winnr, old_bufnr = 0, 0
 local show_menu = function(property, axis, axies_to_remove_beforehand)
-    local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
+    old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
     axis = axis or ""
     axies_to_remove_beforehand = axies_to_remove_beforehand or {}
 
@@ -83,14 +85,15 @@ local show_menu = function(property, axis, axies_to_remove_beforehand)
             submit = { "<CR>", "<Space>", "l" },
         },
         on_submit = function(item)
-            class_replacer.change_tailwind_paddings(
+            change_arguments = {
                 old_winnr,
                 old_bufnr,
                 property,
                 axis,
                 axies_to_remove_beforehand,
-                item.data
-            )
+                item.data,
+            }
+            class_replacer.change_pms_classes(unpack(change_arguments))
         end,
     })
 
@@ -102,14 +105,15 @@ local show_menu = function(property, axis, axies_to_remove_beforehand)
             menu:map("n", key, function()
                 menu:unmount()
                 local class = get_class(property, axis, value)
-                class_replacer.change_tailwind_paddings(
+                change_arguments = {
                     old_winnr,
                     old_bufnr,
                     property,
                     axis,
                     axies_to_remove_beforehand,
-                    class
-                )
+                    class,
+                }
+                class_replacer.change_pms_classes(unpack(change_arguments))
             end, { nowait = true })
         end
     end
@@ -127,6 +131,12 @@ M.show_margins_menu = function(axis, axies_to_remove_beforehand)
 end
 M.show_spacing_menu = function(axis, axies_to_remove_beforehand)
     show_menu("space-", axis, axies_to_remove_beforehand)
+end
+
+M.apply_previous_action = function()
+    if change_arguments ~= nil then
+        class_replacer.change_pms_classes(unpack(change_arguments))
+    end
 end
 
 return M
