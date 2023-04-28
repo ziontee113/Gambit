@@ -75,4 +75,38 @@ M.replace_tailwind_color_classes = function(input, replacements)
     return table.concat(new_classes, " ")
 end
 
+M.replace_tailwind_padding_classes = function(input, replacement)
+    local padding_patterns = {
+        "^p[xytblr]?%-?[%d.]+$",
+    }
+    local input_classes = vim.split(input, " ")
+    local replaced = false
+
+    for i, class in ipairs(input_classes) do
+        for _, pattern in pairs(padding_patterns) do
+            if string.match(class, pattern) then
+                if not replaced then
+                    input_classes[i] = replacement
+                    replaced = true
+                else
+                    input_classes[i] = ""
+                end
+            end
+        end
+    end
+
+    if not replaced then
+        table.insert(input_classes, replacement)
+    end
+
+    local new_classes = {}
+    for _, class in ipairs(input_classes) do
+        if class ~= "" then
+            table.insert(new_classes, class)
+        end
+    end
+
+    return table.concat(new_classes, " ")
+end
+
 return M

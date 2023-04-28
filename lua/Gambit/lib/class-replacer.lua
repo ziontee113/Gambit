@@ -83,4 +83,15 @@ M.change_tailwind_colors = function(winnr, bufnr, replacement)
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
 end
 
+M.change_tailwind_paddings = function(winnr, bufnr, replacement)
+    local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
+    local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
+
+    local new_classes =
+        classes_manipulator.replace_tailwind_padding_classes(old_classes, replacement)
+    new_classes = string.format('"%s"', new_classes)
+
+    apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
+end
+
 return M

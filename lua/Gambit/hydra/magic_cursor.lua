@@ -130,6 +130,14 @@ Hydra({
         },
 
         {
+            "p",
+            function()
+                require("Gambit.ui.replace_paddings_menu").show_menu()
+            end,
+            { nowait = true },
+        },
+
+        {
             "<Plug>[R1 K, R1 L] --up<Plug>",
             function()
                 classes_replacer.change_tailwind_colors(0, 0, { text = "text-gray-800" })
