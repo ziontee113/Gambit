@@ -77,7 +77,7 @@ end
 
 --------------------------------------------
 
-table.insert(USER_MAPPINGS, "<Plug>[R1 K, R1 L] --up<Plug>")
+REMAP({ "n", "x", "i" }, "<Plug>[R1 K, R1 L] --up<Plug>", "<Nop>")
 
 Hydra({
     name = "Telescope",

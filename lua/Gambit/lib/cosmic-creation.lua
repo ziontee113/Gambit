@@ -72,24 +72,33 @@ M.create_tag_at_cursor = function(tag, destination, count)
     local desired_types = { "jsx_element", "jsx_self_closing_element", "jsx_fragment" }
     local jsx_node = lib_ts.find_parent(0, desired_types)
 
-    if destination == "inside" and jsx_node:type() ~= "jsx_self_closing_element" then
-        local children = ts_utils.get_named_children(jsx_node)
-        local jsx_children = lib_ts.get_children_that_matches_types(jsx_node, desired_types)
-
-        local target, should_add_new_line
-
-        if #jsx_children > 0 then
-            target = jsx_children[#jsx_children]
-            should_add_new_line = false
-        else
-            target = children[#children - 1]
-            should_add_new_line = true
-        end
+    if jsx_node:type() == "jsx_fragment" then
+        local children = lib_ts.get_children_nodes(jsx_node)
+        local target = children[2]
+        local should_add_new_line = true
 
         create_tag_at_node(tag, target, should_add_new_line, count)
         return should_add_new_line
-    elseif destination == "next-to" then
-        create_tag_at_node(tag, jsx_node, false, count)
+    else
+        if destination == "inside" and jsx_node:type() ~= "jsx_self_closing_element" then
+            local children = ts_utils.get_named_children(jsx_node)
+            local jsx_children = lib_ts.get_children_that_matches_types(jsx_node, desired_types)
+
+            local target, should_add_new_line
+
+            if #jsx_children > 0 then
+                target = jsx_children[#jsx_children]
+                should_add_new_line = false
+            else
+                target = children[#children - 1]
+                should_add_new_line = true
+            end
+
+            create_tag_at_node(tag, target, should_add_new_line, count)
+            return should_add_new_line
+        elseif destination == "next-to" then
+            create_tag_at_node(tag, jsx_node, false, count)
+        end
     end
 end
 
