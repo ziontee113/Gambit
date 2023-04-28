@@ -78,6 +78,7 @@ end
 --------------------------------------------
 
 REMAP({ "n", "x", "i" }, "<Plug>[R1 K, R1 L] --up<Plug>", "<Nop>")
+REMAP({ "n", "x", "i" }, "<Plug>R1 B --down<Plug>", "<Nop>")
 
 Hydra({
     name = "Telescope",
@@ -97,7 +98,7 @@ Hydra({
         end,
     },
     mode = "n",
-    body = "<Leader>f",
+    body = "<Plug>R1 B --down<Plug>",
     heads = {
         -------------------------------------------- CIT and Toggle Destination
 
