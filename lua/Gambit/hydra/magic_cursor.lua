@@ -132,7 +132,7 @@ Hydra({
         {
             "c",
             function()
-                pms_menu.show_paddings_menu()
+                require("Gambit.ui.replace_classes_menu").show_menu()
             end,
             { nowait = true },
         },
@@ -157,6 +157,14 @@ Hydra({
             "t",
             function()
                 colors_menu.change_text_color()
+            end,
+            { nowait = true },
+        },
+
+        {
+            "b",
+            function()
+                colors_menu.change_background_color()
             end,
             { nowait = true },
         },

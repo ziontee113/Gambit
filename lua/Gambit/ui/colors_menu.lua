@@ -1,6 +1,7 @@
 local M = {}
 
 local colors = {
+    { color = false, keys = { "0" }, hide = true },
     { color = "slate", keys = { "sl" } },
     { color = "gray", keys = { "g" } },
     { color = "zinc", keys = { "z" } },
@@ -51,7 +52,7 @@ local get_full_class = function(colored_prefix, step)
     return string.format("%s-%s", colored_prefix, step)
 end
 
-local show_steps_menu = function(colored_prefix, winnr, bufnr)
+local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
     local lines = {}
     for _, entry in ipairs(steps) do
         if type(entry) == "string" then
@@ -67,7 +68,7 @@ local show_steps_menu = function(colored_prefix, winnr, bufnr)
         max_width = 40,
         keymap = defaults.keymaps,
         on_submit = function(item)
-            N(item.text)
+            class_replacer.change_tailwind_colors(winnr, bufnr, { [property] = item.text })
         end,
     })
 
@@ -77,7 +78,7 @@ local show_steps_menu = function(colored_prefix, winnr, bufnr)
                 steps_menu:map("n", key, function()
                     steps_menu:unmount()
                     local class = get_full_class(colored_prefix, entry.step)
-                    N(class)
+                    class_replacer.change_tailwind_colors(winnr, bufnr, { [property] = class })
                 end, { nowait = true })
             end
         end
@@ -110,7 +111,7 @@ local show_colors_menu = function(property)
         max_width = 40,
         keymap = defaults.keymaps,
         on_submit = function(item)
-            show_steps_menu(item.text, old_winnr, old_bufnr)
+            show_steps_menu(property, item.text, old_winnr, old_bufnr)
         end,
     })
 
@@ -119,7 +120,20 @@ local show_colors_menu = function(property)
             for _, key in ipairs(entry.keys) do
                 colors_menu:map("n", key, function()
                     colors_menu:unmount()
-                    show_steps_menu(get_colored_prefix(property, entry.color), old_winnr, old_bufnr)
+                    if entry.color then
+                        show_steps_menu(
+                            property,
+                            get_colored_prefix(property, entry.color),
+                            old_winnr,
+                            old_bufnr
+                        )
+                    else
+                        class_replacer.change_tailwind_colors(
+                            old_winnr,
+                            old_bufnr,
+                            { [property] = "" }
+                        )
+                    end
                 end, { nowait = true })
             end
         end
@@ -130,6 +144,9 @@ end
 
 M.change_text_color = function()
     show_colors_menu("text")
+end
+M.change_background_color = function()
+    show_colors_menu("bg")
 end
 
 return M

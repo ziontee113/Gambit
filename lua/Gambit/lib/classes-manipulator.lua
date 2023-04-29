@@ -53,7 +53,7 @@ local remove_empty_strings_from_tbl_then_concat_with_space = function(tbl)
 end
 
 M.replace_tailwind_color_classes = function(input, replacements)
-    local tailwind_patterns = {
+    local tailwind_color_patterns = {
         text = "text%-%a+%-%d+",
         bg = "bg%-%a+%-%d+",
     }
@@ -61,17 +61,17 @@ M.replace_tailwind_color_classes = function(input, replacements)
     local matches = {}
 
     for i, class in ipairs(input_classes) do
-        for type, pattern in pairs(tailwind_patterns) do
-            if string.match(class, pattern) then
-                input_classes[i] = replacements[type]
-                matches[type] = replacements[type]
+        for key, value in pairs(replacements) do
+            if string.match(class, tailwind_color_patterns[key]) then
+                input_classes[i] = value
+                matches[key] = value
             end
         end
     end
 
-    for type, _ in pairs(replacements) do
-        if not matches[type] and replacements[type] then
-            table.insert(input_classes, replacements[type])
+    for key, _ in pairs(replacements) do
+        if not matches[key] and replacements[key] then
+            table.insert(input_classes, replacements[key])
         end
     end
 
