@@ -3,7 +3,7 @@ local M = {}
 local colors = {
     { color = false, keys = { "0" }, hide = true },
     { color = "slate", keys = { "sl" } },
-    { color = "gray", keys = { "g" } },
+    { color = "gray", keys = { "G" } },
     { color = "zinc", keys = { "z" } },
     { color = "neutral", keys = { "n" } },
     { color = "stone", keys = { "st" } },
@@ -27,15 +27,15 @@ local colors = {
 }
 
 local steps = {
-    { step = "100", keys = { "1", "m" } },
-    { step = "200", keys = { "2", "," } },
-    { step = "300", keys = { "3", "." } },
-    { step = "400", keys = { "4", "j" } },
-    { step = "500", keys = { "5", "k" } },
-    { step = "600", keys = { "6", "l" } },
-    { step = "700", keys = { "7", "u" } },
-    { step = "800", keys = { "8", "i" } },
-    { step = "900", keys = { "9", "o" } },
+    { step = "100", keys = { "1", "m", "q" } },
+    { step = "200", keys = { "2", ",", "w" } },
+    { step = "300", keys = { "3", ".", "e" } },
+    { step = "400", keys = { "4", "j", "r" } },
+    { step = "500", keys = { "5", "k", "a" } },
+    { step = "600", keys = { "6", "l", "s" } },
+    { step = "700", keys = { "7", "u", "d" } },
+    { step = "800", keys = { "8", "i", "f" } },
+    { step = "900", keys = { "9", "o", "g" } },
 }
 
 ------------------------------------------------------------------------------ Imports
@@ -63,7 +63,13 @@ local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
         end
     end
 
-    local steps_menu = Menu(defaults.popup_options, {
+    local filetype = string.format("tailwind-%s-color-picker", property)
+    local popup_option = vim.tbl_deep_extend("force", defaults.popup_options, {
+        buf_options = {
+            filetype = filetype,
+        },
+    })
+    local steps_menu = Menu(popup_option, {
         lines = lines,
         max_width = 40,
         keymap = defaults.keymaps,
