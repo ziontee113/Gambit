@@ -85,6 +85,7 @@ REMAP({ "n", "x", "i" }, "<Plug>[R1 K, R1 L] --up<Plug>", "<Nop>")
 REMAP({ "n", "x", "i" }, "<Plug>R1 B --down<Plug>", "<Nop>")
 
 local pms_menu = require("Gambit.ui.pms_menu")
+local colors_menu = require("Gambit.ui.colors_menu")
 
 Hydra({
     name = "Telescope",
@@ -146,6 +147,16 @@ Hydra({
                         new_tag(unpack(previous_add_tag_args))
                     end
                 end
+            end,
+            { nowait = true },
+        },
+
+        ------------------------------------------ colors
+
+        {
+            "t",
+            function()
+                colors_menu.change_text_color()
             end,
             { nowait = true },
         },
