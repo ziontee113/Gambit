@@ -19,10 +19,10 @@ M.popup_options = {
 }
 
 M.keymaps = {
-    focus_next = { "j", "<Down>", "<Tab>" },
-    focus_prev = { "k", "<Up>", "<S-Tab>" },
+    focus_next = { "<Down>", "<Tab>" },
+    focus_prev = { "<Up>", "<S-Tab>" },
     close = { "<Esc>", "<C-c>" },
-    submit = { "<CR>", "<Space>", "l" },
+    submit = { "<CR>", "<Space>" },
 }
 
 return M

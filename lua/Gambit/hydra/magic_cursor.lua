@@ -168,7 +168,7 @@ Hydra({
                     { keymaps = { "x" }, classes = { "text-xs" } },
                     { keymaps = { "m" }, classes = { "text-sm" } },
                     { keymaps = { "b" }, classes = { "text-base" } },
-                    { keymaps = { "g" }, classes = { "text-lg" } },
+                    { keymaps = { "l" }, classes = { "text-lg" } },
                     { keymaps = { "q", "1" }, classes = { "text-xl" } },
                     { keymaps = { "w", "2" }, classes = { "text-2xl" } },
                     { keymaps = { "e", "3" }, classes = { "text-3xl" } },
@@ -178,6 +178,20 @@ Hydra({
                     { keymaps = { "s", "7" }, classes = { "text-7xl" } },
                     { keymaps = { "d", "8" }, classes = { "text-8xl" } },
                     { keymaps = { "f", "9" }, classes = { "text-9xl" } },
+                }, "after")
+            end,
+            { nowait = true },
+        },
+
+        {
+            "<C-a>",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "h" }, classes = { "text-left" } },
+                    { keymaps = { "l" }, classes = { "text-right" } },
+                    { keymaps = { "k" }, classes = { "text-center" } },
+                    { keymaps = { "j" }, classes = { "text-justify" } },
                 }, "after")
             end,
             { nowait = true },
