@@ -136,12 +136,11 @@ Hydra({
         {
             "c",
             function()
-                local classes_groups = {
-                    {},
-                    { "flex" },
-                    { "flex", "flex-row" },
-                }
-                require("Gambit.ui.replace_classes_menu").show_menu(classes_groups)
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymap = "0", classes = {}, hidden = true },
+                    { keymap = "f", classes = { "flex" } },
+                    { keymap = "r", classes = { "flex", "flex-row" } },
+                })
             end,
             { nowait = true },
         },
@@ -149,13 +148,12 @@ Hydra({
         {
             "O",
             function()
-                local classes_groups = {
-                    {},
-                    { "items-center" },
-                    { "justify-center" },
-                    { "items-center", "jusify-center" },
-                }
-                require("Gambit.ui.replace_classes_menu").show_menu(classes_groups)
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymap = "0", classes = {}, hidden = true },
+                    { keymap = "i", classes = { "items-center" } },
+                    { keymap = "j", classes = { "justify-center" } },
+                    { keymap = "c", classes = { "items-center", "justify-center" } },
+                })
             end,
             { nowait = true },
         },

@@ -1,8 +1,8 @@
 local module = require("Gambit.lib.classes-manipulator")
 
 local list = {
-    { "flex" },
-    { "flex", "flex-row" },
+    { keymap = "f", classes = { "flex" } },
+    { keymap = "r", classes = { "flex", "flex-row" } },
 }
 
 describe("replace_classes_with_list_item()", function()

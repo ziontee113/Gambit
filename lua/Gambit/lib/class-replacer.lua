@@ -66,8 +66,11 @@ M.apply_classes_group = function(winnr, bufnr, classes_groups, item_data)
     local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
     local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
 
-    local new_classes =
-        classes_manipulator.replace_classes_with_list_item(old_classes, classes_groups, item_data)
+    local new_classes = classes_manipulator.replace_classes_with_list_item(
+        old_classes,
+        classes_groups,
+        item_data.classes
+    )
     new_classes = string.format('"%s"', new_classes)
 
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)

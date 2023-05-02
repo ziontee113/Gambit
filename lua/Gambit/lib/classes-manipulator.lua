@@ -8,6 +8,8 @@ local filter_matched_classes_in_list = function(input, list)
     local matched_index = 0
 
     for list_index, sub_list in ipairs(list) do
+        sub_list = sub_list.classes
+
         local score = 0
         remaining_classes = {}
 
