@@ -20,7 +20,7 @@ local hint_flower = [[
 ⠀⠀⠉⠲⣍⠓⠦⣄⠀⠀⠙⣆⠀⠀⠀⡞⡼⡼⢀⣠⠴⠊⢉⡤⠚⠁⠀    
 ⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀      _i_: change in tag
 ⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _o_: toggle insert inside
-⠀⠀⠀⠀⢀⡴⠚⠉⠉⢉⣳⣄⣠⠏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _c_: change class presets 
+⠀⠀⠀⠀⢀⡴⠚⠉⠉⢉⣳⣄⣠⠏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    
 ⠀⠀⣠⣴⣟⣒⣋⣉⣉⡭⠟⢡⠏⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _u_: undo          
 ⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⢀⠏⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                         
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡞⢠⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _q_, _<Esc>_: exit 
@@ -134,29 +134,56 @@ Hydra({
         -------------------------------------------- Replacing Classes
 
         {
-            "c",
+            "fl",
             function()
                 require("Gambit.ui.replace_classes_menu").show_menu({
-                    { keymap = "0", classes = {}, hidden = true },
-                    { keymap = "f", classes = { "flex" } },
-                    { keymap = "r", classes = { "flex", "flex-row" } },
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "f" }, classes = { "flex" } },
+                    { keymaps = { "r" }, classes = { "flex", "flex-row" } },
                 })
             end,
             { nowait = true },
         },
 
         {
-            "O",
+            "a",
             function()
                 require("Gambit.ui.replace_classes_menu").show_menu({
-                    { keymap = "0", classes = {}, hidden = true },
-                    { keymap = "i", classes = { "items-center" } },
-                    { keymap = "j", classes = { "justify-center" } },
-                    { keymap = "c", classes = { "items-center", "justify-center" } },
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "i" }, classes = { "items-center" } },
+                    { keymaps = { "j" }, classes = { "justify-center" } },
+                    { keymaps = { "b" }, classes = { "justify-between" } },
+                    { keymaps = { "cb" }, classes = { "content-between" } },
+                    { keymaps = { "cc" }, classes = { "items-center", "justify-center" } },
                 })
             end,
             { nowait = true },
         },
+
+        {
+            "z",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "x" }, classes = { "text-xs" } },
+                    { keymaps = { "m" }, classes = { "text-sm" } },
+                    { keymaps = { "b" }, classes = { "text-base" } },
+                    { keymaps = { "g" }, classes = { "text-lg" } },
+                    { keymaps = { "q", "1" }, classes = { "text-xl" } },
+                    { keymaps = { "w", "2" }, classes = { "text-2xl" } },
+                    { keymaps = { "e", "3" }, classes = { "text-3xl" } },
+                    { keymaps = { "r", "4" }, classes = { "text-4xl" } },
+                    { keymaps = { "t", "5" }, classes = { "text-5xl" } },
+                    { keymaps = { "a", "6" }, classes = { "text-6xl" } },
+                    { keymaps = { "s", "7" }, classes = { "text-7xl" } },
+                    { keymaps = { "d", "8" }, classes = { "text-8xl" } },
+                    { keymaps = { "f", "9" }, classes = { "text-9xl" } },
+                }, "after")
+            end,
+            { nowait = true },
+        },
+
+        ------------------------------------------ Repeat
 
         {
             ".",
