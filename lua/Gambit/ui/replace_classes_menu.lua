@@ -5,13 +5,7 @@ local class_replacer = require("Gambit.lib.class-replacer")
 
 local M = {}
 
-local classes_groups = {
-    {},
-    { "flex" },
-    { "flex", "flex-row" },
-}
-
-M.show_menu = function()
+M.show_menu = function(classes_groups)
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
 
     local lines = {}

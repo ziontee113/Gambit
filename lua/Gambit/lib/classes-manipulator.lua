@@ -28,20 +28,6 @@ local filter_matched_classes_in_list = function(input, list)
     return remaining_classes, matched_index, input_classes
 end
 
-local function append_remaining_classes(output, remaining_classes)
-    local joined_remaining_classes = table.concat(remaining_classes, " ")
-    if joined_remaining_classes ~= "" then
-        output = string.format("%s %s", output, joined_remaining_classes)
-    end
-    return output
-end
-
-M.replace_classes_with_list_item = function(input, list, replacement)
-    local remaining_classes = filter_matched_classes_in_list(input, list)
-    local output = table.concat(replacement, " ")
-    return append_remaining_classes(output, remaining_classes)
-end
-
 local remove_empty_strings_from_tbl_then_concat_with_space = function(tbl)
     local new_tbl = {}
     for _, str in ipairs(tbl) do
@@ -50,6 +36,17 @@ local remove_empty_strings_from_tbl_then_concat_with_space = function(tbl)
         end
     end
     return table.concat(new_tbl, " ")
+end
+
+local function append_remaining_classes(output, remaining_classes)
+    table.insert(remaining_classes, 1, output)
+    return remove_empty_strings_from_tbl_then_concat_with_space(remaining_classes)
+end
+
+M.replace_classes_with_list_item = function(input, list, replacement)
+    local remaining_classes = filter_matched_classes_in_list(input, list)
+    local output = table.concat(replacement, " ")
+    return append_remaining_classes(output, remaining_classes)
 end
 
 M.replace_tailwind_color_classes = function(input, replacements)

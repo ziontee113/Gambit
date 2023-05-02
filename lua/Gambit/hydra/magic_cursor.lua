@@ -132,7 +132,26 @@ Hydra({
         {
             "c",
             function()
-                require("Gambit.ui.replace_classes_menu").show_menu()
+                local classes_groups = {
+                    {},
+                    { "flex" },
+                    { "flex", "flex-row" },
+                }
+                require("Gambit.ui.replace_classes_menu").show_menu(classes_groups)
+            end,
+            { nowait = true },
+        },
+
+        {
+            "O",
+            function()
+                local classes_groups = {
+                    {},
+                    { "items-center" },
+                    { "justify-center" },
+                    { "items-center", "jusify-center" },
+                }
+                require("Gambit.ui.replace_classes_menu").show_menu(classes_groups)
             end,
             { nowait = true },
         },
