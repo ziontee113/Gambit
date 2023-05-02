@@ -34,31 +34,32 @@ local adjust_index_base_on_direction = function(nodes, old_index, direction, inc
     return new_index
 end
 
-local get_previous_or_next_node = function(nodes, old_index, direction, destination)
+local get_previous_or_next_node = function(opening_brackets, old_index, direction, destination)
     if direction == "in-place" then
-        return nodes[old_index]
+        return opening_brackets[old_index]
     end
 
-    local new_index = adjust_index_base_on_direction(nodes, old_index, direction, 1)
+    local new_index = adjust_index_base_on_direction(opening_brackets, old_index, direction, 1)
 
     -- skip 1 index if it's the same jsx_element
-    local old_jsx_parent = lib_ts.get_jsx_parent_of_bracket(nodes[old_index])
-    local new_jsx_parent = lib_ts.get_jsx_parent_of_bracket(nodes[new_index])
+    local old_jsx_parent = lib_ts.get_jsx_parent_of_bracket(opening_brackets[old_index])
+    local new_jsx_parent = lib_ts.get_jsx_parent_of_bracket(opening_brackets[new_index])
 
     if old_jsx_parent == new_jsx_parent then
-        new_index = adjust_index_base_on_direction(nodes, new_index, direction, 1)
+        new_index = adjust_index_base_on_direction(opening_brackets, new_index, direction, 1)
     end
 
     -- switch target to the correct opening / closing tag
     if destination == "next-to" then
-        local opening, closing = lib_ts.get_first_and_last_bracket(nodes[new_index], destination)
+        local opening, closing =
+            lib_ts.get_first_and_last_bracket(opening_brackets[new_index], destination)
         local opening_row, closing_row = opening:range(), closing:range()
         if opening_row == closing_row then
             return opening
         end
     end
 
-    return nodes[new_index]
+    return opening_brackets[new_index]
 end
 
 M.get_jump_target = function(direction, destination, winnr)
