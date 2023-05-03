@@ -102,6 +102,7 @@ M.get_jump_target = function(direction, destination, winnr)
         local jsx_parent = lib_ts.find_parent(winnr, {
             "jsx_opening_element",
             "jsx_closing_element",
+            "jsx_element",
             "jsx_self_closing_element",
             "jsx_fragment",
         })
