@@ -62,6 +62,34 @@ local get_previous_or_next_node = function(opening_brackets, old_index, directio
     return opening_brackets[new_index]
 end
 
+local find_correct_opening_bracket_of_node = function(node, winnr)
+    local opening_brackets = lib_ts.get_all_nodes_matches_query([[ ("<" @bracket) ]], "tsx", node)
+
+    if node:type() ~= "jsx_fragment" then
+        return opening_brackets[1]
+    else
+        local cursor_row = unpack(vim.api.nvim_win_get_cursor(winnr))
+        cursor_row = cursor_row - 1
+
+        local first_bracket = opening_brackets[1]
+        local last_bracket = opening_brackets[#opening_brackets]
+
+        if first_bracket:range() == cursor_row then
+            return first_bracket
+        else
+            return last_bracket
+        end
+    end
+end
+
+local get_first_match_index = function(nodes, node_to_match)
+    for i, node in ipairs(nodes) do
+        if node == node_to_match then
+            return i
+        end
+    end
+end
+
 M.get_jump_target = function(direction, destination, winnr)
     local opening_brackets = lib_ts.get_all_nodes_matches_query(
         [[
@@ -71,19 +99,25 @@ M.get_jump_target = function(direction, destination, winnr)
     )
 
     if opening_brackets then
-        local jsx_parent =
-            lib_ts.find_parent(winnr, { "jsx_element", "jsx_self_closing_element", "jsx_fragment" })
-        local closest_bracket, closest_index = get_closest_node_to_cursor(opening_brackets, winnr)
+        local jsx_parent = lib_ts.find_parent(winnr, {
+            "jsx_opening_element",
+            "jsx_closing_element",
+            "jsx_self_closing_element",
+            "jsx_fragment",
+        })
 
         if jsx_parent then
+            local bracket = find_correct_opening_bracket_of_node(jsx_parent, winnr)
+            local bracket_index = get_first_match_index(opening_brackets, bracket)
+
             return get_previous_or_next_node(
                 opening_brackets,
-                closest_index,
+                bracket_index,
                 direction,
                 destination
             )
         else
-            return closest_bracket
+            return get_closest_node_to_cursor(opening_brackets, winnr)
         end
     else
         vim.notify("Buffer has no JSX element", vim.log.levels.INFO)

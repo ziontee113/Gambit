@@ -35,9 +35,9 @@ local destination = "next-to"
 local jump = function(direction, hl_group)
     local count = require("Gambit.lib.vim-utils").get_count()
 
-    if direction == "in-place" then -- HACK
-        vim.cmd("norm! ^")
-    end
+    -- if direction == "in-place" then -- HACK
+    --     vim.cmd("norm! ^")
+    -- end
 
     for _ = 1, count do
         local target_node = cosmic_cursor.jump(direction, destination, 0)
