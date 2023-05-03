@@ -35,14 +35,22 @@ local destination = "next-to"
 local jump = function(direction, hl_group)
     local count = require("Gambit.lib.vim-utils").get_count()
 
-    -- if direction == "in-place" then -- HACK
-    --     vim.cmd("norm! ^")
-    -- end
-
     for _ = 1, count do
         local target_node = cosmic_cursor.jump(direction, destination, 0)
         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
         cosmic_rays.highlight_braces(target_node, destination, ns, 0, hl_group or "DiffText")
+    end
+end
+
+local jump_and_highlight_sibling = function(direction, hl_group)
+    local count = require("Gambit.lib.vim-utils").get_count()
+
+    for _ = 1, count do
+        local sibling = cosmic_cursor.jump_to_jsx_sibling(0, direction)
+        if sibling then
+            vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+            cosmic_rays.highlight_braces(sibling, destination, ns, 0, hl_group or "DiffText")
+        end
     end
 end
 
@@ -460,6 +468,23 @@ Hydra({
             "k",
             function()
                 jump("previous")
+            end,
+            { nowait = true },
+        },
+
+        -------------------------------------------- Jumping to Previous / Next JSX Sibling
+
+        {
+            "<C-j>",
+            function()
+                jump_and_highlight_sibling("next")
+            end,
+            { nowait = true },
+        },
+        {
+            "<C-k>",
+            function()
+                jump_and_highlight_sibling("previous")
             end,
             { nowait = true },
         },

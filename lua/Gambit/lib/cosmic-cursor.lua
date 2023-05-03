@@ -124,13 +124,48 @@ M.get_jump_target = function(direction, destination, winnr)
     end
 end
 
+local set_cursor_to_node = function(node)
+    local start_row, start_col, _, _ = node:range()
+    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+end
+
 M.jump = function(direction, destination, winnr)
     local bracket_node = M.get_jump_target(direction, destination, winnr)
-
     if bracket_node then
-        local start_row, start_col, _, _ = bracket_node:range()
-        vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+        set_cursor_to_node(bracket_node)
         return bracket_node -- return the target node for highlighting purposes
+    end
+end
+
+local find_jsx_sibling = function(jsx_element, direction)
+    local sibling = jsx_element
+
+    while sibling do
+        if direction == "next" then
+            sibling = sibling:next_named_sibling()
+        else
+            sibling = sibling:prev_named_sibling()
+        end
+        if not sibling then
+            return
+        end
+        if sibling:type() == "jsx_element" or sibling:type() == "jsx_self_closing_element" then
+            return sibling
+        end
+    end
+end
+
+M.jump_to_jsx_sibling = function(winnr, direction)
+    local jsx_element = lib_ts.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" })
+    local parent = jsx_element:parent()
+
+    if parent:type() == "jsx_element" or parent:type() == "jsx_fragment" then
+        local sibling = find_jsx_sibling(jsx_element, direction)
+
+        if sibling then
+            set_cursor_to_node(sibling)
+            return sibling
+        end
     end
 end
 

@@ -82,9 +82,16 @@ end
 
 -------------------------------------------- for Cosmic Cursor and Cosmic Rays
 
-M.get_jsx_parent_of_bracket = function(bracket_node)
-    local parent = bracket_node:parent()
+M.get_jsx_parent_of_bracket = function(bracket)
+    if
+        bracket:type() == "jsx_element"
+        or bracket:type() == "jsx_self_closing_element"
+        or bracket:type() == "jsx_fragment"
+    then
+        return bracket
+    end
 
+    local parent = bracket:parent()
     if parent:type() == "jsx_self_closing_element" or parent:type() == "jsx_fragment" then
         return parent
     end
