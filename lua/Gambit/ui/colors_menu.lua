@@ -24,6 +24,8 @@ local colors = {
     { color = "fuchsia", keys = { "f" } },
     { color = "pink", keys = { "P" } },
     { color = "rose", keys = { "R" } },
+    { color = "white", keys = { "w" }, single = true },
+    { color = "black", keys = { "B" }, single = true },
 }
 
 local steps = {
@@ -112,7 +114,7 @@ local show_colors_menu = function(property)
             table.insert(lines, Menu.separator(entry))
         elseif type(entry) == "table" and not entry.hide then
             local display_text = get_colored_prefix(property, entry.color)
-            table.insert(lines, Menu.item(display_text))
+            table.insert(lines, Menu.item(display_text, { data = entry }))
         end
     end
 
@@ -121,7 +123,12 @@ local show_colors_menu = function(property)
         max_width = 40,
         keymap = defaults.keymaps,
         on_submit = function(item)
-            show_steps_menu(property, item.text, old_winnr, old_bufnr)
+            if item.data and item.data.single then
+                change_arguments = { old_winnr, old_bufnr, { [property] = item.text } }
+                class_replacer.change_tailwind_colors(unpack(change_arguments))
+            else
+                show_steps_menu(property, item.text, old_winnr, old_bufnr)
+            end
         end,
     })
 
@@ -130,16 +137,22 @@ local show_colors_menu = function(property)
             for _, key in ipairs(entry.keys) do
                 colors_menu:map("n", key, function()
                     colors_menu:unmount()
-                    if entry.color then
-                        show_steps_menu(
-                            property,
-                            get_colored_prefix(property, entry.color),
-                            old_winnr,
-                            old_bufnr
-                        )
-                    else
-                        change_arguments = { old_winnr, old_bufnr, { [property] = "" } }
+                    if entry.single then
+                        local text = get_colored_prefix(property, entry.color)
+                        change_arguments = { old_winnr, old_bufnr, { [property] = text } }
                         class_replacer.change_tailwind_colors(unpack(change_arguments))
+                    else
+                        if entry.color then
+                            show_steps_menu(
+                                property,
+                                get_colored_prefix(property, entry.color),
+                                old_winnr,
+                                old_bufnr
+                            )
+                        else
+                            change_arguments = { old_winnr, old_bufnr, { [property] = "" } }
+                            class_replacer.change_tailwind_colors(unpack(change_arguments))
+                        end
                     end
                 end, { nowait = true })
             end

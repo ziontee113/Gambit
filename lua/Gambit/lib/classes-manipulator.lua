@@ -43,17 +43,20 @@ end
 
 M.replace_tailwind_color_classes = function(input, replacements)
     local tailwind_color_patterns = {
-        text = "text%-%a+%-%d+",
-        bg = "bg%-%a+%-%d+",
+        text = { "text%-%a+%-%d+", "text%-black", "text%-white" },
+        bg = { "bg%-%a+%-%d+", "bg%-black", "bg%-white" },
     }
     local input_classes = vim.split(input, " ")
     local matches = {}
 
     for i, class in ipairs(input_classes) do
         for key, value in pairs(replacements) do
-            if string.match(class, tailwind_color_patterns[key]) then
-                input_classes[i] = value
-                matches[key] = value
+            for _, pattern in ipairs(tailwind_color_patterns[key]) do
+                if string.match(class, pattern) then
+                    input_classes[i] = value
+                    matches[key] = value
+                    break
+                end
             end
         end
     end
