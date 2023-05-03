@@ -45,6 +45,7 @@ local defaults = require("Gambit.options.defaults")
 local class_replacer = require("Gambit.lib.class-replacer")
 
 local old_winnr, old_bufnr = 0, 0
+local change_arguments
 
 ------------------------------------------------------------------------------ Steps Menu
 
@@ -74,7 +75,8 @@ local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
         max_width = 40,
         keymap = defaults.keymaps,
         on_submit = function(item)
-            class_replacer.change_tailwind_colors(winnr, bufnr, { [property] = item.text })
+            change_arguments = { winnr, bufnr, { [property] = item.text } }
+            class_replacer.change_tailwind_colors(unpack(change_arguments))
         end,
     })
 
@@ -84,7 +86,9 @@ local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
                 steps_menu:map("n", key, function()
                     steps_menu:unmount()
                     local class = get_full_class(colored_prefix, entry.step)
-                    class_replacer.change_tailwind_colors(winnr, bufnr, { [property] = class })
+
+                    change_arguments = { winnr, bufnr, { [property] = class } }
+                    class_replacer.change_tailwind_colors(unpack(change_arguments))
                 end, { nowait = true })
             end
         end
@@ -134,11 +138,8 @@ local show_colors_menu = function(property)
                             old_bufnr
                         )
                     else
-                        class_replacer.change_tailwind_colors(
-                            old_winnr,
-                            old_bufnr,
-                            { [property] = "" }
-                        )
+                        change_arguments = { old_winnr, old_bufnr, { [property] = "" } }
+                        class_replacer.change_tailwind_colors(unpack(change_arguments))
                     end
                 end, { nowait = true })
             end
@@ -153,6 +154,12 @@ M.change_text_color = function()
 end
 M.change_background_color = function()
     show_colors_menu("bg")
+end
+
+M.apply_previous_action = function()
+    if change_arguments ~= nil then
+        class_replacer.change_tailwind_colors(unpack(change_arguments))
+    end
 end
 
 return M

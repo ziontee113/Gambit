@@ -235,8 +235,12 @@ Hydra({
             ".",
             function()
                 if GAMBIT_PREVIOUS_ACTION then
-                    if GAMBIT_PREVIOUS_ACTION == "changing-classes" then
+                    if GAMBIT_PREVIOUS_ACTION == "changing-pms-classes" then
                         pms_menu.apply_previous_action()
+                    elseif GAMBIT_PREVIOUS_ACTION == "changing-color-classes" then
+                        colors_menu.apply_previous_action()
+                    elseif GAMBIT_PREVIOUS_ACTION == "changing-classes-groups" then
+                        require("Gambit.ui.replace_classes_menu").apply_previous_action()
                     elseif GAMBIT_PREVIOUS_ACTION == "add-tag" then
                         new_tag(unpack(previous_add_tag_args))
                     end

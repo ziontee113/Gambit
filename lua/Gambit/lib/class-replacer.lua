@@ -75,6 +75,7 @@ M.apply_classes_group = function(winnr, bufnr, classes_groups, item_data, placem
     new_classes = string.format('"%s"', new_classes)
 
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
+    GAMBIT_PREVIOUS_ACTION = "changing-classes-groups"
 end
 
 M.change_tailwind_colors = function(winnr, bufnr, replacement)
@@ -85,6 +86,7 @@ M.change_tailwind_colors = function(winnr, bufnr, replacement)
     new_classes = string.format('"%s"', new_classes)
 
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
+    GAMBIT_PREVIOUS_ACTION = "changing-color-classes"
 end
 
 M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, replacement)
@@ -97,7 +99,7 @@ M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, r
     new_classes = string.format('"%s"', new_classes)
 
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
-    GAMBIT_PREVIOUS_ACTION = "changing-classes"
+    GAMBIT_PREVIOUS_ACTION = "changing-pms-classes"
 end
 
 return M

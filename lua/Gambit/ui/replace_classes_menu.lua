@@ -5,6 +5,7 @@ local class_replacer = require("Gambit.lib.class-replacer")
 
 local M = {}
 
+local change_arguments
 M.show_menu = function(classes_groups, placement)
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
 
@@ -25,13 +26,14 @@ M.show_menu = function(classes_groups, placement)
         max_width = 40,
         keymap = defaults.keymaps,
         on_submit = function(item)
-            class_replacer.apply_classes_group(
+            change_arguments = {
                 old_winnr,
                 old_bufnr,
                 classes_groups,
                 item.data,
-                placement
-            )
+                placement,
+            }
+            class_replacer.apply_classes_group(unpack(change_arguments))
         end,
     })
 
@@ -39,18 +41,26 @@ M.show_menu = function(classes_groups, placement)
         for _, keymap in ipairs(group.keymaps) do
             menu:map("n", keymap, function()
                 menu:unmount()
-                class_replacer.apply_classes_group(
+                change_arguments = {
+
                     old_winnr,
                     old_bufnr,
                     classes_groups,
                     group,
-                    placement
-                )
+                    placement,
+                }
+                class_replacer.apply_classes_group(unpack(change_arguments))
             end, { nowait = true })
         end
     end
 
     menu:mount()
+end
+
+M.apply_previous_action = function()
+    if change_arguments ~= nil then
+        class_replacer.apply_classes_group(unpack(change_arguments))
+    end
 end
 
 return M
