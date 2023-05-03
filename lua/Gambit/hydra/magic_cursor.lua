@@ -46,7 +46,7 @@ local jump_and_highlight_sibling = function(direction, hl_group)
     local count = require("Gambit.lib.vim-utils").get_count()
 
     for _ = 1, count do
-        local sibling = cosmic_cursor.jump_to_jsx_sibling(0, direction)
+        local sibling = cosmic_cursor.jump_to_jsx_relative(0, direction)
         if sibling then
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
             cosmic_rays.highlight_braces(sibling, destination, ns, 0, hl_group or "DiffText")
@@ -485,6 +485,13 @@ Hydra({
             "<C-k>",
             function()
                 jump_and_highlight_sibling("previous")
+            end,
+            { nowait = true },
+        },
+        {
+            "<C-h>",
+            function()
+                jump_and_highlight_sibling("parent")
             end,
             { nowait = true },
         },

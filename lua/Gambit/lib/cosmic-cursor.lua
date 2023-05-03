@@ -155,13 +155,17 @@ local find_jsx_sibling = function(jsx_element, direction)
     end
 end
 
-M.jump_to_jsx_sibling = function(winnr, direction)
+M.jump_to_jsx_relative = function(winnr, direction)
     local jsx_element = lib_ts.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" })
     local parent = jsx_element:parent()
 
     if parent:type() == "jsx_element" or parent:type() == "jsx_fragment" then
-        local sibling = find_jsx_sibling(jsx_element, direction)
+        if direction == "parent" then
+            set_cursor_to_node(parent)
+            return parent
+        end
 
+        local sibling = find_jsx_sibling(jsx_element, direction)
         if sibling then
             set_cursor_to_node(sibling)
             return sibling
