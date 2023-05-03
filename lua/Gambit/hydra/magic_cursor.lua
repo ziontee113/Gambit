@@ -205,6 +205,30 @@ Hydra({
             { nowait = true },
         },
 
+        {
+            "O",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "n" }, classes = { "opacity-0" } },
+                    { keymaps = { "q" }, classes = { "opacity-5" } },
+                    { keymaps = { "w" }, classes = { "opacity-10" } },
+                    { keymaps = { "e" }, classes = { "opacity-20" } },
+                    { keymaps = { "r" }, classes = { "opacity-25" } },
+                    { keymaps = { "t" }, classes = { "opacity-30" } },
+                    { keymaps = { "a" }, classes = { "opacity-40" } },
+                    { keymaps = { "s" }, classes = { "opacity-50" } },
+                    { keymaps = { "d" }, classes = { "opacity-60" } },
+                    { keymaps = { "f" }, classes = { "opacity-70" } },
+                    { keymaps = { "g" }, classes = { "opacity-75" } },
+                    { keymaps = { "u" }, classes = { "opacity-80" } },
+                    { keymaps = { "i" }, classes = { "opacity-90" } },
+                    { keymaps = { "o" }, classes = { "opacity-100" } },
+                }, "after")
+            end,
+            { nowait = true },
+        },
+
         ------------------------------------------ Repeat
 
         {
