@@ -470,6 +470,14 @@ Hydra({
         -------------------------------------------- Adding Tags
 
         {
+            "I",
+            function()
+                new_tag("Image", true)
+            end,
+            { nowait = true },
+        },
+
+        {
             "d",
             function()
                 new_tag("div", true)

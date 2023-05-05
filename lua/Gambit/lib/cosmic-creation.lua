@@ -4,14 +4,26 @@ local ts_utils = require("nvim-treesitter.ts_utils")
 local vim_utils = require("Gambit.lib.vim-utils")
 local lib_ts = require("Gambit.lib.tree-sitter")
 
-local tags_with_no_content = {
+local empty_tags = {
     div = true,
     ul = true,
     span = true,
 }
 
+local formatted_tags = {
+    Image = [[
+<Image
+  src="img.jpg"
+  alt="image"
+  style={{ objectFit: 'cover' }}
+  fill
+/>]],
+}
+
 local generate_tag_content = function(tag, content)
-    if tags_with_no_content[tag] then
+    if formatted_tags[tag] then
+        return formatted_tags[tag]
+    elseif empty_tags[tag] then
         return string.format("<%s></%s>", tag, tag)
     else
         return string.format("<%s>%s</%s>", tag, content or "###", tag)
