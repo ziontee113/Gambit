@@ -148,6 +148,13 @@ Hydra({
             end,
             { nowait = true },
         },
+        {
+            "<C-x>",
+            function()
+                require("Gambit.ui.image_src_menu").replace_img_src()
+            end,
+            { nowait = true },
+        },
 
         {
             "fl",
@@ -472,7 +479,7 @@ Hydra({
         {
             "I",
             function()
-                new_tag("Image", true)
+                new_tag("Image")
             end,
             { nowait = true },
         },

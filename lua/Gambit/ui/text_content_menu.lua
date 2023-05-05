@@ -22,21 +22,6 @@ local get_content_groups_from_file = function(file_path)
     return groups
 end
 
---stylua: ignore
-local valid_hints = {
-    "w", "e", "r", "t",
-    "a", "s", "d", "f", "g",
-    "z", "x", "c", "v", "y",
-    "u", "i", "o", "p", "h", "l",
-    "n", "m", ",", ".", "/",
-
-    "W", "E", "R", "T",
-    "A", "S", "D", "F", "G",
-    "Z", "X", "C", "V", "Y",
-    "U", "I", "O", "P", "H", "L",
-    "N", "M", "<", ">", "?",
-}
-
 ------------------------------------------------------------------------------ Imports
 
 local Menu = require("nui.menu")
@@ -90,7 +75,7 @@ local show_content_menu = function(winnr, bufnr, content_group)
                 table.insert(lines, Menu.separator(""))
             end
         else
-            local hint = find_valid_hint(line, valid_hints, occupied_hints)
+            local hint = find_valid_hint(line, defaults.valid_hints, occupied_hints)
             local display_text = hint .. " " .. line
             table.insert(lines, Menu.item(display_text, { data = line }))
             table.insert(occupied_hints, hint)
@@ -134,7 +119,7 @@ local show_groups_menu = function(file_path)
     local occupied_hints = {}
 
     for _, group in ipairs(groups) do
-        local hint = find_valid_hint(group.name, valid_hints, occupied_hints)
+        local hint = find_valid_hint(group.name, defaults.valid_hints, occupied_hints)
         local display_text = hint .. " " .. group.name
         table.insert(lines, Menu.item(display_text, { data = group }))
         table.insert(occupied_hints, hint)

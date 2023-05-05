@@ -25,4 +25,20 @@ M.keymaps = {
     submit = { "<CR>", "<Space>" },
 }
 
+
+--stylua: ignore
+M.valid_hints = {
+    "q", "w", "e", "r", "t",
+    "a", "s", "d", "f", "g",
+    "z", "x", "c", "v", "y",
+    "u", "i", "o", "p", "h", "l",
+    "n", "m", ",", ".", "/",
+
+    "Q", "W", "E", "R", "T",
+    "A", "S", "D", "F", "G",
+    "Z", "X", "C", "V", "Y",
+    "U", "I", "O", "P", "H", "L",
+    "N", "M", "<", ">", "?",
+}
+
 return M

@@ -14,7 +14,7 @@ local formatted_tags = {
     Image = [[
 <Image
   src="img.jpg"
-  alt="image"
+  alt=""
   style={{ objectFit: 'cover' }}
   fill
 />]],
