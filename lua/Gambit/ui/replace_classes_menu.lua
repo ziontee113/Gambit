@@ -6,7 +6,7 @@ local class_replacer = require("Gambit.lib.class-replacer")
 local M = {}
 
 local change_arguments
-M.show_menu = function(classes_groups, placement)
+M.show_menu = function(classes_groups, placement, negatives)
     local old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
 
     local lines = {}
@@ -32,6 +32,7 @@ M.show_menu = function(classes_groups, placement)
                 classes_groups,
                 item.data,
                 placement,
+                negatives,
             }
             class_replacer.apply_classes_group(unpack(change_arguments))
         end,
@@ -48,6 +49,7 @@ M.show_menu = function(classes_groups, placement)
                     classes_groups,
                     group,
                     placement,
+                    negatives,
                 }
                 class_replacer.apply_classes_group(unpack(change_arguments))
             end, { nowait = true })

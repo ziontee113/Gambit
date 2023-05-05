@@ -4,6 +4,7 @@ local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
 local cosmic_rays = require("Gambit.lib.cosmic-rays")
 local cosmic_creation = require("Gambit.lib.cosmic-creation")
 local classes_replacer = require("Gambit.lib.class-replacer")
+local lua_patterns = require("Gambit.lua_patterns")
 
 local hint_flower = [[
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -198,6 +199,53 @@ Hydra({
                     { keymaps = { "E", "8" }, classes = { "font-extrabold" } },
                     { keymaps = { "B", "9" }, classes = { "font-black" } },
                 })
+            end,
+            { nowait = true },
+        },
+
+        {
+            "td",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "u", "U" }, classes = { "underline" } },
+                    { keymaps = { "o", "O" }, classes = { "overline" } },
+                    { keymaps = { "l", "L" }, classes = { "line-through" } },
+                    { keymaps = { "n", "N" }, classes = { "no-underline" } },
+                })
+            end,
+            { nowait = true },
+        },
+
+        -- testing replace_classes_menu w/ negatives
+        {
+            "T",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu(
+                    {
+                        { keymaps = { "0" }, classes = {}, hidden = true },
+                        { keymaps = { "a" }, classes = { "font-bold", "text-2xl" } },
+                    },
+                    "after",
+                    {
+                        lua_patterns.font_weight,
+                        lua_patterns.text_decoration,
+                        lua_patterns.font_size,
+                        lua_patterns.font_style,
+                    }
+                )
+            end,
+            { nowait = true },
+        },
+
+        {
+            "fs",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "i" }, classes = { "italic" } },
+                    { keymaps = { "n" }, classes = { "not-italic" } },
+                }, "after")
             end,
             { nowait = true },
         },

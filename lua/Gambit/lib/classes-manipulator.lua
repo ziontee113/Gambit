@@ -1,4 +1,5 @@
 local M = {}
+local lua_patterns = require("Gambit.lua_patterns")
 
 local filter_matched_classes_in_list = function(input, list)
     local remaining_classes = vim.split(input, " ")
@@ -6,8 +7,8 @@ local filter_matched_classes_in_list = function(input, list)
     for _, sub_list in ipairs(list) do
         sub_list = sub_list.classes
 
-        for i, class in ipairs(remaining_classes) do
-            if vim.tbl_contains(sub_list, class) then
+        for i = #remaining_classes, 1, -1 do
+            if vim.tbl_contains(sub_list, remaining_classes[i]) then
                 table.remove(remaining_classes, i)
             end
         end
@@ -35,16 +36,32 @@ local function append_remaining_classes(output, remaining_classes, placement)
     return remove_empty_strings_from_tbl_then_concat_with_space(remaining_classes)
 end
 
-M.replace_classes_with_list_item = function(input, list, replacement, placement)
+local remove_negative_classes = function(classes, negatives)
+    for i = #classes, 1, -1 do
+        for _, pattern_set in ipairs(negatives) do
+            for _, pattern in ipairs(pattern_set) do
+                if classes[i] and string.match(classes[i], pattern) then
+                    table.remove(classes, i)
+                    break
+                end
+            end
+        end
+    end
+    return classes
+end
+
+M.replace_classes_with_list_item = function(input, list, replacement, placement, negatives)
     local remaining_classes = filter_matched_classes_in_list(input, list)
+    remaining_classes = remove_negative_classes(remaining_classes, negatives or {})
+
     local output = table.concat(replacement, " ")
     return append_remaining_classes(output, remaining_classes, placement)
 end
 
 M.replace_tailwind_color_classes = function(input, replacements)
     local tailwind_color_patterns = {
-        text = { "text%-%a+%-%d+", "text%-black", "text%-white" },
-        bg = { "bg%-%a+%-%d+", "bg%-black", "bg%-white" },
+        text = lua_patterns.text_color,
+        bg = lua_patterns.background_color,
     }
     local input_classes = vim.split(input, " ")
     local matches = {}
