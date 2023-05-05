@@ -141,6 +141,36 @@ Hydra({
 
         -------------------------------------------- Replacing Classes
 
+        -- remove me later
+        {
+            "<C-x>",
+            function()
+                local lib_ts = require("Gambit.lib.tree-sitter")
+                local jsx_parent = lib_ts.find_parent(0, {
+                    "jsx_element",
+                    "jsx_self_closing_element",
+                    "jsx_fragment",
+                })
+                local content_nodes = lib_ts.get_all_nodes_matches_query(
+                    [[ ((jsx_text) @bracket) ]],
+                    "tsx",
+                    jsx_parent
+                )
+
+                local text = vim.treesitter.get_node_text(content_nodes[1], 0)
+                N(text)
+            end,
+            { nowait = true },
+        },
+
+        {
+            "<C-CR>",
+            function()
+                require("Gambit.ui.text_content_menu").replace_content("contents.txt")
+            end,
+            { nowait = true },
+        },
+
         {
             "fl",
             function()
