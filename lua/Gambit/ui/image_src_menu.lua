@@ -23,10 +23,10 @@ local find_image_paths = function(callback)
     })
 end
 
-local trim_public_from_paths = function(paths)
+local trim_pattern_from_strings = function(paths, pattern)
     local results = {}
     for _, path in ipairs(paths) do
-        local trimmed_path = string.gsub(path, "^public", "")
+        local trimmed_path = string.gsub(path, pattern, "")
         table.insert(results, trimmed_path)
     end
     return results
@@ -54,7 +54,7 @@ local show_paths_menu = function(paths)
     old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
     local lines = {}
 
-    paths = trim_public_from_paths(paths)
+    paths = trim_pattern_from_strings(paths, "^public")
 
     for i, path in ipairs(paths) do
         local display_text = defaults.valid_hints[i] .. " " .. path

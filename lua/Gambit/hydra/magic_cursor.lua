@@ -149,7 +149,7 @@ Hydra({
             { nowait = true },
         },
         {
-            "<C-x>",
+            "sr",
             function()
                 require("Gambit.ui.image_src_menu").replace_img_src()
             end,
@@ -178,6 +178,25 @@ Hydra({
                     { keymaps = { "b" }, classes = { "justify-between" } },
                     { keymaps = { "cb" }, classes = { "content-between" } },
                     { keymaps = { "cc" }, classes = { "items-center", "justify-center" } },
+                })
+            end,
+            { nowait = true },
+        },
+
+        {
+            "fw",
+            function()
+                require("Gambit.ui.replace_classes_menu").show_menu({
+                    { keymaps = { "0" }, classes = {}, hidden = true },
+                    { keymaps = { "t", "1" }, classes = { "font-thin" } },
+                    { keymaps = { "e", "2" }, classes = { "font-extralight" } },
+                    { keymaps = { "l", "3" }, classes = { "font-light" } },
+                    { keymaps = { "n", "4" }, classes = { "font-normal" } },
+                    { keymaps = { "m", "5" }, classes = { "font-medium" } },
+                    { keymaps = { "s", "6" }, classes = { "font-semibold" } },
+                    { keymaps = { "b", "7" }, classes = { "font-bold" } },
+                    { keymaps = { "E", "8" }, classes = { "font-extrabold" } },
+                    { keymaps = { "B", "9" }, classes = { "font-black" } },
                 })
             end,
             { nowait = true },
