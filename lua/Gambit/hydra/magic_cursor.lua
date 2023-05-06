@@ -108,7 +108,7 @@ PSEUDO_CLASSES = ""
 local indicator = require("Gambit.ui.state_indicator")
 local indicator_popup
 
-local mixer = require("Gambit.ui.pseudo_alias_mixer")
+local mixer_ui = require("Gambit.ui.pseudo_alias_mixer")
 
 Hydra({
     name = "Telescope",
@@ -140,7 +140,7 @@ Hydra({
         {
             "<Tab>",
             function()
-                mixer.mix(indicator_popup)
+                mixer_ui.show(indicator_popup)
             end,
             { nowait = true },
         },

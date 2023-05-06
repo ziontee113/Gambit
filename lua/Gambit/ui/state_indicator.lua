@@ -42,6 +42,7 @@ M.initiate = function()
     })
 
     popup:mount()
+    popup:hide()
 
     return popup
 end

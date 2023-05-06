@@ -3,7 +3,7 @@ local M = {}
 local indicator = require("Gambit.ui.state_indicator")
 local lib_mixer = require("Gambit.lib.pseudo-classes-mixer")
 
-M.mix = function(indicator_popup)
+M.show = function(indicator_popup)
     local Input = require("nui.input")
 
     local popup_options = {
@@ -42,7 +42,7 @@ M.mix = function(indicator_popup)
     -------------------------------------------- Mappings
 
     -- unmount the input while preserving current PSEUDO_CLASSES
-    input:map("i", "<Space>", function()
+    input:map("i", { "<Space>", "<Tab>" }, function()
         input:unmount()
     end, {})
 
@@ -50,7 +50,7 @@ M.mix = function(indicator_popup)
     input:map("i", "<C-w>", "<C-S-w>", { noremap = true })
 
     -- clear current PSEUDO_CLASSES
-    input:map("i", { "<Esc>", "<Tab>" }, function()
+    input:map("i", { "<Esc>" }, function()
         PSEUDO_CLASSES = ""
         indicator.update(indicator_popup)
         input:unmount()

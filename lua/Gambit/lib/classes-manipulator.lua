@@ -89,43 +89,57 @@ end
 
 local pms_patterns = {
     p = {
-        [""] = "^p%-%d+$",
-        ["x"] = "^px%-%d+$",
-        ["y"] = "^py%-%d+$",
-        ["t"] = "^pt%-%d+$",
-        ["b"] = "^pb%-%d+$",
-        ["l"] = "^pl%-%d+$",
-        ["r"] = "^pr%-%d+$",
-        ["all"] = "^p[xytblr]?%-%d+$",
+        [""] = { "^.*:p%-%d+$", "^p%-%d+$" },
+        ["x"] = { "^.*:px%-%d+$", "^px%-%d+$" },
+        ["y"] = { "^.*:py%-%d+$", "^py%-%d+$" },
+        ["t"] = { "^.*:pt%-%d+$", "^pt%-%d+$" },
+        ["b"] = { "^.*:pb%-%d+$", "^pb%-%d+$" },
+        ["l"] = { "^.*:pl%-%d+$", "^pl%-%d+$" },
+        ["r"] = { "^.*:pr%-%d+$", "^pr%-%d+$" },
+        ["all"] = { "^.*:p[xytblr]?%-%d+$", "^p[xytblr]?%-%d+$" },
     },
     m = {
-        [""] = "^m%-%d+$",
-        ["x"] = "^mx%-%d+$",
-        ["y"] = "^my%-%d+$",
-        ["t"] = "^mt%-%d+$",
-        ["b"] = "^mb%-%d+$",
-        ["l"] = "^ml%-%d+$",
-        ["r"] = "^mr%-%d+$",
-        ["all"] = "^m[xytblr]?%-%d+$",
+        [""] = { "^.*:m%-%d+$", "^m%-%d+$" },
+        ["x"] = { "^.*:mx%-%d+$", "^mx%-%d+$" },
+        ["y"] = { "^.*:my%-%d+$", "^my%-%d+$" },
+        ["t"] = { "^.*:mt%-%d+$", "^mt%-%d+$" },
+        ["b"] = { "^.*:mb%-%d+$", "^mb%-%d+$" },
+        ["l"] = { "^.*:ml%-%d+$", "^ml%-%d+$" },
+        ["r"] = { "^.*:mr%-%d+$", "^mr%-%d+$" },
+        ["all"] = { "^.*:m[xytblr]?%-%d+$", "^m[xytblr]?%-%d+$" },
     },
     ["space-"] = {
-        ["x"] = "^space%-x%-%d+$",
-        ["y"] = "^space%-y%-%d+$",
-        ["all"] = "^space%-[xy]?%-%d+$",
+        ["x"] = { "^.*:space%-x%-%d+$", "^space%-x%-%d+$" },
+        ["y"] = { "^.*:space%-y%-%d+$", "^space%-y%-%d+$" },
+        ["all"] = { "^.*:space%-[xy]?%-%d+$", "^space%-[xy]?%-%d+$" },
     },
 }
 
+local add_pseudo_classes = function(replacement)
+    return PSEUDO_CLASSES .. replacement
+end
+
 M.replace_pms_classes = function(input, property, axis, replacement)
+    replacement = add_pseudo_classes(replacement)
+
     local input_classes = vim.split(input, " ")
     local replaced = false
 
     for i, class in ipairs(input_classes) do
-        if string.match(class, pms_patterns[property][axis]) then
-            if not replaced then
-                input_classes[i] = replacement
-                replaced = true
+        for _, pattern in ipairs(pms_patterns[property][axis]) do
+            if string.match(class, pattern) then
+                if not replaced then
+                    if string.find(input_classes[i], PSEUDO_CLASSES, 1, true) then
+                        input_classes[i] = replacement
+                        replaced = true
+                    end
+                else
+                    if string.find(input_classes[i], PSEUDO_CLASSES, 1, true) then
+                        input_classes[i] = ""
+                    end
+                end
             else
-                input_classes[i] = ""
+                print(class)
             end
         end
     end
@@ -149,8 +163,10 @@ M.remove_pms_classes = function(input, property, axies_to_remove)
 
     for i, class in ipairs(input_classes) do
         for _, axis in ipairs(axies_to_remove) do
-            if string.match(class, pms_patterns[property][axis]) then
-                input_classes[i] = ""
+            for _, pattern in ipairs(pms_patterns[property][axis]) do
+                if string.match(class, pattern) then
+                    input_classes[i] = ""
+                end
             end
         end
     end
