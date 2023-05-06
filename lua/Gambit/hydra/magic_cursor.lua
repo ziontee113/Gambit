@@ -7,25 +7,31 @@ local classes_replacer = require("Gambit.lib.class-replacer")
 local lua_patterns = require("Gambit.lua_patterns")
 
 local hint_flower = [[
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠖⠋⠉⠉⠳⡴⠒⠒⠒⠲⠤⢤⣀⠀⠀⠀⠀  
-⠀⠀⠀⠀⠀⠀⠀⣠⠊⠀⠀⡴⠚⡩⠟⠓⠒⡖⠲⡄⠀⠀⠈⡆⠀⠀⠀  
-⠀⠀⠀⠀⠀⢀⡞⠁⢠⠒⠾⢥⣀⣇⣚⣹⡤⡟⠀⡇⢠⠀⢠⠇⠀⠀⠀  
-⠀⠀⠀⠀⠀⢸⣄⣀⠀⡇⠀⠀⠀⠀⠀⢀⡜⠁⣸⢠⠎⣰⣃⠀⠀⠀⠀      _k_ / _j_: prevous / next tag
-⠀⠀⠀⠀⠸⡍⠀⠉⠉⠛⠦⣄⠀⢀⡴⣫⠴⠋⢹⡏⡼⠁⠈⠙⢦⡀⠀     
-⠀⠀⠀⠀⣀⡽⣄⠀⠀⠀⠀⠈⠙⠻⣎⡁⠀⠀⣸⡾⠀⠀⠀⠀⣀⡹⠂      _<C-S-P>_
-⠀⠀⢀⡞⠁⠀⠈⢣⡀⠀⠀⠀⠀⠀⠀⠉⠓⠶⢟⠀⢀⡤⠖⠋⠁⠀⠀    
-⠀⠀⠀⠉⠙⠒⠦⡀⠙⠦⣀⠀⠀⠀⠀⠀⠀⢀⣴⡷⠋⠀⠀⠀⠀⠀⠀      _d_: div
-⠀⠀⠀⠀⠀⠀⠀⠘⢦⣀⠈⠓⣦⣤⣤⣤⢶⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀      _U_: ul    _l_: li
-⠀⢤⣤⣤⡤⠤⠤⠤⠤⣌⡉⠉⠁⠀⠀⢸⢸⠁⡠⠖⠒⠒⢒⣒⡶⣶⠤ 
-⠀⠀⠉⠲⣍⠓⠦⣄⠀⠀⠙⣆⠀⠀⠀⡞⡼⡼⢀⣠⠴⠊⢉⡤⠚⠁⠀    
-⠀⠀⠀⠀⠈⠳⣄⠈⠙⢦⡀⢸⡀⠀⢰⢣⡧⠷⣯⣤⠤⠚⠉⠀⠀⠀⠀      _i_: change in tag
-⠀⠀⠀⠀⠀⠀⠈⠑⣲⠤⠬⠿⠧⣠⢏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _o_: toggle insert inside
-⠀⠀⠀⠀⢀⡴⠚⠉⠉⢉⣳⣄⣠⠏⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    
-⠀⠀⣠⣴⣟⣒⣋⣉⣉⡭⠟⢡⠏⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _u_: undo          
-⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⢀⠏⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                         
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡞⢠⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      _q_, _<Esc>_: exit 
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠓⠚
+move: _k_ / _j_ sibling: _<C-k>_ / _<C-j>_ parent: _<C-h>_
+
+tags:        _d_ / _U_ / _l_ / _I_
+
+paddings:   _px_ _py_ / _pX_ _pY_ / _p<C-x>_ _p<C-y>_
+            _pt_ _pb_ _pl_ _pr_
+            _P_ / _<C-S-P>_
+                            
+margins:    _mx_ _my_ / _mt_ _mb_ _ml_ _mr_ 
+            _M_ / _<C-S-M>_ 
+
+spacing:    _sx_ _sy_ _sX_ _sY_
+
+_i_: change / _o_: destination
+
+_h_: content _sr_: src
+
+_a_: align _fl_: flex _T_: custom presets
+
+_t_: text-color _b_: background-color
+_z_: font-size  _fw_: font-weight
+_fs_:font-style _td_: text-decoration _<C-a>_: text-align
+_O_: opacity
+
+_._: repeat _u_: undo _q_, _<Esc>_: exit 
 ]]
 
 --------------------------------------------
@@ -529,14 +535,6 @@ Hydra({
             "sY",
             function()
                 pms_menu.show_spacing_menu("y", "all")
-            end,
-            { nowait = true },
-        },
-
-        {
-            "<Plug>[R1 K, R1 L] --up<Plug>",
-            function()
-                classes_replacer.change_tailwind_colors(0, 0, { text = "text-gray-800" })
             end,
             { nowait = true },
         },

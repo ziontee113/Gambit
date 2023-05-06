@@ -13,6 +13,12 @@ describe("translate_alias_string", function()
         local got = mixer.translate_alias_string(input)
         assert.equals(want, got)
     end)
+    it("works with 3 aliases", function()
+        local input = "shfl"
+        local want = "sm:hover:first-letter:"
+        local got = mixer.translate_alias_string(input)
+        assert.equals(want, got)
+    end)
     it("works with 5 aliases", function()
         local input = "hfoacvt"
         local want = "hover:focus:active:visited:target:"
