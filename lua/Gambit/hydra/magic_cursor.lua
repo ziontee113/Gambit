@@ -104,6 +104,8 @@ REMAP({ "n", "x", "i" }, "<Plug>R1 B --down<Plug>", "<Nop>")
 local pms_menu = require("Gambit.ui.pms_menu")
 local colors_menu = require("Gambit.ui.colors_menu")
 
+local state_indicator_popup
+
 Hydra({
     name = "Telescope",
     hint = hints,
@@ -116,9 +118,17 @@ Hydra({
         },
         on_enter = function()
             jump("in-place")
+
+            local state_indicator = require("Gambit.ui.state_indicator")
+            state_indicator_popup = state_indicator.create_state_display()
+            state_indicator.set_state(state_indicator_popup, "sm:hover:first-letter")
         end,
         on_exit = function()
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+
+            if state_indicator_popup then
+                state_indicator_popup:unmount()
+            end
         end,
     },
     mode = "n",
