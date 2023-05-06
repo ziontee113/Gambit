@@ -4,7 +4,7 @@ local Popup = require("nui.popup")
 local NuiText = require("nui.text")
 local NuiLine = require("nui.line")
 
-M.create_state_display = function()
+M.initiate = function()
     local popup = Popup({
         position = {
             row = "50%",
@@ -59,28 +59,32 @@ local center_state_text = function(state, win_width)
     return string.rep(" ", spaces) .. state
 end
 
-M.set_state = function(popup, state)
+M.update = function(popup)
     local border_text = " Class Mode "
-    local win_width = calculate_win_width(state, border_text)
+    if PSEUDO_CLASSES == "" then
+        popup:hide()
+    else
+        local win_width = calculate_win_width(PSEUDO_CLASSES, border_text)
 
-    local text = NuiText(center_state_text(state, win_width), "Normal")
-    local line = NuiLine({ text })
+        local text = NuiText(center_state_text(PSEUDO_CLASSES, win_width), "Normal")
+        local line = NuiLine({ text })
+        line:render(popup.bufnr, -1, 1)
 
-    line:render(popup.bufnr, -1, 1)
+        popup:update_layout({
+            position = {
+                row = "50%",
+                col = "100%",
+            },
+            size = {
+                width = win_width,
+                height = 1,
+            },
+        })
 
-    popup:update_layout({
-        position = {
-            row = "50%",
-            col = "100%",
-        },
-        size = {
-            width = win_width,
-            height = 1,
-        },
-    })
-
-    popup.border:set_text("top", border_text, "center")
-    popup.border:set_highlight("Normal:Normal,FloatBorder:@function")
+        popup.border:set_text("top", border_text, "center")
+        popup.border:set_highlight("@function")
+        popup:show()
+    end
 end
 
 return M

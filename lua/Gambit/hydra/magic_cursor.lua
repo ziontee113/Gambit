@@ -104,7 +104,11 @@ REMAP({ "n", "x", "i" }, "<Plug>R1 B --down<Plug>", "<Nop>")
 local pms_menu = require("Gambit.ui.pms_menu")
 local colors_menu = require("Gambit.ui.colors_menu")
 
-local state_indicator_popup
+PSEUDO_CLASSES = ""
+local indicator = require("Gambit.ui.state_indicator")
+local indicator_popup
+
+local mixer = require("Gambit.ui.pseudo_alias_mixer")
 
 Hydra({
     name = "Telescope",
@@ -119,21 +123,28 @@ Hydra({
         on_enter = function()
             jump("in-place")
 
-            local state_indicator = require("Gambit.ui.state_indicator")
-            state_indicator_popup = state_indicator.create_state_display()
-            state_indicator.set_state(state_indicator_popup, "sm:hover:first-letter")
+            PSEUDO_CLASSES = ""
+            indicator_popup = indicator.initiate()
         end,
         on_exit = function()
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
 
-            if state_indicator_popup then
-                state_indicator_popup:unmount()
+            if indicator_popup then
+                indicator_popup:unmount()
             end
         end,
     },
     mode = "n",
     body = "<Plug>R1 B --down<Plug>",
     heads = {
+        {
+            "<Tab>",
+            function()
+                mixer.mix(indicator_popup)
+            end,
+            { nowait = true },
+        },
+
         -------------------------------------------- CIT and Toggle Destination
 
         {

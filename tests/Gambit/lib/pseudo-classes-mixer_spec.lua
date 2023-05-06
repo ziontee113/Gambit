@@ -1,6 +1,12 @@
-local mixer = require("Gambit.lib.state-manager.mixer")
+local mixer = require("Gambit.lib.pseudo-classes-mixer")
 
 describe("translate_alias_string", function()
+    it("returns empty string if input is empty", function()
+        local input = ""
+        local want = ""
+        local got = mixer.translate_alias_string(input)
+        assert.equals(want, got)
+    end)
     it("works with 1 alias", function()
         local input = "h"
         local want = "hover:"
