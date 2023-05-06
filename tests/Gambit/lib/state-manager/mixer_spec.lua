@@ -1,0 +1,22 @@
+local mixer = require("Gambit.lib.state-manager.mixer")
+
+describe("translate_alias_string", function()
+    it("works with 1 alias", function()
+        local input = "h"
+        local want = "hover:"
+        local got = mixer.translate_alias_string(input)
+        assert.equals(want, got)
+    end)
+    it("works with 2 aliases", function()
+        local input = "sh"
+        local want = "sm:hover:"
+        local got = mixer.translate_alias_string(input)
+        assert.equals(want, got)
+    end)
+    it("works with 5 aliases", function()
+        local input = "hfoacvt"
+        local want = "hover:focus:active:visited:target:"
+        local got = mixer.translate_alias_string(input)
+        assert.equals(want, got)
+    end)
+end)

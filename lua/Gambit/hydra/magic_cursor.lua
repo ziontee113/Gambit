@@ -170,66 +170,6 @@ Hydra({
         },
 
         {
-            "<C-;>",
-            function()
-                require("Gambit.ui.replace_classes_menu").show_menu({
-                    { keymaps = { "0" }, classes = {}, hidden = true },
-                    { keymaps = { "ho" }, classes = { "hover" } },
-                    { keymaps = { "fo" }, classes = { "focus" } },
-                    { keymaps = { "ac" }, classes = { "active" } },
-                    { keymaps = { "vi" }, classes = { "visited" } },
-                    { keymaps = { "ta" }, classes = { "target" } },
-
-                    { keymaps = { "fw" }, classes = { "focus-within" } },
-                    { keymaps = { "fv" }, classes = { "focus-within" } },
-
-                    { keymaps = { "em" }, classes = { "empty" } },
-                    { keymaps = { "ds" }, classes = { "disabled" } },
-                    { keymaps = { "en" }, classes = { "enabled" } },
-                    { keymaps = { "ch" }, classes = { "checked" } },
-                    { keymaps = { "in" }, classes = { "intermediate" } },
-                    { keymaps = { "df" }, classes = { "default" } },
-                    { keymaps = { "re" }, classes = { "required" } },
-                    { keymaps = { "vl" }, classes = { "valid" } },
-                    { keymaps = { "in" }, classes = { "invalid" } },
-                    { keymaps = { "ir" }, classes = { "in-range" } },
-                    { keymaps = { "or" }, classes = { "out-of-range" } },
-                    { keymaps = { "ps" }, classes = { "placeholder-shown" } },
-                    { keymaps = { "af" }, classes = { "autofill" } },
-                    { keymaps = { "ro" }, classes = { "read-only" } },
-
-                    { keymaps = { "fi" }, classes = { "first" } },
-                    { keymaps = { "la" }, classes = { "last" } },
-                    { keymaps = { "on" }, classes = { "only" } },
-                    { keymaps = { "od" }, classes = { "odd" } },
-                    { keymaps = { "ev" }, classes = { "even" } },
-                    { keymaps = { "fo" }, classes = { "first-of-type" } },
-                    { keymaps = { "lo" }, classes = { "last-of-type" } },
-                    { keymaps = { "oo" }, classes = { "only-of-type" } },
-
-                    { keymaps = { "oo" }, classes = { "first-letter" } },
-                    { keymaps = { "oo" }, classes = { "first-line" } },
-                    { keymaps = { "oo" }, classes = { "marker" } },
-                    { keymaps = { "oo" }, classes = { "selection" } },
-                    { keymaps = { "oo" }, classes = { "file" } },
-                    { keymaps = { "oo" }, classes = { "backdrop" } },
-                    { keymaps = { "oo" }, classes = { "placeholder" } },
-
-                    { keymaps = { "sm" }, classes = { "sm" } },
-                    { keymaps = { "md" }, classes = { "md" } },
-                    { keymaps = { "lg" }, classes = { "lg" } },
-                    { keymaps = { "xl" }, classes = { "xl" } },
-                    { keymaps = { "2x" }, classes = { "2xl" } },
-
-                    { keymaps = { "D" }, classes = { "dark" } },
-                    { keymaps = { "P" }, classes = { "portrait" } },
-                    { keymaps = { "L" }, classes = { "landscape" } },
-                })
-            end,
-            { nowait = true },
-        },
-
-        {
             "a",
             function()
                 require("Gambit.ui.replace_classes_menu").show_menu({
