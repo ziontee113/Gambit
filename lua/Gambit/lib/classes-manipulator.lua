@@ -50,6 +50,10 @@ local remove_negative_classes = function(classes, negatives)
     return classes
 end
 
+local add_pseudo_classes = function(replacement)
+    return PSEUDO_CLASSES .. replacement
+end
+
 M.replace_classes_with_list_item = function(input, list, replacement, placement, negatives)
     local remaining_classes = filter_matched_classes_in_list(input, list)
     remaining_classes = remove_negative_classes(remaining_classes, negatives or {})
@@ -59,6 +63,10 @@ M.replace_classes_with_list_item = function(input, list, replacement, placement,
 end
 
 M.replace_tailwind_color_classes = function(input, replacements)
+    for key, value in pairs(replacements) do
+        replacements[key] = add_pseudo_classes(value)
+    end
+
     local tailwind_color_patterns = {
         text = lua_patterns.text_color,
         bg = lua_patterns.background_color,
@@ -69,7 +77,7 @@ M.replace_tailwind_color_classes = function(input, replacements)
     for i, class in ipairs(input_classes) do
         for key, value in pairs(replacements) do
             for _, pattern in ipairs(tailwind_color_patterns[key]) do
-                if string.match(class, pattern) then
+                if string.match(class, pattern) and string.find(class, PSEUDO_CLASSES, 1, true) then
                     input_classes[i] = value
                     matches[key] = value
                     break
@@ -115,10 +123,6 @@ local pms_patterns = {
     },
 }
 
-local add_pseudo_classes = function(replacement)
-    return PSEUDO_CLASSES .. replacement
-end
-
 M.replace_pms_classes = function(input, property, axis, replacement)
     replacement = add_pseudo_classes(replacement)
 
@@ -138,8 +142,6 @@ M.replace_pms_classes = function(input, property, axis, replacement)
                         input_classes[i] = ""
                     end
                 end
-            else
-                print(class)
             end
         end
     end
@@ -164,7 +166,7 @@ M.remove_pms_classes = function(input, property, axies_to_remove)
     for i, class in ipairs(input_classes) do
         for _, axis in ipairs(axies_to_remove) do
             for _, pattern in ipairs(pms_patterns[property][axis]) do
-                if string.match(class, pattern) then
+                if string.match(class, pattern) and string.find(class, PSEUDO_CLASSES, 1, true) then
                     input_classes[i] = ""
                 end
             end
