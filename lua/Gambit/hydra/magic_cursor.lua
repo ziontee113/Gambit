@@ -3,10 +3,9 @@ local Hydra = require("hydra")
 local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
 local cosmic_rays = require("Gambit.lib.cosmic-rays")
 local cosmic_creation = require("Gambit.lib.cosmic-creation")
-local classes_replacer = require("Gambit.lib.class-replacer")
 local lua_patterns = require("Gambit.lua_patterns")
 
-local hint_flower = [[
+local hints = [[
 move: _k_ / _j_ sibling: _<C-k>_ / _<C-j>_ parent: _<C-h>_
 
 tags:        _d_ / _U_ / _l_ / _I_
@@ -100,7 +99,6 @@ end
 
 --------------------------------------------
 
-REMAP({ "n", "x", "i" }, "<Plug>[R1 K, R1 L] --up<Plug>", "<Nop>")
 REMAP({ "n", "x", "i" }, "<Plug>R1 B --down<Plug>", "<Nop>")
 
 local pms_menu = require("Gambit.ui.pms_menu")
@@ -108,7 +106,7 @@ local colors_menu = require("Gambit.ui.colors_menu")
 
 Hydra({
     name = "Telescope",
-    hint = hint_flower,
+    hint = hints,
     config = {
         color = "pink",
         invoke_on_body = true,
