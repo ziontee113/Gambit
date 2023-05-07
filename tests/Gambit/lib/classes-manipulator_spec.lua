@@ -235,12 +235,21 @@ describe("replace_tailwind_color_classes", function()
         local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
         assert.equals(want, got)
     end)
-    it("replaces correctly w/ multi-pseudo-classes", function()
+    it("replaces correctly w/ multi-pseudo-classes, PSEUDO_CLASSES: hover:", function()
         PSEUDO_CLASSES = "hover:"
         local input =
             "hover:text-gray-400 flex flex-row px-20 py-10 text-center sm:hover:text-blue-800"
         local want =
             "hover:text-yellow-200 flex flex-row px-20 py-10 text-center sm:hover:text-blue-800"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-yellow-200" })
+        assert.equals(want, got)
+    end)
+    it("replaces correctly w/ multi-pseudo-classes, PSEUDO_CLASSES: sm:hover:", function()
+        PSEUDO_CLASSES = "sm:hover:"
+        local input =
+            "hover:text-gray-400 flex flex-row px-20 py-10 text-center sm:hover:text-blue-800"
+        local want =
+            "hover:text-gray-400 flex flex-row px-20 py-10 text-center sm:hover:text-yellow-200"
         local got = module.replace_tailwind_color_classes(input, { text = "text-yellow-200" })
         assert.equals(want, got)
     end)
@@ -266,5 +275,32 @@ describe("replace_tailwind_color_classes", function()
             { text = "text-green-800", bg = "bg-white" }
         )
         assert.equals(want, got)
+    end)
+end)
+
+describe("pseudo_splitter pattern_check", function()
+    it("works for 1 pseudo_prefixes", function()
+        local pattern = require("Gambit.lua_patterns").pseudo_splitter
+        local str = "sm:text-blue-400"
+
+        local pseudo_prefix, class = string.match(str, pattern)
+        assert.equals("sm:", pseudo_prefix)
+        assert.equals("text-blue-400", class)
+    end)
+    it("works for 2 pseudo_prefixes", function()
+        local pattern = require("Gambit.lua_patterns").pseudo_splitter
+        local str = "sm:hover:text-blue-400"
+
+        local pseudo_prefix, class = string.match(str, pattern)
+        assert.equals("sm:hover:", pseudo_prefix)
+        assert.equals("text-blue-400", class)
+    end)
+    it("works for 5 pseudo_prefixes", function()
+        local pattern = require("Gambit.lua_patterns").pseudo_splitter
+        local str = "sm:dark:hover:first-letter:active:text-blue-400"
+
+        local pseudo_prefix, class = string.match(str, pattern)
+        assert.equals("sm:dark:hover:first-letter:active:", pseudo_prefix)
+        assert.equals("text-blue-400", class)
     end)
 end)

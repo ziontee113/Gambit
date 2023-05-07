@@ -94,6 +94,8 @@ M.replace_tailwind_color_classes = function(input, replacements)
             for _, pattern in ipairs(tailwind_color_patterns[key]) do
                 local pseudo_prefix, style = pseudo_split(class)
 
+                print(pseudo_prefix, style, PSEUDO_CLASSES)
+
                 if string.match(style, pattern) and (pseudo_prefix == PSEUDO_CLASSES) then
                     input_classes[i] = value
                     matches[key] = value

@@ -48,7 +48,7 @@ local M = {
 
     ----------------------------------
 
-    pseudo_splitter = "^(.-:)(.*)$",
+    pseudo_splitter = "^(.-:)([^:]+)$",
 }
 
 return M
