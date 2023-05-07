@@ -36,15 +36,19 @@ local M = {
         "text%-9xl",
     },
     text_color = {
-        "text%-%a+%-%d+",
-        "text%-black",
-        "text%-white",
+        "^text%-%a+%-%d+",
+        "^text%-black",
+        "^text%-white",
     },
     background_color = {
-        "bg%-%a+%-%d+",
-        "bg%-black",
-        "bg%-white",
+        "^bg%-%a+%-%d+",
+        "^bg%-black",
+        "^bg%-white",
     },
+
+    ----------------------------------
+
+    pseudo_splitter = "^(.-:)(.*)$",
 }
 
 return M

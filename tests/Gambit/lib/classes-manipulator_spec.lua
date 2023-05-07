@@ -3,25 +3,43 @@ local module = require("Gambit.lib.classes-manipulator")
 local list = {
     { keymap = "f", classes = { "flex" } },
     { keymap = "r", classes = { "flex", "flex-row" } },
+    { keymap = "c", classes = { "flex", "flex-col" } },
 }
 
 describe("replace_classes_with_list_item()", function()
     it("adds classes correctly", function()
+        PSEUDO_CLASSES = ""
         local input = "text-gray-500 bg-pink-300"
         local want = "flex flex-row text-gray-500 bg-pink-300"
         local got = module.replace_classes_with_list_item(input, list, { "flex", "flex-row" })
         assert.equals(want, got)
     end)
     it("removes classes correctly", function()
+        PSEUDO_CLASSES = ""
         local input = "text-gray-500 flex flex-row bg-pink-300"
         local want = "flex text-gray-500 bg-pink-300"
         local got = module.replace_classes_with_list_item(input, list, { "flex" })
         assert.equals(want, got)
     end)
+
+    -- w/ pseudo-classes
+    it("adds classes correctly w/ pseudo-classes && empty slate", function()
+        PSEUDO_CLASSES = "sm:"
+        local input = "text-gray-500 bg-pink-300"
+        local want = "sm:flex sm:flex-row text-gray-500 bg-pink-300"
+        local got = module.replace_classes_with_list_item(input, list, { "flex", "flex-row" })
+        assert.equals(want, got)
+    end)
+    it("adds classes correctly w/ pseudo-classes && normal value in place", function()
+        PSEUDO_CLASSES = "sm:"
+        local input = "flex flex-row text-gray-500 bg-pink-300"
+        local want = "sm:flex sm:flex-row flex flex-row text-gray-500 bg-pink-300"
+        local got = module.replace_classes_with_list_item(input, list, { "flex", "flex-row" })
+        assert.equals(want, got)
+    end)
 end)
 
 describe("replace_pms_classes", function()
-    -- no pseudo-classes
     it("adds correctly for omni axis", function()
         PSEUDO_CLASSES = ""
         local input = "flex flex-row gap-4 text-center"
@@ -194,6 +212,15 @@ describe("replace_tailwind_color_classes", function()
         local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
         assert.equals(want, got)
     end)
+    it("adds correctly w/ multi-pseudo-classes", function()
+        PSEUDO_CLASSES = "sm:hover:"
+        local input = "hover:text-gray-400 flex flex-row px-20 py-10 text-center"
+        local want =
+            "hover:text-gray-400 flex flex-row px-20 py-10 text-center sm:hover:text-blue-800"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
+        assert.equals(want, got)
+    end)
+
     it("replaces correctly w/ pseudo-classes", function()
         PSEUDO_CLASSES = "hover:"
         local input = "hover:text-gray-400 flex flex-row px-20 py-10 text-center"
@@ -208,6 +235,16 @@ describe("replace_tailwind_color_classes", function()
         local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
         assert.equals(want, got)
     end)
+    it("replaces correctly w/ multi-pseudo-classes", function()
+        PSEUDO_CLASSES = "hover:"
+        local input =
+            "hover:text-gray-400 flex flex-row px-20 py-10 text-center sm:hover:text-blue-800"
+        local want =
+            "hover:text-yellow-200 flex flex-row px-20 py-10 text-center sm:hover:text-blue-800"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-yellow-200" })
+        assert.equals(want, got)
+    end)
+
     it("adds correctly given both text and bg colors w/ pseudo-classes", function()
         PSEUDO_CLASSES = "hover:"
         local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
