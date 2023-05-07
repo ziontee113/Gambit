@@ -186,6 +186,13 @@ describe("replace_tailwind_color_classes", function()
         local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
         assert.equals(want, got)
     end)
+    it("removes correctly", function()
+        PSEUDO_CLASSES = ""
+        local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
+        local want = "flex flex-row px-20 py-10 text-center"
+        local got = module.replace_tailwind_color_classes(input, { text = "" })
+        assert.equals(want, got)
+    end)
     it("adds and replaces correctly given both text and bg colors", function()
         PSEUDO_CLASSES = ""
         local input = "text-gray-400 flex flex-row px-20 py-10 text-center"
@@ -251,6 +258,14 @@ describe("replace_tailwind_color_classes", function()
         local want =
             "hover:text-gray-400 flex flex-row px-20 py-10 text-center sm:hover:text-yellow-200"
         local got = module.replace_tailwind_color_classes(input, { text = "text-yellow-200" })
+        assert.equals(want, got)
+    end)
+
+    it("removes correctly w/ pseudo-classes", function()
+        PSEUDO_CLASSES = "hover:"
+        local input = "hover:text-gray-400 flex flex-row px-20 py-10 text-center"
+        local want = "flex flex-row px-20 py-10 text-center"
+        local got = module.replace_tailwind_color_classes(input, { text = "" })
         assert.equals(want, got)
     end)
 

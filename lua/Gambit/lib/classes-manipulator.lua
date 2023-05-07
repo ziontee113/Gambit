@@ -2,7 +2,10 @@ local M = {}
 local lua_patterns = require("Gambit.lua_patterns")
 
 local add_pseudo_classes = function(replacement)
-    return PSEUDO_CLASSES .. replacement
+    if replacement ~= "" then
+        return PSEUDO_CLASSES .. replacement
+    end
+    return replacement
 end
 
 local pseudo_split = function(class)
