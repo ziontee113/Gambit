@@ -193,6 +193,29 @@ describe("replace_tailwind_color_classes", function()
         local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
         assert.equals(want, got)
     end)
+
+    it("replaces arbitrary css color correctly", function()
+        PSEUDO_CLASSES = ""
+        local input = "text-[gray] flex flex-row px-20 py-10 text-center"
+        local want = "text-blue-800 flex flex-row px-20 py-10 text-center"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
+        assert.equals(want, got)
+    end)
+    it("replaces arbitrary rgb() color correctly", function()
+        PSEUDO_CLASSES = ""
+        local input = "text-[rgb(0,0,50)] flex flex-row px-20 py-10 text-center"
+        local want = "text-blue-800 flex flex-row px-20 py-10 text-center"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
+        assert.equals(want, got)
+    end)
+    it("replaces arbitrary hsla() color correctly", function()
+        PSEUDO_CLASSES = ""
+        local input = "text-[hsla(0,52%,50%,0.5)] flex flex-row px-20 py-10 text-center"
+        local want = "text-blue-800 flex flex-row px-20 py-10 text-center"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
+        assert.equals(want, got)
+    end)
+
     it("removes correctly", function()
         PSEUDO_CLASSES = ""
         local input = "text-gray-400 flex flex-row px-20 py-10 text-center"

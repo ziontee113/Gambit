@@ -27,7 +27,7 @@ _a_: align _fl_: flex _T_: custom presets
 
 _t_: text-color _b_: background-color
 _z_: font-size  _fw_: font-weight
-_fs_:font-style _td_: text-decoration _<C-a>_: text-align
+_fs_:font-style _D_: text-decoration _<C-a>_: text-align
 _O_: opacity
 
 _._: repeat _u_: undo _q_, _<Esc>_: exit 
@@ -229,7 +229,7 @@ Hydra({
         },
 
         {
-            "td",
+            "D",
             function()
                 require("Gambit.ui.replace_classes_menu").show_menu({
                     { keymaps = { "0" }, classes = {}, hidden = true },

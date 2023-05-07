@@ -1,6 +1,9 @@
 local M = {}
 
 local dictionary = {
+    ["A"] = "after",
+    ["B"] = "before",
+
     ["h"] = "hover",
     ["fo"] = "focus",
     ["ac"] = "active",

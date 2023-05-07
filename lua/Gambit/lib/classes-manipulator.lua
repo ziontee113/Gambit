@@ -84,6 +84,14 @@ M.replace_classes_with_list_item = function(input, list, replacement, placement,
     return append_remaining_classes(output, remaining_classes, placement)
 end
 
+local style_matches_css_color = function(style, property)
+    local property_colors = {}
+    for _, color in ipairs(lua_patterns.css_colors) do
+        table.insert(property_colors, string.format("%s-[%s]", property, color))
+    end
+    return vim.tbl_contains(property_colors, style)
+end
+
 M.replace_tailwind_color_classes = function(input, replacements)
     for key, value in pairs(replacements) do
         replacements[key] = add_pseudo_classes(value)
@@ -97,15 +105,15 @@ M.replace_tailwind_color_classes = function(input, replacements)
     local matches = {}
 
     for i, class in ipairs(input_classes) do
-        for key, value in pairs(replacements) do
-            for _, pattern in ipairs(tailwind_color_patterns[key]) do
+        for property, value in pairs(replacements) do
+            for _, pattern in ipairs(tailwind_color_patterns[property]) do
                 local pseudo_prefix, style = pseudo_split(class)
-
-                print(pseudo_prefix, style, PSEUDO_CLASSES)
-
-                if string.match(style, pattern) and (pseudo_prefix == PSEUDO_CLASSES) then
+                if
+                    (string.match(style, pattern) or style_matches_css_color(style, property))
+                    and (pseudo_prefix == PSEUDO_CLASSES)
+                then
                     input_classes[i] = value
-                    matches[key] = value
+                    matches[property] = value
                     break
                 end
             end
