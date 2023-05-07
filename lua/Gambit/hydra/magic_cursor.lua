@@ -23,9 +23,9 @@ _i_: change / _o_: destination
 
 _h_: content _sr_: src
 
-_a_: align _fl_: flex _T_: custom presets
+_a_: align _fl_: flex _C_: custom presets
 
-_t_: text-color _b_: background-color
+_t_ _T_: text-color _b_ _B_: background-color
 _z_: font-size  _fw_: font-weight
 _fs_:font-style _D_: text-decoration _<C-a>_: text-align
 _O_: opacity
@@ -244,7 +244,7 @@ Hydra({
 
         -- testing replace_classes_menu w/ negatives
         {
-            "T",
+            "C",
             function()
                 require("Gambit.ui.replace_classes_menu").show_menu(
                     {
@@ -365,11 +365,25 @@ Hydra({
             end,
             { nowait = true },
         },
+        {
+            "T",
+            function()
+                require("Gambit.ui.color_input").show(0, 0, "text")
+            end,
+            { nowait = true },
+        },
 
         {
             "b",
             function()
                 colors_menu.change_background_color()
+            end,
+            { nowait = true },
+        },
+        {
+            "B",
+            function()
+                require("Gambit.ui.color_input").show(0, 0, "bg")
             end,
             { nowait = true },
         },

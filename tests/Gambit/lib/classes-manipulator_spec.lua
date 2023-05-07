@@ -215,6 +215,13 @@ describe("replace_tailwind_color_classes", function()
         local got = module.replace_tailwind_color_classes(input, { text = "text-blue-800" })
         assert.equals(want, got)
     end)
+    it("replaces arbitrary color with arbitrary color correctly", function()
+        PSEUDO_CLASSES = ""
+        local input = "text-[hsla(0,52%,50%,0.5)] flex flex-row px-20 py-10 text-center"
+        local want = "text-[#000] flex flex-row px-20 py-10 text-center"
+        local got = module.replace_tailwind_color_classes(input, { text = "text-[#000]" })
+        assert.equals(want, got)
+    end)
 
     it("removes correctly", function()
         PSEUDO_CLASSES = ""

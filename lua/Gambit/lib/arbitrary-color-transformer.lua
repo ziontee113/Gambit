@@ -1,6 +1,6 @@
 local M = {}
 
-M.transform = function(input)
+M.input_to_color = function(input)
     local _, commas = string.gsub(input, ",", "")
     if commas > 0 then
         if commas == 3 then
@@ -21,6 +21,10 @@ M.transform = function(input)
     end
 
     return string.format("#%s", input)
+end
+
+M.wrap_color_in_property = function(color, property)
+    return string.format("%s-[%s]", property, color)
 end
 
 return M

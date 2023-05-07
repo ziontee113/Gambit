@@ -1,7 +1,12 @@
 local M = {}
 
-M.show = function(winnr, bufnr, propery, menu)
+local colors_menu_module = require("Gambit.ui.colors_menu")
+local class_replacer = require("Gambit.lib.class-replacer")
+local transformer = require("Gambit.lib.arbitrary-color-transformer")
+
+M.show = function(winnr, bufnr, property, menu)
     local Input = require("nui.input")
+    local border_top_text = string.format("[%s color]", property)
 
     local popup_options = {
         relative = "cursor",
@@ -14,7 +19,7 @@ M.show = function(winnr, bufnr, propery, menu)
         border = {
             style = "rounded",
             text = {
-                top = "[Color Input]",
+                top = border_top_text,
                 top_align = "center",
             },
         },
@@ -26,29 +31,34 @@ M.show = function(winnr, bufnr, propery, menu)
     local input = Input(popup_options, {
         prompt = "> ",
         default_value = "",
-        on_change = function(value)
-            -- TODO: create a module to convert / transform the prompt to actual color values
+        on_submit = function(input)
+            local color = transformer.input_to_color(input)
+            local class = transformer.wrap_color_in_property(color, property)
+            local change_arguments = { winnr, bufnr, { [property] = class } }
+
+            colors_menu_module.change_arguments(change_arguments)
+            class_replacer.change_tailwind_colors(unpack(change_arguments))
+
+            if menu then
+                menu:unmount()
+            end
         end,
     })
 
     input:mount()
-    menu:unmount()
 
     -------------------------------------------- Mappings
 
-    -- unmount the input while preserving current PSEUDO_CLASSES
-    input:map("i", { "<Space>", "<Tab>" }, function()
+    -- keys to unmount the input
+    input:map("i", { "<Space>", "<Tab>", "<Esc>" }, function()
         input:unmount()
+        if menu then
+            menu:unmount()
+        end
     end, {})
 
     -- restore default <C-w> behavior in Insert Mode
     input:map("i", "<C-w>", "<C-S-w>", { noremap = true })
-
-    -- clear current PSEUDO_CLASSES
-    input:map("i", { "<Esc>" }, function()
-        -- TODO:
-        input:unmount()
-    end, { noremap = true })
 end
 
 return M
