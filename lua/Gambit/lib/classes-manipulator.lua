@@ -117,34 +117,7 @@ M.replace_tailwind_color_classes = function(input, replacements)
     return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
 end
 
-local pms_patterns = {
-    p = {
-        [""] = "^p%-%d+$",
-        ["x"] = "^px%-%d+$",
-        ["y"] = "^py%-%d+$",
-        ["t"] = "^pt%-%d+$",
-        ["b"] = "^pb%-%d+$",
-        ["l"] = "^pl%-%d+$",
-        ["r"] = "^pr%-%d+$",
-        ["all"] = "^p[xytblr]?%-%d+$",
-    },
-    m = {
-        [""] = "^m%-%d+$",
-        ["x"] = "^mx%-%d+$",
-        ["y"] = "^my%-%d+$",
-        ["t"] = "^mt%-%d+$",
-        ["b"] = "^mb%-%d+$",
-        ["l"] = "^ml%-%d+$",
-        ["r"] = "^mr%-%d+$",
-        ["all"] = "^m[xytblr]?%-%d+$",
-    },
-    ["space-"] = {
-        ["x"] = "^space%-x%-%d+$",
-        ["y"] = "^space%-y%-%d+$",
-        ["all"] = "^space%-[xy]?%-%d+$",
-    },
-}
-
+local pms_patterns = lua_patterns.pms_patterns
 M.replace_pms_classes = function(input, property, axis, replacement)
     replacement = add_pseudo_classes(replacement)
 
