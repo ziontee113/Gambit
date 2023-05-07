@@ -2,6 +2,7 @@ local M = {}
 
 local colors = {
     { color = false, keys = { "0" }, hide = true },
+    { color = false, keys = { "A" }, hide = true, input = true },
     { color = "slate", keys = { "sl" } },
     { color = "gray", keys = { "G" } },
     { color = "zinc", keys = { "z" } },
@@ -136,23 +137,34 @@ local show_colors_menu = function(property)
         if type(entry) == "table" then
             for _, key in ipairs(entry.keys) do
                 colors_menu:map("n", key, function()
-                    colors_menu:unmount()
-                    if entry.single then
-                        local text = get_colored_prefix(property, entry.color)
-                        change_arguments = { old_winnr, old_bufnr, { [property] = text } }
-                        class_replacer.change_tailwind_colors(unpack(change_arguments))
-                    else
-                        if entry.color then
-                            show_steps_menu(
-                                property,
-                                get_colored_prefix(property, entry.color),
+                    if entry.input then
+                        vim.schedule(function()
+                            require("Gambit.ui.color_input").show(
                                 old_winnr,
-                                old_bufnr
+                                old_bufnr,
+                                property,
+                                colors_menu
                             )
-                        else
-                            change_arguments = { old_winnr, old_bufnr, { [property] = "" } }
+                        end)
+                    else
+                        if entry.single then
+                            local text = get_colored_prefix(property, entry.color)
+                            change_arguments = { old_winnr, old_bufnr, { [property] = text } }
                             class_replacer.change_tailwind_colors(unpack(change_arguments))
+                        else
+                            if entry.color then
+                                show_steps_menu(
+                                    property,
+                                    get_colored_prefix(property, entry.color),
+                                    old_winnr,
+                                    old_bufnr
+                                )
+                            else
+                                change_arguments = { old_winnr, old_bufnr, { [property] = "" } }
+                                class_replacer.change_tailwind_colors(unpack(change_arguments))
+                            end
                         end
+                        colors_menu:unmount()
                     end
                 end, { nowait = true })
             end
