@@ -4,7 +4,7 @@ local colors_menu_module = require("Gambit.ui.colors_menu")
 local class_replacer = require("Gambit.lib.class-replacer")
 local transformer = require("Gambit.lib.arbitrary-color-transformer")
 
-M.show = function(winnr, bufnr, property, menu)
+M.show = function(winnr, bufnr, property)
     local Input = require("nui.input")
     local border_top_text = string.format("[%s color]", property)
 
@@ -38,10 +38,6 @@ M.show = function(winnr, bufnr, property, menu)
 
             colors_menu_module.change_arguments(change_arguments)
             class_replacer.change_tailwind_colors(unpack(change_arguments))
-
-            if menu then
-                menu:unmount()
-            end
         end,
     })
 
@@ -52,9 +48,6 @@ M.show = function(winnr, bufnr, property, menu)
     -- keys to unmount the input
     input:map("i", { "<Space>", "<Tab>", "<Esc>" }, function()
         input:unmount()
-        if menu then
-            menu:unmount()
-        end
     end, {})
 
     -- restore default <C-w> behavior in Insert Mode
@@ -62,5 +55,3 @@ M.show = function(winnr, bufnr, property, menu)
 end
 
 return M
-
--- {{{nvim-execute-on-save}}}

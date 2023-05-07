@@ -1,4 +1,4 @@
-local transformer = require("Gambit.lib.arbitrary-color-transformer")
+local transformer = require("Gambit.lib.arbitrary-value-transformer")
 
 describe("input_to_color()", function()
     it("transforms input with 2 comma separated numbers to rgb()", function()
