@@ -30,10 +30,17 @@ describe("replace_classes_with_list_item()", function()
         local got = module.replace_classes_with_list_item(input, list, { "flex", "flex-row" })
         assert.equals(want, got)
     end)
-    it("adds classes correctly w/ pseudo-classes && normal value in place", function()
+    it("adds classes correctly w/ pseudo-classes && normal value in place, sm:", function()
         PSEUDO_CLASSES = "sm:"
         local input = "flex flex-row text-gray-500 bg-pink-300"
         local want = "sm:flex sm:flex-row flex flex-row text-gray-500 bg-pink-300"
+        local got = module.replace_classes_with_list_item(input, list, { "flex", "flex-row" })
+        assert.equals(want, got)
+    end)
+    it("adds classes correctly w/ pseudo-classes && normal value in place, sm:hover:", function()
+        PSEUDO_CLASSES = "sm:hover:"
+        local input = "flex flex-row text-gray-500 bg-pink-300"
+        local want = "sm:hover:flex sm:hover:flex-row flex flex-row text-gray-500 bg-pink-300"
         local got = module.replace_classes_with_list_item(input, list, { "flex", "flex-row" })
         assert.equals(want, got)
     end)

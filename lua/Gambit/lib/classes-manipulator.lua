@@ -1,13 +1,6 @@
 local M = {}
 local lua_patterns = require("Gambit.lua_patterns")
 
-local add_pseudo_classes = function(replacement)
-    if replacement ~= "" then
-        return PSEUDO_CLASSES .. replacement
-    end
-    return replacement
-end
-
 local pseudo_split = function(class)
     local pseudo_prefix, style = string.match(class, lua_patterns.pseudo_splitter)
     if not style then
@@ -15,6 +8,17 @@ local pseudo_split = function(class)
         pseudo_prefix = ""
     end
     return pseudo_prefix, style
+end
+
+local add_pseudo_classes = function(class)
+    if pseudo_split(class) ~= "" then
+        return class
+    end
+
+    if class ~= "" then
+        return PSEUDO_CLASSES .. class
+    end
+    return class
 end
 
 local filter_matched_classes_in_list = function(input, list)
