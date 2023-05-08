@@ -32,15 +32,18 @@ M.input_to_pms_value = function(input)
         return input .. "rem"
     end
 
-    local last_char = string.sub(input, -1)
-    local value = string.sub(input, 1, #input - 1)
+    local _, idx = string.find(input, "%D")
+    local num = tonumber(string.sub(input, 1, idx - 1))
+    local chars = string.sub(input, idx)
+
+    --stylua: ignore
     local unit_tbl = {
-        x = "px",
-        p = "pt",
-        w = "vw",
-        h = "vh",
+        x = "px", px = "px",
+        p = "pt", pt = "pt",
+        w = "vw", vw = "vw",
+        h = "vh", vh = "vh",
     }
-    return value .. unit_tbl[last_char]
+    return num .. unit_tbl[chars]
 end
 
 M.wrap_value_in_property = function(color, property)

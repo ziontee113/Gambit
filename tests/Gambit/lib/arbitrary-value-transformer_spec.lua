@@ -42,22 +42,24 @@ describe("input_to_pms_value()", function()
         local got = transformer.input_to_pms_value(input)
         assert.equals(want, got)
     end)
-    it(
-        "given only numbers input and x as last character, return input value with px unit",
-        function()
-            local input = "99x"
-            local want = "99px"
-            local got = transformer.input_to_pms_value(input)
-            assert.equals(want, got)
-        end
-    )
-    it(
-        "given only numbers input and w as last character, return input value with vw unit",
-        function()
-            local input = "99w"
-            local want = "99vw"
-            local got = transformer.input_to_pms_value(input)
-            assert.equals(want, got)
-        end
-    )
+
+    it("given numbers input and x as last character, return input value with px unit", function()
+        local input = "99x"
+        local want = "99px"
+        local got = transformer.input_to_pms_value(input)
+        assert.equals(want, got)
+    end)
+    it("given numbers input and px as last characters, return input value with px unit", function()
+        local input = "99px"
+        local want = "99px"
+        local got = transformer.input_to_pms_value(input)
+        assert.equals(want, got)
+    end)
+
+    it("given numbers input and w as last character, return input value with vw unit", function()
+        local input = "99w"
+        local want = "99vw"
+        local got = transformer.input_to_pms_value(input)
+        assert.equals(want, got)
+    end)
 end)
