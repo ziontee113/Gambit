@@ -388,6 +388,16 @@ Hydra({
             { nowait = true },
         },
 
+        -------------------------------------------- change pseudo_element content
+
+        {
+            ",c",
+            function()
+                require("Gambit.ui.content_input").show(0, 0)
+            end,
+            { nowait = true },
+        },
+
         ------------------------------------------ paddings
         {
             "P",

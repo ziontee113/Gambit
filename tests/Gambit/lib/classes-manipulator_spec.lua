@@ -392,3 +392,42 @@ describe("pseudo_splitter pattern_check", function()
         assert.equals("text-blue-400", class)
     end)
 end)
+
+describe("replace_pseudo_element_content()", function()
+    it("does nothing if PSEUDO_CLASSES doesn't contain :before or :after", function()
+        PSEUDO_CLASSES = ""
+        local input = "p-4 text-white"
+        local want = "p-4 text-white"
+        local got = module.replace_pseudo_element_content(input)
+        assert.equals(want, got)
+    end)
+    it("returns correct class name with before:", function()
+        PSEUDO_CLASSES = "before:"
+        local input = "p-4 text-white"
+        local want = "p-4 text-white before:content-['my_content']"
+        local got = module.replace_pseudo_element_content(input, "my_content")
+        assert.equals(want, got)
+    end)
+    it("returns correct class name with hover:before:", function()
+        PSEUDO_CLASSES = "hover:before:"
+        local input = "p-4 text-white"
+        local want = "p-4 text-white hover:before:content-['my_content']"
+        local got = module.replace_pseudo_element_content(input, "my_content")
+        assert.equals(want, got)
+    end)
+
+    it("removes correct class if replacement is nil", function()
+        PSEUDO_CLASSES = "before:"
+        local input = "p-4 text-white before:content-['my_content']"
+        local want = "p-4 text-white"
+        local got = module.replace_pseudo_element_content(input, nil)
+        assert.equals(want, got)
+    end)
+    it("replaces class correctly", function()
+        PSEUDO_CLASSES = "before:"
+        local input = "before:content-['my_content'] p-4 text-white"
+        local want = "before:content-['other_content'] p-4 text-white"
+        local got = module.replace_pseudo_element_content(input, "other_content")
+        assert.equals(want, got)
+    end)
+end)

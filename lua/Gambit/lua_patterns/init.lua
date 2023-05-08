@@ -127,6 +127,7 @@ local M = {
     ----------------------------------
 
     pseudo_splitter = "^(.-:)([^:]+)$",
+    pseudo_element_content = "^content%-%['.*']$",
 }
 
 return M

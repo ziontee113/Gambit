@@ -1,6 +1,6 @@
 local M = {}
 
-M.create_input = function(border_top_text, callback)
+M.create_input = function(border_top_text, callback, quit_callback)
     local Input = require("nui.input")
 
     local popup_options = {
@@ -38,6 +38,7 @@ M.create_input = function(border_top_text, callback)
     -- keys to unmount the input
     input:map("i", { "<Space>", "<Tab>", "<Esc>" }, function()
         input:unmount()
+        quit_callback()
     end, {})
 
     -- restore default <C-w> behavior in Insert Mode

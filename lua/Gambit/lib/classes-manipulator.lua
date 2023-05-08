@@ -183,4 +183,39 @@ M.remove_pms_classes = function(input, property, axies_to_remove)
     return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
 end
 
+M.replace_pseudo_element_content = function(input, replacement)
+    if string.match(PSEUDO_CLASSES, "before:") or string.match(PSEUDO_CLASSES, "after:") then
+        if replacement == nil then
+            replacement = ""
+        else
+            replacement = string.format("%scontent-['%s']", PSEUDO_CLASSES, replacement)
+        end
+
+        local input_classes = vim.split(input, " ")
+        local replaced = false
+
+        for i, class in ipairs(input_classes) do
+            local pseudo_prefix, style = pseudo_split(class)
+            if string.match(style, lua_patterns.pseudo_element_content) then
+                if pseudo_prefix == PSEUDO_CLASSES then
+                    if not replaced then
+                        input_classes[i] = replacement
+                        replaced = true
+                    else
+                        input_classes[i] = ""
+                    end
+                end
+            end
+        end
+
+        if not replaced then
+            table.insert(input_classes, replacement)
+        end
+
+        return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
+    end
+
+    return input
+end
+
 return M
