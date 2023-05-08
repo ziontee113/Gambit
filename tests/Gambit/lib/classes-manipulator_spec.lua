@@ -106,6 +106,14 @@ describe("replace_pms_classes", function()
         local got = module.replace_pms_classes(input, "p", "", "p-4")
         assert.equals(want, got)
     end)
+    it("adds arbitrary value correctly for omni axis", function()
+        PSEUDO_CLASSES = ""
+        local input = "flex flex-row text-center"
+        local want = "flex flex-row text-center p-[22px]"
+        local got = module.replace_pms_classes(input, "p", "", "p-[22px]")
+        assert.equals(want, got)
+    end)
+
     it("replaces correctly for pseudo omni axis", function()
         PSEUDO_CLASSES = "hover:"
         local input = "text-gray-400 flex flex-row hover:p-10 text-center"
@@ -118,6 +126,20 @@ describe("replace_pms_classes", function()
         local input = "flex flex-row text-center p-10 hover:p-10"
         local want = "flex flex-row text-center p-10 hover:p-4"
         local got = module.replace_pms_classes(input, "p", "", "p-4")
+        assert.equals(want, got)
+    end)
+    it("replaces arbitrary value from normal tailwind class correctly for omni axis", function()
+        PSEUDO_CLASSES = ""
+        local input = "flex flex-row text-center p-4"
+        local want = "flex flex-row text-center p-[22px]"
+        local got = module.replace_pms_classes(input, "p", "", "p-[22px]")
+        assert.equals(want, got)
+    end)
+    it("replaces arbitrary value from arbitrary value correctly for omni axis", function()
+        PSEUDO_CLASSES = ""
+        local input = "flex flex-row text-center p-[22px]"
+        local want = "flex flex-row text-center p-[69rem]"
+        local got = module.replace_pms_classes(input, "p", "", "p-[69rem]")
         assert.equals(want, got)
     end)
 
@@ -133,6 +155,20 @@ describe("replace_pms_classes", function()
         local input = "flex flex-row text-center px-4 hover:px-10"
         local want = "flex flex-row text-center px-4 hover:px-2"
         local got = module.replace_pms_classes(input, "p", "x", "px-2")
+        assert.equals(want, got)
+    end)
+    it("replaces arbitrary value from normal tailwind class correctly hover:", function()
+        PSEUDO_CLASSES = "hover:"
+        local input = "flex flex-row text-center p-4 hover:p-10"
+        local want = "flex flex-row text-center p-4 hover:p-[22px]"
+        local got = module.replace_pms_classes(input, "p", "", "p-[22px]")
+        assert.equals(want, got)
+    end)
+    it("replaces arbitrary value from arbitrary value correctly hover:", function()
+        PSEUDO_CLASSES = "hover:"
+        local input = "flex flex-row text-center hover:p-[22px] p-4"
+        local want = "flex flex-row text-center hover:p-[69rem] p-4"
+        local got = module.replace_pms_classes(input, "p", "", "p-[69rem]")
         assert.equals(want, got)
     end)
 end)

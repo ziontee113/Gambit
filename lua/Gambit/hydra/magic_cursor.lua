@@ -403,6 +403,13 @@ Hydra({
             end,
             { nowait = true },
         },
+        {
+            ",P",
+            function()
+                require("Gambit.ui.pms_input").show(0, 0, "p", "", "")
+            end,
+            { nowait = true },
+        },
 
         ----- padding x and y
         {
@@ -413,12 +420,28 @@ Hydra({
             { nowait = true },
         },
         {
+            ",py",
+            function()
+                require("Gambit.ui.pms_input").show(0, 0, "p", "y", "")
+            end,
+            { nowait = true },
+        },
+
+        {
             "pY",
             function()
                 pms_menu.show_paddings_menu("x", { "t", "b" })
             end,
             { nowait = true },
         },
+        {
+            ",pY",
+            function()
+                require("Gambit.ui.pms_input").show(0, 0, "p", "y", { "t", "b" })
+            end,
+            { nowait = true },
+        },
+
         {
             "px",
             function()
@@ -427,9 +450,23 @@ Hydra({
             { nowait = true },
         },
         {
+            ",px",
+            function()
+                require("Gambit.ui.pms_input").show(0, 0, "p", "x", "")
+            end,
+            { nowait = true },
+        },
+        {
             "pX",
             function()
                 pms_menu.show_paddings_menu("x", { "l", "r" })
+            end,
+            { nowait = true },
+        },
+        {
+            ",pX",
+            function()
+                require("Gambit.ui.pms_input").show(0, 0, "p", "x", { "l", "r" })
             end,
             { nowait = true },
         },
@@ -442,9 +479,23 @@ Hydra({
             { nowait = true },
         },
         {
+            ",p<C-y>",
+            function()
+                require("Gambit.ui.pms_input").show(0, 0, "p", "y", "all")
+            end,
+            { nowait = true },
+        },
+        {
             "p<C-x>",
             function()
                 pms_menu.show_paddings_menu("x", "all")
+            end,
+            { nowait = true },
+        },
+        {
+            ",p<C-x>",
+            function()
+                require("Gambit.ui.pms_input").show(0, 0, "p", "x", "all")
             end,
             { nowait = true },
         },

@@ -48,7 +48,6 @@ local class_replacer = require("Gambit.lib.class-replacer")
 
 local old_winnr, old_bufnr = 0, 0
 local change_arguments
-
 M.change_arguments = function(arguments)
     change_arguments = arguments
 end

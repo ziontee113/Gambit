@@ -23,7 +23,27 @@ M.input_to_color = function(input)
     return string.format("#%s", input)
 end
 
-M.wrap_color_in_property = function(color, property)
+M.input_to_pms_value = function(input)
+    if input == "" then
+        input = "0"
+    end
+
+    if tonumber(input) then
+        return input .. "rem"
+    end
+
+    local last_char = string.sub(input, -1)
+    local value = string.sub(input, 1, #input - 1)
+    local unit_tbl = {
+        x = "px",
+        p = "pt",
+        w = "vw",
+        h = "vh",
+    }
+    return value .. unit_tbl[last_char]
+end
+
+M.wrap_value_in_property = function(color, property)
     return string.format("%s-[%s]", property, color)
 end
 

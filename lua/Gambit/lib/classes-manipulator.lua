@@ -129,7 +129,6 @@ M.replace_tailwind_color_classes = function(input, replacements)
     return remove_empty_strings_from_tbl_then_concat_with_space(input_classes)
 end
 
-local pms_patterns = lua_patterns.pms_patterns
 M.replace_pms_classes = function(input, property, axis, replacement)
     replacement = add_pseudo_classes(replacement)
 
@@ -139,13 +138,15 @@ M.replace_pms_classes = function(input, property, axis, replacement)
     for i, class in ipairs(input_classes) do
         local pseudo_prefix, style = pseudo_split(class)
 
-        if string.match(style, pms_patterns[property][axis]) then
-            if pseudo_prefix == PSEUDO_CLASSES then
-                if not replaced then
-                    input_classes[i] = replacement
-                    replaced = true
-                else
-                    input_classes[i] = ""
+        for _, pattern in ipairs(lua_patterns.pms[property][axis]) do
+            if string.match(style, pattern) then
+                if pseudo_prefix == PSEUDO_CLASSES then
+                    if not replaced then
+                        input_classes[i] = replacement
+                        replaced = true
+                    else
+                        input_classes[i] = ""
+                    end
                 end
             end
         end
@@ -171,11 +172,10 @@ M.remove_pms_classes = function(input, property, axies_to_remove)
     for i, class in ipairs(input_classes) do
         local pseudo_prefix, style = pseudo_split(class)
         for _, axis in ipairs(axies_to_remove) do
-            if
-                string.match(style, pms_patterns[property][axis])
-                and pseudo_prefix == PSEUDO_CLASSES
-            then
-                input_classes[i] = ""
+            for _, pattern in ipairs(lua_patterns.pms[property][axis]) do
+                if string.match(style, pattern) and pseudo_prefix == PSEUDO_CLASSES then
+                    input_classes[i] = ""
+                end
             end
         end
     end

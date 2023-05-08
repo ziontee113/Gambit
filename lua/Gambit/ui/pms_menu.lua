@@ -57,6 +57,9 @@ local get_class = function(property, axis, value)
 end
 
 local change_arguments
+M.change_arguments = function(args)
+    change_arguments = args
+end
 local old_winnr, old_bufnr = 0, 0
 local show_menu = function(property, axis, axies_to_remove_beforehand)
     old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
