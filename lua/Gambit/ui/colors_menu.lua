@@ -48,6 +48,7 @@ local class_replacer = require("Gambit.lib.class-replacer")
 
 local old_winnr, old_bufnr = 0, 0
 local change_arguments
+local visual_mode = require("Gambit.lib.visual-mode")
 M.change_arguments = function(arguments)
     change_arguments = arguments
 end
@@ -85,7 +86,10 @@ local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
                 bufnr = bufnr,
                 replacement = { [property] = item.text },
             }
-            class_replacer.change_tailwind_colors(change_arguments)
+            visual_mode.change_selected_elements_classes(
+                class_replacer.change_tailwind_colors,
+                change_arguments
+            )
         end,
     })
 
@@ -101,7 +105,10 @@ local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
                         bufnr = bufnr,
                         replacement = { [property] = class },
                     }
-                    class_replacer.change_tailwind_colors(change_arguments)
+                    visual_mode.change_selected_elements_classes(
+                        class_replacer.change_tailwind_colors,
+                        change_arguments
+                    )
                 end, { nowait = true })
             end
         end
@@ -150,8 +157,15 @@ local show_colors_menu = function(property)
                     colors_menu:unmount()
                     if entry.single then
                         local text = get_colored_prefix(property, entry.color)
-                        change_arguments = { old_winnr, old_bufnr, { [property] = text } }
-                        class_replacer.change_tailwind_colors(unpack(change_arguments))
+                        change_arguments = {
+                            winnr = old_winnr,
+                            bufnr = old_bufnr,
+                            replacement = { [property] = text },
+                        }
+                        visual_mode.change_selected_elements_classes(
+                            class_replacer.change_tailwind_colors,
+                            change_arguments
+                        )
                     else
                         if entry.color then
                             show_steps_menu(
@@ -166,7 +180,10 @@ local show_colors_menu = function(property)
                                 bufnr = old_bufnr,
                                 replacement = { [property] = "" },
                             }
-                            class_replacer.change_tailwind_colors(change_arguments)
+                            visual_mode.change_selected_elements_classes(
+                                class_replacer.change_tailwind_colors,
+                                change_arguments
+                            )
                         end
                     end
                 end, { nowait = true })
@@ -187,7 +204,10 @@ end
 M.apply_previous_action = function(node)
     if change_arguments ~= nil then
         change_arguments.node = node
-        class_replacer.change_tailwind_colors(change_arguments)
+        visual_mode.change_selected_elements_classes(
+            class_replacer.change_tailwind_colors,
+            change_arguments
+        )
     end
 end
 
