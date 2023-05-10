@@ -129,6 +129,7 @@ Hydra({
         end,
         on_exit = function()
             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+            visual_mode.deactivate()
 
             if indicator_popup then
                 indicator_popup:unmount()
