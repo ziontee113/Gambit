@@ -2,6 +2,7 @@ local Menu = require("nui.menu")
 
 local defaults = require("Gambit.options.defaults")
 local class_replacer = require("Gambit.lib.class-replacer")
+local visual_mode = require("Gambit.lib.visual-mode")
 
 local M = {}
 
@@ -34,7 +35,10 @@ M.show_menu = function(classes_groups, placement, negatives)
                 placement = placement,
                 negatives = negatives,
             }
-            class_replacer.apply_classes_group(change_arguments)
+            visual_mode.change_selected_elements_classes(
+                class_replacer.apply_classes_group,
+                change_arguments
+            )
         end,
     })
 
@@ -50,7 +54,10 @@ M.show_menu = function(classes_groups, placement, negatives)
                     placement = placement,
                     negatives = negatives,
                 }
-                class_replacer.apply_classes_group(change_arguments)
+                visual_mode.change_selected_elements_classes(
+                    class_replacer.apply_classes_group,
+                    change_arguments
+                )
             end, { nowait = true })
         end
     end
@@ -61,7 +68,10 @@ end
 M.apply_previous_action = function(node)
     if change_arguments ~= nil then
         change_arguments.node = node
-        class_replacer.apply_classes_group(change_arguments)
+        visual_mode.change_selected_elements_classes(
+            class_replacer.apply_classes_group,
+            change_arguments
+        )
     end
 end
 
