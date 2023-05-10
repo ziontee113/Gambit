@@ -61,10 +61,10 @@ M.change_arguments = function(args)
     change_arguments = args
 end
 local old_winnr, old_bufnr = 0, 0
-local show_menu = function(property, axis, axies_to_remove_beforehand)
+local show_menu = function(property, axis, axies_to_remove)
     old_winnr, old_bufnr = vim.api.nvim_get_current_win(), vim.api.nvim_get_current_buf()
     axis = axis or ""
-    axies_to_remove_beforehand = axies_to_remove_beforehand or {}
+    axies_to_remove = axies_to_remove or {}
 
     local lines = {}
     for _, entry in ipairs(key_value_map) do
@@ -89,14 +89,14 @@ local show_menu = function(property, axis, axies_to_remove_beforehand)
         },
         on_submit = function(item)
             change_arguments = {
-                old_winnr,
-                old_bufnr,
-                property,
-                axis,
-                axies_to_remove_beforehand,
-                item.data,
+                winnr = old_winnr,
+                bufnr = old_bufnr,
+                property = property,
+                axis = axis,
+                axies_to_remove = axies_to_remove,
+                replacement = item.data,
             }
-            class_replacer.change_pms_classes(unpack(change_arguments))
+            class_replacer.change_pms_classes(change_arguments)
         end,
     })
 
@@ -109,14 +109,14 @@ local show_menu = function(property, axis, axies_to_remove_beforehand)
                 menu:unmount()
                 local class = get_class(property, axis, value)
                 change_arguments = {
-                    old_winnr,
-                    old_bufnr,
-                    property,
-                    axis,
-                    axies_to_remove_beforehand,
-                    class,
+                    winnr = old_winnr,
+                    bufnr = old_bufnr,
+                    property = property,
+                    axis = axis,
+                    axies_to_remove = axies_to_remove,
+                    replacement = class,
                 }
-                class_replacer.change_pms_classes(unpack(change_arguments))
+                class_replacer.change_pms_classes(change_arguments)
             end, { nowait = true })
         end
     end
@@ -138,11 +138,8 @@ end
 
 M.apply_previous_action = function(node)
     if change_arguments ~= nil then
-        if node and type(change_arguments[#change_arguments]) ~= "userdata" then
-            table.insert(change_arguments, node)
-        end
-
-        class_replacer.change_pms_classes(unpack(change_arguments))
+        change_arguments.node = node
+        class_replacer.change_pms_classes(change_arguments)
     end
 end
 

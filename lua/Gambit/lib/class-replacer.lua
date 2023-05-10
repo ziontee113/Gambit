@@ -50,17 +50,25 @@ M.change_tailwind_colors = function(winnr, bufnr, replacement, node)
     GAMBIT_PREVIOUS_ACTION = "changing-color-classes"
 end
 
-M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, replacement, node)
+M.change_pms_classes = function(opts)
     local className_string_node, jsx_tag_node =
-        lib_ts.get_tag_and_className_string_nodes(winnr, node)
-    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
+        lib_ts.get_tag_and_className_string_nodes(opts.winnr, opts.node)
+    local old_classes =
+        lib_ts.get_classes_from_className_string_node(className_string_node, opts.bufnr)
 
     local new_classes =
-        classes_manipulator.remove_pms_classes(old_classes, property, axies_to_remove)
-    new_classes = classes_manipulator.replace_pms_classes(new_classes, property, axis, replacement)
+        classes_manipulator.remove_pms_classes(old_classes, opts.property, opts.axies_to_remove)
+
+    new_classes = classes_manipulator.replace_pms_classes(
+        new_classes,
+        opts.property,
+        opts.axis,
+        opts.replacement
+    )
+
     new_classes = string.format('"%s"', new_classes)
 
-    apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
+    apply_new_classes(opts.bufnr, jsx_tag_node, className_string_node, new_classes)
     GAMBIT_PREVIOUS_ACTION = "changing-pms-classes"
 end
 
