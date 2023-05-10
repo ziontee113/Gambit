@@ -140,9 +140,9 @@ end
 
 --------------------------------------------
 
-M.get_tag_and_className_string_nodes = function(winnr)
+M.get_tag_and_className_string_nodes = function(winnr, node)
     local desired_types = { "jsx_element", "jsx_self_closing_element" }
-    local jsx_node = M.find_parent(winnr, desired_types)
+    local jsx_node = M.find_parent(winnr, desired_types, node)
 
     local root
     if jsx_node:type() == "jsx_element" then
@@ -181,6 +181,8 @@ M.get_classes_from_className_string_node = function(className_string_node, bufnr
 
     return old_classes
 end
+
+--------------------------------------------
 
 M.replace_node_text = function(bufnr, node, replacement)
     replacement = vim_utils.string_to_string_tbl(replacement)

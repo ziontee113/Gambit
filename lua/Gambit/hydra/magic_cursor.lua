@@ -150,7 +150,7 @@ Hydra({
         {
             "<C-S-.>",
             function()
-                require("Gambit.lib.classes-cloning").replace_all_classes_to_sibling_classes()
+                require("Gambit.lib.class-replacer").replicate_all_classes_to_all_siblings(0, 0)
             end,
             { nowait = true },
         },

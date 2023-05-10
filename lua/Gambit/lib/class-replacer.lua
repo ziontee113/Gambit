@@ -72,4 +72,25 @@ M.change_pseudo_element_conent = function(winnr, bufnr, replacement)
     apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
 end
 
+M.replicate_all_classes_to_all_siblings = function(winnr, bufnr)
+    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
+    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
+    old_classes = string.format('"%s"', old_classes)
+
+    local current_jsx_element =
+        lib_ts.find_parent(winnr, { "jsx_element", "jsx_self_closing_element" }, jsx_tag_node)
+    local children = lib_ts.get_children_that_matches_types(
+        current_jsx_element:parent(),
+        { "jsx_element", "jsx_self_closing_element" }
+    )
+
+    for _, child in ipairs(children) do
+        if child ~= current_jsx_element then
+            local string_node, tag_node = lib_ts.get_tag_and_className_string_nodes(winnr, child)
+
+            apply_new_classes(bufnr, tag_node, string_node, old_classes)
+        end
+    end
+end
+
 return M
