@@ -145,6 +145,16 @@ Hydra({
             { nowait = true },
         },
 
+        -------------------------------------------- Classes Cloning
+
+        {
+            "<C-S-.>",
+            function()
+                require("Gambit.lib.classes-cloning").replace_all_classes_to_sibling_classes()
+            end,
+            { nowait = true },
+        },
+
         -------------------------------------------- CIT and Toggle Destination
 
         {

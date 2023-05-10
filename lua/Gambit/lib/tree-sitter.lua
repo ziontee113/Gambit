@@ -140,6 +140,48 @@ end
 
 --------------------------------------------
 
+M.get_tag_and_className_string_nodes = function(winnr)
+    local desired_types = { "jsx_element", "jsx_self_closing_element" }
+    local jsx_node = M.find_parent(winnr, desired_types)
+
+    local root
+    if jsx_node:type() == "jsx_element" then
+        local opening_element =
+            M.get_children_that_matches_types(jsx_node, { "jsx_opening_element" })[1]
+        root = opening_element
+    elseif jsx_node:type() == "jsx_self_closing_element" then
+        root = jsx_node
+    end
+
+    local _, matched_groups = M.get_all_nodes_matches_query(
+        [[ ;query
+(jsx_attribute
+  (property_identifier) @prop_ident (#eq? @prop_ident "className")
+  (string) @string
+)
+]],
+        "tsx",
+        root,
+        { "string" }
+    )
+
+    local jsx_tag_node = M.get_children_that_matches_types(root, { "identifier" })[1]
+    local className_string_node = matched_groups["string"][1]
+
+    return className_string_node, jsx_tag_node
+end
+
+M.get_classes_from_className_string_node = function(className_string_node, bufnr)
+    local old_classes = ""
+    if className_string_node then
+        old_classes = vim.treesitter.get_node_text(className_string_node, bufnr)
+        old_classes = string.gsub(old_classes, "^[\"']", "")
+        old_classes = string.gsub(old_classes, "[\"']$", "")
+    end
+
+    return old_classes
+end
+
 M.replace_node_text = function(bufnr, node, replacement)
     replacement = vim_utils.string_to_string_tbl(replacement)
 

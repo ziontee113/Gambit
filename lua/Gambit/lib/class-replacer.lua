@@ -3,48 +3,6 @@ local M = {}
 local lib_ts = require("Gambit.lib.tree-sitter")
 local classes_manipulator = require("Gambit.lib.classes-manipulator")
 
-local get_tag_and_className_string_nodes = function(winnr)
-    local desired_types = { "jsx_element", "jsx_self_closing_element" }
-    local jsx_node = lib_ts.find_parent(winnr, desired_types)
-
-    local root
-    if jsx_node:type() == "jsx_element" then
-        local opening_element =
-            lib_ts.get_children_that_matches_types(jsx_node, { "jsx_opening_element" })[1]
-        root = opening_element
-    elseif jsx_node:type() == "jsx_self_closing_element" then
-        root = jsx_node
-    end
-
-    local _, matched_groups = lib_ts.get_all_nodes_matches_query(
-        [[ ;query
-(jsx_attribute
-  (property_identifier) @prop_ident (#eq? @prop_ident "className")
-  (string) @string
-)
-]],
-        "tsx",
-        root,
-        { "string" }
-    )
-
-    local jsx_tag_node = lib_ts.get_children_that_matches_types(root, { "identifier" })[1]
-    local className_string_node = matched_groups["string"][1]
-
-    return className_string_node, jsx_tag_node
-end
-
-local get_classes_from_className_string_node = function(className_string_node, bufnr)
-    local old_classes = ""
-    if className_string_node then
-        old_classes = vim.treesitter.get_node_text(className_string_node, bufnr)
-        old_classes = string.gsub(old_classes, "^[\"']", "")
-        old_classes = string.gsub(old_classes, "[\"']$", "")
-    end
-
-    return old_classes
-end
-
 local apply_new_classes = function(bufnr, jsx_tag_node, className_string_node, new_classes)
     if jsx_tag_node then
         if className_string_node then
@@ -64,8 +22,8 @@ local apply_new_classes = function(bufnr, jsx_tag_node, className_string_node, n
 end
 
 M.apply_classes_group = function(win, buf, classes_groups, item_data, placement, negatives)
-    local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(win)
-    local old_classes = get_classes_from_className_string_node(className_string_node, buf)
+    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(win)
+    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, buf)
 
     local new_classes = classes_manipulator.replace_classes_with_list_item(
         old_classes,
@@ -81,8 +39,8 @@ M.apply_classes_group = function(win, buf, classes_groups, item_data, placement,
 end
 
 M.change_tailwind_colors = function(winnr, bufnr, replacement)
-    local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
-    local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
+    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
+    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
 
     local new_classes = classes_manipulator.replace_tailwind_color_classes(old_classes, replacement)
     new_classes = string.format('"%s"', new_classes)
@@ -92,8 +50,8 @@ M.change_tailwind_colors = function(winnr, bufnr, replacement)
 end
 
 M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, replacement)
-    local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
-    local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
+    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
+    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
 
     local new_classes =
         classes_manipulator.remove_pms_classes(old_classes, property, axies_to_remove)
@@ -105,8 +63,8 @@ M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, r
 end
 
 M.change_pseudo_element_conent = function(winnr, bufnr, replacement)
-    local className_string_node, jsx_tag_node = get_tag_and_className_string_nodes(winnr)
-    local old_classes = get_classes_from_className_string_node(className_string_node, bufnr)
+    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
+    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
 
     local new_classes = classes_manipulator.replace_pseudo_element_content(old_classes, replacement)
     new_classes = string.format('"%s"', new_classes)
