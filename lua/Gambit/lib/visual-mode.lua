@@ -36,6 +36,20 @@ M.jsx_nodes = function()
     return visual_elements
 end
 
+M.get_start_and_end_rows = function()
+    local start1, _, end1, _ = visual_elements[1]:range()
+    local start2, _, end2, _ = visual_elements[#visual_elements]:range()
+
+    local start_row, end_row
+    if start1 < start2 then
+        start_row, end_row = start1, end2
+    else
+        start_row, end_row = start2, end1
+    end
+
+    return start_row, end_row
+end
+
 local desired_parent_types = { "jsx_element", "jsx_self_closing_element" }
 M.update = function(node, winnr)
     if visual_mode_active == false then
