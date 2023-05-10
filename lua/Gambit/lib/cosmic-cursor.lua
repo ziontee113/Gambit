@@ -131,11 +131,13 @@ local set_cursor_to_node = function(node)
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
 end
 
-M.jump = function(direction, destination, winnr)
-    local bracket_node = M.get_jump_target(direction, destination, winnr)
+M.jump = function(opts)
+    local bracket_node = M.get_jump_target(opts.direction, opts.destination, opts.winnr)
     if bracket_node then
         set_cursor_to_node(bracket_node)
-        visual_mode.update(bracket_node, winnr)
+        if not opts.skip_visual_mode then
+            visual_mode.update(bracket_node, opts.winnr)
+        end
         return bracket_node -- return the target node for highlighting purposes
     end
 end

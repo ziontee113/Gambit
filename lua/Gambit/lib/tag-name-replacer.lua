@@ -23,6 +23,8 @@ M.replace_to = function(opts)
             lib_ts.replace_node_text(opts.bufnr, opening_idents[1], { opts.tag })
         end
     end
+
+    visual_mode.deactivate()
 end
 
 return M

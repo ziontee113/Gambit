@@ -38,13 +38,18 @@ _._: repeat _u_: undo _q_, _<Esc>_: exit
 local ns = vim.api.nvim_create_namespace("magic_cursor")
 local destination = "next-to"
 
-local jump = function(direction, hl_group)
+local jump = function(opts)
     local count = require("Gambit.lib.vim-utils").get_count()
 
     for _ = 1, count do
-        local target_node = cosmic_cursor.jump(direction, destination, 0)
+        local target_node = cosmic_cursor.jump({
+            direction = opts.direction,
+            destination = destination,
+            skip_visual_mode = opts.skip_visual_mode,
+            winnr = 0,
+        })
         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-        cosmic_rays.highlight_braces(target_node, destination, ns, 0, hl_group or "DiffText")
+        cosmic_rays.highlight_braces(target_node, destination, ns, 0, opts.hl_group or "DiffText")
     end
 end
 
@@ -67,8 +72,8 @@ local toggle_inside_or_outside_opt = function()
         destination = "next-to"
     end
 
-    jump("previous")
-    jump("next")
+    jump({ direction = "previous" })
+    jump({ direction = "next" })
 end
 
 local previous_add_tag_args
@@ -122,7 +127,7 @@ Hydra({
             border = "rounded",
         },
         on_enter = function()
-            jump("in-place")
+            jump({ direction = "in-place" })
 
             PSEUDO_CLASSES = ""
             indicator_popup = indicator.initiate()
@@ -165,7 +170,7 @@ Hydra({
             "d",
             function()
                 require("Gambit.lib.delete").delete(0, 0)
-                jump("in-place")
+                jump({ direction = "in-place" })
             end,
             { nowait = true },
         },
@@ -174,7 +179,7 @@ Hydra({
             "w",
             function()
                 require("Gambit.lib.wrap").wrap_selected_nodes_in_tag("div", 0, 0, 2)
-                jump("in-place")
+                jump({ direction = "in-place" })
             end,
             { nowait = true },
         },
@@ -732,14 +737,29 @@ Hydra({
         {
             "j",
             function()
-                jump("next")
+                jump({ direction = "next" })
             end,
             { nowait = true },
         },
         {
             "k",
             function()
-                jump("previous")
+                jump({ direction = "previous" })
+            end,
+            { nowait = true },
+        },
+
+        {
+            "J",
+            function()
+                jump({ direction = "next", skip_visual_mode = true })
+            end,
+            { nowait = true },
+        },
+        {
+            "K",
+            function()
+                jump({ direction = "previous", skip_visual_mode = true })
             end,
             { nowait = true },
         },
@@ -775,7 +795,7 @@ Hydra({
             function()
                 vim.cmd("norm! u")
                 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                jump("in-place")
+                jump({ direction = "in-place" })
             end,
             { nowait = true },
         },
