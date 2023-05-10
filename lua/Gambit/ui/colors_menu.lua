@@ -201,13 +201,17 @@ M.change_background_color = function()
     show_colors_menu("bg")
 end
 
-M.apply_previous_action = function(node)
+M.apply_previous_action = function(node, sibling_repeat)
     if change_arguments ~= nil then
-        change_arguments.node = node
-        visual_mode.change_selected_elements_classes(
-            class_replacer.change_tailwind_colors,
-            change_arguments
-        )
+        if sibling_repeat then
+            change_arguments.node = node
+            class_replacer.change_tailwind_colors(change_arguments)
+        else
+            visual_mode.change_selected_elements_classes(
+                class_replacer.change_tailwind_colors,
+                change_arguments
+            )
+        end
     end
 end
 

@@ -173,6 +173,7 @@ M.jump_to_jsx_relative = function(winnr, direction)
         local sibling = find_jsx_sibling(jsx_element, direction)
         if sibling then
             set_cursor_to_node(sibling)
+            visual_mode.update(sibling, winnr)
             return sibling
         end
     end

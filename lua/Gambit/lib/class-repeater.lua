@@ -23,11 +23,14 @@ M.repeat_classes_to_all_siblings = function(winnr, bufnr)
 
                 if tag_node then
                     if GAMBIT_PREVIOUS_ACTION == "changing-pms-classes" then
-                        require("Gambit.ui.pms_menu").apply_previous_action(tag_node)
+                        require("Gambit.ui.pms_menu").apply_previous_action(tag_node, true)
                     elseif GAMBIT_PREVIOUS_ACTION == "changing-color-classes" then
-                        require("Gambit.ui.colors_menu").apply_previous_action(tag_node)
+                        require("Gambit.ui.colors_menu").apply_previous_action(tag_node, true)
                     elseif GAMBIT_PREVIOUS_ACTION == "changing-classes-groups" then
-                        require("Gambit.ui.replace_classes_menu").apply_previous_action(tag_node)
+                        require("Gambit.ui.replace_classes_menu").apply_previous_action(
+                            tag_node,
+                            true
+                        )
                     end
                 end
             end

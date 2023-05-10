@@ -65,13 +65,17 @@ M.show_menu = function(classes_groups, placement, negatives)
     menu:mount()
 end
 
-M.apply_previous_action = function(node)
+M.apply_previous_action = function(node, sibling_repeat)
     if change_arguments ~= nil then
-        change_arguments.node = node
-        visual_mode.change_selected_elements_classes(
-            class_replacer.apply_classes_group,
-            change_arguments
-        )
+        if sibling_repeat then
+            change_arguments.node = node
+            class_replacer.apply_classes_group(change_arguments)
+        else
+            visual_mode.change_selected_elements_classes(
+                class_replacer.apply_classes_group,
+                change_arguments
+            )
+        end
     end
 end
 

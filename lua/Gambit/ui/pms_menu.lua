@@ -144,13 +144,17 @@ M.show_spacing_menu = function(axis, axies_to_remove_beforehand)
     show_menu("space-", axis, axies_to_remove_beforehand)
 end
 
-M.apply_previous_action = function(node)
+M.apply_previous_action = function(node, sibling_repeat)
     if change_arguments ~= nil then
-        change_arguments.node = node
-        visual_mode.change_selected_elements_classes(
-            class_replacer.change_pms_classes,
-            change_arguments
-        )
+        if sibling_repeat then
+            change_arguments.node = node
+            class_replacer.change_pms_classes(change_arguments)
+        else
+            visual_mode.change_selected_elements_classes(
+                class_replacer.change_pms_classes,
+                change_arguments
+            )
+        end
     end
 end
 
