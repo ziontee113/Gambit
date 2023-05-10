@@ -152,9 +152,9 @@ Hydra({
             "v",
             function()
                 if visual_mode.is_active() then
-                    visual_mode.activate()
-                else
                     visual_mode.deactivate()
+                else
+                    visual_mode.activate()
                 end
             end,
             { nowait = true },

@@ -1,30 +1,57 @@
+local lib_ts = require("Gambit.lib.tree-sitter")
+
 local M = {}
+local ns = vim.api.nvim_create_namespace("stormcaller_visual_mode")
 
 local visual_mode_active = false
 local visual_elements = {}
 
+local update_eol_extmarks = function()
+    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+
+    if visual_mode_active then
+        for _, node in ipairs(visual_elements) do
+            local start_row = node:range()
+            vim.api.nvim_buf_set_extmark(0, ns, start_row, 0, {
+                virt_text = { { "V", "@attribute" } },
+                virt_text_pos = "eol",
+            })
+        end
+    end
+end
+
 M.activate = function()
     visual_mode_active = true
+    update_eol_extmarks()
 end
 M.deactivate = function()
     visual_mode_active = false
     visual_elements = {}
+    update_eol_extmarks()
 end
 M.is_active = function()
     return visual_mode_active
 end
-M.bracket_nodes = function()
+M.jsx_nodes = function()
     return visual_elements
 end
 
-M.update = function(node)
-    if not visual_mode_active then
+local desired_parent_types = { "jsx_element", "jsx_self_closing_element" }
+M.update = function(node, winnr)
+    if visual_mode_active == false then
         visual_elements = {}
     end
 
-    if not vim.tbl_contains(visual_elements, node) then
-        table.insert(visual_elements, node)
+    local jsx_node = lib_ts.find_parent(winnr, desired_parent_types, node)
+    if not vim.tbl_contains(visual_elements, jsx_node) then
+        if #visual_elements == 0 then
+            table.insert(visual_elements, jsx_node)
+        elseif jsx_node:parent() == visual_elements[1]:parent() then
+            table.insert(visual_elements, jsx_node)
+        end
     end
+
+    update_eol_extmarks()
 end
 
 return M

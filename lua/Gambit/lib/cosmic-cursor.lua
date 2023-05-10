@@ -135,7 +135,7 @@ M.jump = function(direction, destination, winnr)
     local bracket_node = M.get_jump_target(direction, destination, winnr)
     if bracket_node then
         set_cursor_to_node(bracket_node)
-        visual_mode.update(bracket_node)
+        visual_mode.update(bracket_node, winnr)
         return bracket_node -- return the target node for highlighting purposes
     end
 end
