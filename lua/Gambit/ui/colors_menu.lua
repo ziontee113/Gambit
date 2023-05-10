@@ -80,8 +80,12 @@ local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
         max_width = 40,
         keymap = defaults.keymaps,
         on_submit = function(item)
-            change_arguments = { winnr, bufnr, { [property] = item.text } }
-            class_replacer.change_tailwind_colors(unpack(change_arguments))
+            change_arguments = {
+                winnr = winnr,
+                bufnr = bufnr,
+                replacement = { [property] = item.text },
+            }
+            class_replacer.change_tailwind_colors(change_arguments)
         end,
     })
 
@@ -92,8 +96,12 @@ local show_steps_menu = function(property, colored_prefix, winnr, bufnr)
                     steps_menu:unmount()
                     local class = get_full_class(colored_prefix, entry.step)
 
-                    change_arguments = { winnr, bufnr, { [property] = class } }
-                    class_replacer.change_tailwind_colors(unpack(change_arguments))
+                    change_arguments = {
+                        winnr = winnr,
+                        bufnr = bufnr,
+                        replacement = { [property] = class },
+                    }
+                    class_replacer.change_tailwind_colors(change_arguments)
                 end, { nowait = true })
             end
         end
@@ -153,8 +161,12 @@ local show_colors_menu = function(property)
                                 old_bufnr
                             )
                         else
-                            change_arguments = { old_winnr, old_bufnr, { [property] = "" } }
-                            class_replacer.change_tailwind_colors(unpack(change_arguments))
+                            change_arguments = {
+                                winnr = old_winnr,
+                                bufnr = old_bufnr,
+                                replacement = { [property] = "" },
+                            }
+                            class_replacer.change_tailwind_colors(change_arguments)
                         end
                     end
                 end, { nowait = true })
@@ -174,11 +186,8 @@ end
 
 M.apply_previous_action = function(node)
     if change_arguments ~= nil then
-        if node and type(change_arguments[#change_arguments]) ~= "userdata" then
-            table.insert(change_arguments, node)
-        end
-
-        class_replacer.change_tailwind_colors(unpack(change_arguments))
+        change_arguments.node = node
+        class_replacer.change_tailwind_colors(change_arguments)
     end
 end
 

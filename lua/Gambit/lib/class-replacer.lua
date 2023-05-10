@@ -38,15 +38,17 @@ M.apply_classes_group = function(win, buf, classes_groups, item_data, placement,
     GAMBIT_PREVIOUS_ACTION = "changing-classes-groups"
 end
 
-M.change_tailwind_colors = function(winnr, bufnr, replacement, node)
+M.change_tailwind_colors = function(opts)
     local className_string_node, jsx_tag_node =
-        lib_ts.get_tag_and_className_string_nodes(winnr, node)
-    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
+        lib_ts.get_tag_and_className_string_nodes(opts.winnr, opts.node)
+    local old_classes =
+        lib_ts.get_classes_from_className_string_node(className_string_node, opts.bufnr)
 
-    local new_classes = classes_manipulator.replace_tailwind_color_classes(old_classes, replacement)
+    local new_classes =
+        classes_manipulator.replace_tailwind_color_classes(old_classes, opts.replacement)
     new_classes = string.format('"%s"', new_classes)
 
-    apply_new_classes(bufnr, jsx_tag_node, className_string_node, new_classes)
+    apply_new_classes(opts.bufnr, jsx_tag_node, className_string_node, new_classes)
     GAMBIT_PREVIOUS_ACTION = "changing-color-classes"
 end
 
