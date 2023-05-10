@@ -145,16 +145,6 @@ Hydra({
             { nowait = true },
         },
 
-        -------------------------------------------- Classes Cloning
-
-        {
-            "<C-S-.>",
-            function()
-                require("Gambit.lib.class-replacer").replicate_all_classes_to_all_siblings(0, 0)
-            end,
-            { nowait = true },
-        },
-
         -------------------------------------------- CIT and Toggle Destination
 
         {
@@ -362,6 +352,22 @@ Hydra({
                         new_tag(unpack(previous_add_tag_args))
                     end
                 end
+            end,
+            { nowait = true },
+        },
+
+        {
+            "<C-.>",
+            function()
+                require("Gambit.lib.class-repeater").myfunc(0, 0)
+            end,
+            { nowait = true },
+        },
+
+        {
+            "<C-S-.>",
+            function()
+                require("Gambit.lib.class-replacer").replicate_all_classes_to_all_siblings(0, 0)
             end,
             { nowait = true },
         },

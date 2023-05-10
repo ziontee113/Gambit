@@ -59,8 +59,12 @@ M.show_menu = function(classes_groups, placement, negatives)
     menu:mount()
 end
 
-M.apply_previous_action = function()
+M.apply_previous_action = function(node)
     if change_arguments ~= nil then
+        if node and type(change_arguments[#change_arguments]) ~= "userdata" then
+            table.insert(change_arguments, node)
+        end
+
         class_replacer.apply_classes_group(unpack(change_arguments))
     end
 end

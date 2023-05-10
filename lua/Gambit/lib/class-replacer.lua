@@ -21,8 +21,8 @@ local apply_new_classes = function(bufnr, jsx_tag_node, className_string_node, n
     end
 end
 
-M.apply_classes_group = function(win, buf, classes_groups, item_data, placement, negatives)
-    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(win)
+M.apply_classes_group = function(win, buf, classes_groups, item_data, placement, negatives, node)
+    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(win, node)
     local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, buf)
 
     local new_classes = classes_manipulator.replace_classes_with_list_item(
@@ -38,8 +38,9 @@ M.apply_classes_group = function(win, buf, classes_groups, item_data, placement,
     GAMBIT_PREVIOUS_ACTION = "changing-classes-groups"
 end
 
-M.change_tailwind_colors = function(winnr, bufnr, replacement)
-    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
+M.change_tailwind_colors = function(winnr, bufnr, replacement, node)
+    local className_string_node, jsx_tag_node =
+        lib_ts.get_tag_and_className_string_nodes(winnr, node)
     local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
 
     local new_classes = classes_manipulator.replace_tailwind_color_classes(old_classes, replacement)
@@ -49,8 +50,9 @@ M.change_tailwind_colors = function(winnr, bufnr, replacement)
     GAMBIT_PREVIOUS_ACTION = "changing-color-classes"
 end
 
-M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, replacement)
-    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
+M.change_pms_classes = function(winnr, bufnr, property, axis, axies_to_remove, replacement, node)
+    local className_string_node, jsx_tag_node =
+        lib_ts.get_tag_and_className_string_nodes(winnr, node)
     local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
 
     local new_classes =

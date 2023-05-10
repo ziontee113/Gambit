@@ -172,8 +172,12 @@ M.change_background_color = function()
     show_colors_menu("bg")
 end
 
-M.apply_previous_action = function()
+M.apply_previous_action = function(node)
     if change_arguments ~= nil then
+        if node and type(change_arguments[#change_arguments]) ~= "userdata" then
+            table.insert(change_arguments, node)
+        end
+
         class_replacer.change_tailwind_colors(unpack(change_arguments))
     end
 end
