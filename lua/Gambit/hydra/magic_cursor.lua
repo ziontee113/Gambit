@@ -170,6 +170,15 @@ Hydra({
             { nowait = true },
         },
 
+        {
+            "W",
+            function()
+                require("Gambit.lib.wrap").wrap_selected_nodes_in_tag("div", 0, 2)
+                jump("in-place")
+            end,
+            { nowait = true },
+        },
+
         -------------------------------------------- CIT and Toggle Destination
 
         {
