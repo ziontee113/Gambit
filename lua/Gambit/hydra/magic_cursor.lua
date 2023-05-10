@@ -171,9 +171,9 @@ Hydra({
         },
 
         {
-            "W",
+            "w",
             function()
-                require("Gambit.lib.wrap").wrap_selected_nodes_in_tag("div", 0, 2)
+                require("Gambit.lib.wrap").wrap_selected_nodes_in_tag("div", 0, 0, 2)
                 jump("in-place")
             end,
             { nowait = true },
