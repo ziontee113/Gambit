@@ -76,7 +76,7 @@ M.change_pms_classes = function(opts)
     GAMBIT_PREVIOUS_ACTION = "changing-pms-classes"
 end
 
-M.change_pseudo_element_conent = function(winnr, bufnr, replacement)
+M.change_pseudo_element_content = function(winnr, bufnr, replacement)
     local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
     local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, bufnr)
 

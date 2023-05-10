@@ -109,6 +109,7 @@ local indicator = require("Gambit.ui.state_indicator")
 local indicator_popup
 
 local mixer_ui = require("Gambit.ui.pseudo_alias_mixer")
+local visual_mode = require("Gambit.lib.visual-mode")
 
 Hydra({
     name = "Telescope",
@@ -141,6 +142,29 @@ Hydra({
             "<Tab>",
             function()
                 mixer_ui.show(indicator_popup)
+            end,
+            { nowait = true },
+        },
+
+        -------------------------------------------- Visual Mode
+
+        {
+            "v",
+            function()
+                if visual_mode.is_active() then
+                    visual_mode.activate()
+                else
+                    visual_mode.deactivate()
+                end
+            end,
+            { nowait = true },
+        },
+
+        {
+            "d",
+            function()
+                require("Gambit.lib.delete").delete(0, 0)
+                jump("in-place")
             end,
             { nowait = true },
         },
@@ -660,7 +684,7 @@ Hydra({
         },
 
         {
-            "d",
+            "D",
             function()
                 new_tag("div", true)
             end,

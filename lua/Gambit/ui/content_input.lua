@@ -4,10 +4,10 @@ local class_replacer = require("Gambit.lib.class-replacer")
 
 M.show = function(winnr, bufnr)
     local callback = function(content)
-        class_replacer.change_pseudo_element_conent(winnr, bufnr, content)
+        class_replacer.change_pseudo_element_content(winnr, bufnr, content)
     end
     local quit_callback = function()
-        class_replacer.change_pseudo_element_conent(winnr, bufnr, nil)
+        class_replacer.change_pseudo_element_content(winnr, bufnr, nil)
     end
 
     require("Gambit.lib.input-maker").create_input(

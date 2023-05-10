@@ -1,6 +1,7 @@
 local M = {}
 
 local lib_ts = require("Gambit.lib.tree-sitter")
+local visual_mode = require("Gambit.lib.visual-mode")
 
 local get_closest_node_to_cursor = function(nodes, winnr)
     local cursor_row, cursor_col = unpack(vim.api.nvim_win_get_cursor(winnr))
@@ -134,6 +135,7 @@ M.jump = function(direction, destination, winnr)
     local bracket_node = M.get_jump_target(direction, destination, winnr)
     if bracket_node then
         set_cursor_to_node(bracket_node)
+        visual_mode.update(bracket_node)
         return bracket_node -- return the target node for highlighting purposes
     end
 end
