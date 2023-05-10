@@ -27,14 +27,14 @@ M.show_menu = function(classes_groups, placement, negatives)
         keymap = defaults.keymaps,
         on_submit = function(item)
             change_arguments = {
-                old_winnr,
-                old_bufnr,
-                classes_groups,
-                item.data,
-                placement,
-                negatives,
+                winnr = old_winnr,
+                bufnr = old_bufnr,
+                classes_groups = classes_groups,
+                item_data = item.data,
+                placement = placement,
+                negatives = negatives,
             }
-            class_replacer.apply_classes_group(unpack(change_arguments))
+            class_replacer.apply_classes_group(change_arguments)
         end,
     })
 
@@ -43,15 +43,14 @@ M.show_menu = function(classes_groups, placement, negatives)
             menu:map("n", keymap, function()
                 menu:unmount()
                 change_arguments = {
-
-                    old_winnr,
-                    old_bufnr,
-                    classes_groups,
-                    group,
-                    placement,
-                    negatives,
+                    winnr = old_winnr,
+                    bufnr = old_bufnr,
+                    classes_groups = classes_groups,
+                    item_data = group,
+                    placement = placement,
+                    negatives = negatives,
                 }
-                class_replacer.apply_classes_group(unpack(change_arguments))
+                class_replacer.apply_classes_group(change_arguments)
             end, { nowait = true })
         end
     end
@@ -61,11 +60,8 @@ end
 
 M.apply_previous_action = function(node)
     if change_arguments ~= nil then
-        if node and type(change_arguments[#change_arguments]) ~= "userdata" then
-            table.insert(change_arguments, node)
-        end
-
-        class_replacer.apply_classes_group(unpack(change_arguments))
+        change_arguments.node = node
+        class_replacer.apply_classes_group(change_arguments)
     end
 end
 

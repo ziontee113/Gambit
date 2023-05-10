@@ -21,20 +21,22 @@ local apply_new_classes = function(bufnr, jsx_tag_node, className_string_node, n
     end
 end
 
-M.apply_classes_group = function(win, buf, classes_groups, item_data, placement, negatives, node)
-    local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(win, node)
-    local old_classes = lib_ts.get_classes_from_className_string_node(className_string_node, buf)
+M.apply_classes_group = function(opts)
+    local className_string_node, jsx_tag_node =
+        lib_ts.get_tag_and_className_string_nodes(opts.winnr, opts.node)
+    local old_classes =
+        lib_ts.get_classes_from_className_string_node(className_string_node, opts.bufnr)
 
     local new_classes = classes_manipulator.replace_classes_with_list_item(
         old_classes,
-        classes_groups,
-        item_data.classes,
-        placement,
-        negatives
+        opts.classes_groups,
+        opts.item_data.classes,
+        opts.placement,
+        opts.negatives
     )
     new_classes = string.format('"%s"', new_classes)
 
-    apply_new_classes(buf, jsx_tag_node, className_string_node, new_classes)
+    apply_new_classes(opts.bufnr, jsx_tag_node, className_string_node, new_classes)
     GAMBIT_PREVIOUS_ACTION = "changing-classes-groups"
 end
 
