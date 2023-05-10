@@ -57,6 +57,8 @@ local get_class = function(property, axis, value)
 end
 
 local change_arguments
+
+local visual_mode = require("Gambit.lib.visual-mode")
 M.change_arguments = function(args)
     change_arguments = args
 end
@@ -96,7 +98,10 @@ local show_menu = function(property, axis, axies_to_remove)
                 axies_to_remove = axies_to_remove,
                 replacement = item.data,
             }
-            class_replacer.change_pms_classes(change_arguments)
+            visual_mode.change_selected_elements_classes(
+                class_replacer.change_pms_classes,
+                change_arguments
+            )
         end,
     })
 
@@ -116,7 +121,10 @@ local show_menu = function(property, axis, axies_to_remove)
                     axies_to_remove = axies_to_remove,
                     replacement = class,
                 }
-                class_replacer.change_pms_classes(change_arguments)
+                visual_mode.change_selected_elements_classes(
+                    class_replacer.change_pms_classes,
+                    change_arguments
+                )
             end, { nowait = true })
         end
     end
@@ -139,7 +147,10 @@ end
 M.apply_previous_action = function(node)
     if change_arguments ~= nil then
         change_arguments.node = node
-        class_replacer.change_pms_classes(change_arguments)
+        visual_mode.change_selected_elements_classes(
+            class_replacer.change_pms_classes,
+            change_arguments
+        )
     end
 end
 

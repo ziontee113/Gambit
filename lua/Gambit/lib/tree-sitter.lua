@@ -184,6 +184,18 @@ end
 
 --------------------------------------------
 
+local desired_parent_types = { "jsx_element", "jsx_self_closing_element" }
+M.get_updated_jsx_node = function(winnr, og_node)
+    local root = M.get_root("tsx")
+    local start_row, start_col = og_node:range()
+
+    local node = root:named_descendant_for_range(start_row, start_col, start_row, start_col)
+    local jsx_node = M.find_parent(winnr, desired_parent_types, node)
+    return jsx_node
+end
+
+--------------------------------------------
+
 M.replace_node_text = function(bufnr, node, replacement)
     replacement = vim_utils.string_to_string_tbl(replacement)
 

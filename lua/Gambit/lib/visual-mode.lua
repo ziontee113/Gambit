@@ -69,4 +69,13 @@ M.update = function(node, winnr)
     update_eol_extmarks()
 end
 
+M.change_selected_elements_classes = function(callback, change_arguments)
+    for i, node in ipairs(visual_elements) do
+        change_arguments.node = node
+        callback(change_arguments)
+
+        visual_elements[i] = lib_ts.get_updated_jsx_node(change_arguments.winnr, node)
+    end
+end
+
 return M

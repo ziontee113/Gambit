@@ -160,6 +160,7 @@ Hydra({
                 if visual_mode.is_active() then
                     visual_mode.deactivate()
                 else
+                    jump({ direction = "in-place" })
                     visual_mode.activate()
                 end
             end,
@@ -410,7 +411,7 @@ Hydra({
         {
             "<C-.>",
             function()
-                require("Gambit.lib.class-repeater").myfunc(0, 0)
+                require("Gambit.lib.class-repeater").repeat_classes_to_all_siblings(0, 0)
             end,
             { nowait = true },
         },

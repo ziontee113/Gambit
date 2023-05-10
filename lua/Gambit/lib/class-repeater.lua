@@ -2,7 +2,7 @@ local M = {}
 
 local lib_ts = require("Gambit.lib.tree-sitter")
 
-M.myfunc = function(winnr, bufnr)
+M.repeat_classes_to_all_siblings = function(winnr, bufnr)
     if GAMBIT_PREVIOUS_ACTION then
         local className_string_node, jsx_tag_node = lib_ts.get_tag_and_className_string_nodes(winnr)
         local old_classes =
