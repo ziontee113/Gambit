@@ -29,6 +29,7 @@ M.deactivate = function()
     visual_elements = {}
     update_eol_extmarks()
 end
+
 M.is_active = function()
     return visual_mode_active
 end

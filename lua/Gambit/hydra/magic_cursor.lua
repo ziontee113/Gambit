@@ -179,6 +179,18 @@ Hydra({
             { nowait = true },
         },
 
+        {
+            "R",
+            function()
+                require("Gambit.ui.replace_tag_name_menu").show({
+                    { keymaps = { "d", "D" }, tag = "div" },
+                    { keymaps = { "u", "U" }, tag = "ul" },
+                    { keymaps = { "s", "S" }, tag = "section" },
+                })
+            end,
+            { nowait = true },
+        },
+
         -------------------------------------------- CIT and Toggle Destination
 
         {
