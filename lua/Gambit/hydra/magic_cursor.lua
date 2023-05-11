@@ -658,7 +658,7 @@ Hydra({
         {
             "I",
             function()
-                tag_api.new("Image")
+                tag_api.new({ tag = "Image" })
             end,
             { nowait = true },
         },
@@ -666,21 +666,21 @@ Hydra({
         {
             "D",
             function()
-                tag_api.new("div", true)
+                tag_api.new({ tag = "div", enter = true })
             end,
             { nowait = true },
         },
         {
             "U",
             function()
-                tag_api.new("ul", true)
+                tag_api.new({ tag = "ul", enter = true })
             end,
             { nowait = true },
         },
         {
             "l",
             function()
-                tag_api.new("li")
+                tag_api.new({ tag = "li" })
             end,
             { nowait = true },
         },

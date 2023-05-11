@@ -3,12 +3,12 @@ local M = {}
 local cosmic_creation = require("Gambit.lib.cosmic-creation")
 local navigation = require("Gambit.api.navigation")
 
-local previous_add_tag_args
+local previous_new_tag_args
 
-M.new = function(tag, enter)
+M.new = function(opts)
     local count = require("Gambit.lib.vim-utils").get_count()
     local added_new_lines =
-        cosmic_creation.create_tag_at_cursor(tag, navigation._destination(), count)
+        cosmic_creation.create_tag_at_cursor(opts.tag, navigation._destination(), count)
 
     -- update cursor position to the newly created tag
     if added_new_lines then
@@ -20,18 +20,18 @@ M.new = function(tag, enter)
     vim.cmd("norm! ^")
 
     -- update destination for future tags base on `enter` argument
-    local destination = enter and "inside" or "next-to"
+    local destination = opts.enter and "inside" or "next-to"
     navigation._update_destination(destination)
 
     -- update the highlighting
     navigation.jump_and_highlight({ direction = "in-place" })
 
     GAMBIT_PREVIOUS_ACTION = "add-tag"
-    previous_add_tag_args = { tag, enter }
+    previous_new_tag_args = opts
 end
 
 M.repeat_previous_action = function()
-    M.new(unpack(previous_add_tag_args))
+    M.new(previous_new_tag_args)
 end
 
 return M
