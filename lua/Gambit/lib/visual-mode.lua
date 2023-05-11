@@ -51,13 +51,16 @@ M.get_start_and_end_rows = function()
     return start_row, end_row
 end
 
-local desired_parent_types = { "jsx_element", "jsx_self_closing_element" }
 M.update = function(node, winnr)
     if visual_mode_active == false then
         visual_elements = {}
     end
 
-    local jsx_node = lib_ts.find_parent(winnr, desired_parent_types, node)
+    local jsx_node = lib_ts.get_updated_jsx_node(winnr, node)
+    if not jsx_node then
+        return
+    end
+
     if not vim.tbl_contains(visual_elements, jsx_node) then
         if #visual_elements == 0 then
             table.insert(visual_elements, jsx_node)
