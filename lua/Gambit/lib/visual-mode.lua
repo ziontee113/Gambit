@@ -30,12 +30,17 @@ M.deactivate = function()
     update_eol_extmarks()
 end
 
-M.is_active = function()
-    return visual_mode_active
+M.toggle = function()
+    if M.is_active() then
+        M.deactivate()
+    else
+        require("Gambit.api.navigation").jump_and_highlight({ direction = "in-place" })
+        M.activate()
+    end
 end
-M.jsx_nodes = function()
-    return visual_elements
-end
+
+M.is_active = function() return visual_mode_active end
+M.jsx_nodes = function() return visual_elements end
 
 M.get_start_and_end_rows = function()
     local start1, _, end1, _ = visual_elements[1]:range()

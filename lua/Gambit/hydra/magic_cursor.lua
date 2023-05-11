@@ -56,39 +56,19 @@ Hydra({
             position = "bottom-right",
             border = "rounded",
         },
-        on_enter = function()
-            mandatory_events.enter()
-        end,
-        on_exit = function()
-            mandatory_events.exit()
-        end,
+        on_enter = function() mandatory_events.enter() end,
+        on_exit = function() mandatory_events.exit() end,
     },
     mode = "n",
     body = "<Plug>R1 B --down<Plug>",
     heads = {
-        {
-            "<Tab>",
-            function()
-                pseudo_classes_input.show()
-            end,
-            { nowait = true },
-        },
+        -------------------------------------------- Changing Pseudo Classes
+
+        { "<Tab>", function() pseudo_classes_input.show() end, { nowait = true } },
 
         -------------------------------------------- Visual Mode
 
-        {
-            "v",
-            function()
-                if visual_mode.is_active() then
-                    visual_mode.deactivate()
-                else
-                    navigation.jump_and_highlight({ direction = "in-place" })
-                    visual_mode.activate()
-                end
-            end,
-            { nowait = true },
-        },
-
+        { "v", function() visual_mode.toggle() end, { nowait = true } },
         {
             "d",
             function()
@@ -123,9 +103,7 @@ Hydra({
 
         {
             "o",
-            function()
-                navigation.toggle_inside_or_outside_opt()
-            end,
+            function() navigation.toggle_inside_or_outside_opt() end,
             { nowait = true },
         },
 
@@ -163,16 +141,12 @@ Hydra({
 
         {
             "h",
-            function()
-                require("Gambit.ui.text_content_menu").replace_content("contents.txt")
-            end,
+            function() require("Gambit.ui.text_content_menu").replace_content("contents.txt") end,
             { nowait = true },
         },
         {
             "sr",
-            function()
-                require("Gambit.ui.image_src_menu").replace_img_src()
-            end,
+            function() require("Gambit.ui.image_src_menu").replace_img_src() end,
             { nowait = true },
         },
 
@@ -354,9 +328,7 @@ Hydra({
 
         {
             "<C-.>",
-            function()
-                require("Gambit.lib.class-repeater").repeat_classes_to_all_siblings(0, 0)
-            end,
+            function() require("Gambit.lib.class-repeater").repeat_classes_to_all_siblings(0, 0) end,
             { nowait = true },
         },
 
@@ -372,31 +344,23 @@ Hydra({
 
         {
             "t",
-            function()
-                colors_menu.change_text_color()
-            end,
+            function() colors_menu.change_text_color() end,
             { nowait = true },
         },
         {
             "T",
-            function()
-                require("Gambit.ui.color_input").show(0, 0, "text")
-            end,
+            function() require("Gambit.ui.color_input").show(0, 0, "text") end,
             { nowait = true },
         },
 
         {
             "b",
-            function()
-                colors_menu.change_background_color()
-            end,
+            function() colors_menu.change_background_color() end,
             { nowait = true },
         },
         {
             "B",
-            function()
-                require("Gambit.ui.color_input").show(0, 0, "bg")
-            end,
+            function() require("Gambit.ui.color_input").show(0, 0, "bg") end,
             { nowait = true },
         },
 
@@ -404,244 +368,180 @@ Hydra({
 
         {
             ",c",
-            function()
-                require("Gambit.ui.content_input").show(0, 0)
-            end,
+            function() require("Gambit.ui.content_input").show(0, 0) end,
             { nowait = true },
         },
 
         ------------------------------------------ paddings
         {
             "P",
-            function()
-                pms_menu.show_paddings_menu("")
-            end,
+            function() pms_menu.show_paddings_menu("") end,
             { nowait = true },
         },
         {
             "<C-S-P>",
-            function()
-                pms_menu.show_paddings_menu("", "all")
-            end,
+            function() pms_menu.show_paddings_menu("", "all") end,
             { nowait = true },
         },
         {
             ",P",
-            function()
-                require("Gambit.ui.pms_input").show(0, 0, "p", "", "")
-            end,
+            function() require("Gambit.ui.pms_input").show(0, 0, "p", "", "") end,
             { nowait = true },
         },
 
         ----- padding x and y
         {
             "py",
-            function()
-                pms_menu.show_paddings_menu("y")
-            end,
+            function() pms_menu.show_paddings_menu("y") end,
             { nowait = true },
         },
         {
             ",py",
-            function()
-                require("Gambit.ui.pms_input").show(0, 0, "p", "y", "")
-            end,
+            function() require("Gambit.ui.pms_input").show(0, 0, "p", "y", "") end,
             { nowait = true },
         },
 
         {
             "pY",
-            function()
-                pms_menu.show_paddings_menu("x", { "t", "b" })
-            end,
+            function() pms_menu.show_paddings_menu("x", { "t", "b" }) end,
             { nowait = true },
         },
         {
             ",pY",
-            function()
-                require("Gambit.ui.pms_input").show(0, 0, "p", "y", { "t", "b" })
-            end,
+            function() require("Gambit.ui.pms_input").show(0, 0, "p", "y", { "t", "b" }) end,
             { nowait = true },
         },
 
         {
             "px",
-            function()
-                pms_menu.show_paddings_menu("x")
-            end,
+            function() pms_menu.show_paddings_menu("x") end,
             { nowait = true },
         },
         {
             ",px",
-            function()
-                require("Gambit.ui.pms_input").show(0, 0, "p", "x", "")
-            end,
+            function() require("Gambit.ui.pms_input").show(0, 0, "p", "x", "") end,
             { nowait = true },
         },
         {
             "pX",
-            function()
-                pms_menu.show_paddings_menu("x", { "l", "r" })
-            end,
+            function() pms_menu.show_paddings_menu("x", { "l", "r" }) end,
             { nowait = true },
         },
         {
             ",pX",
-            function()
-                require("Gambit.ui.pms_input").show(0, 0, "p", "x", { "l", "r" })
-            end,
+            function() require("Gambit.ui.pms_input").show(0, 0, "p", "x", { "l", "r" }) end,
             { nowait = true },
         },
 
         {
             "p<C-y>",
-            function()
-                pms_menu.show_paddings_menu("y", "all")
-            end,
+            function() pms_menu.show_paddings_menu("y", "all") end,
             { nowait = true },
         },
         {
             ",p<C-y>",
-            function()
-                require("Gambit.ui.pms_input").show(0, 0, "p", "y", "all")
-            end,
+            function() require("Gambit.ui.pms_input").show(0, 0, "p", "y", "all") end,
             { nowait = true },
         },
         {
             "p<C-x>",
-            function()
-                pms_menu.show_paddings_menu("x", "all")
-            end,
+            function() pms_menu.show_paddings_menu("x", "all") end,
             { nowait = true },
         },
         {
             ",p<C-x>",
-            function()
-                require("Gambit.ui.pms_input").show(0, 0, "p", "x", "all")
-            end,
+            function() require("Gambit.ui.pms_input").show(0, 0, "p", "x", "all") end,
             { nowait = true },
         },
 
         ----- padding t,b,l,r
         {
             "pl",
-            function()
-                pms_menu.show_paddings_menu("l")
-            end,
+            function() pms_menu.show_paddings_menu("l") end,
             { nowait = true },
         },
         {
             "pr",
-            function()
-                pms_menu.show_paddings_menu("r")
-            end,
+            function() pms_menu.show_paddings_menu("r") end,
             { nowait = true },
         },
         {
             "pt",
-            function()
-                pms_menu.show_paddings_menu("t")
-            end,
+            function() pms_menu.show_paddings_menu("t") end,
             { nowait = true },
         },
         {
             "pb",
-            function()
-                pms_menu.show_paddings_menu("b")
-            end,
+            function() pms_menu.show_paddings_menu("b") end,
             { nowait = true },
         },
 
         ------------------------------------------ margins
         {
             "M",
-            function()
-                pms_menu.show_margins_menu("")
-            end,
+            function() pms_menu.show_margins_menu("") end,
             { nowait = true },
         },
         {
             "<C-S-M>",
-            function()
-                pms_menu.show_margins_menu("", "all")
-            end,
+            function() pms_menu.show_margins_menu("", "all") end,
             { nowait = true },
         },
 
         ----- padding x and y
         {
             "my",
-            function()
-                pms_menu.show_margins_menu("y")
-            end,
+            function() pms_menu.show_margins_menu("y") end,
             { nowait = true },
         },
         {
             "mx",
-            function()
-                pms_menu.show_margins_menu("x")
-            end,
+            function() pms_menu.show_margins_menu("x") end,
             { nowait = true },
         },
 
         ----- padding t,b,l,r
         {
             "ml",
-            function()
-                pms_menu.show_margins_menu("l")
-            end,
+            function() pms_menu.show_margins_menu("l") end,
             { nowait = true },
         },
         {
             "mr",
-            function()
-                pms_menu.show_margins_menu("r")
-            end,
+            function() pms_menu.show_margins_menu("r") end,
             { nowait = true },
         },
         {
             "mt",
-            function()
-                pms_menu.show_margins_menu("t")
-            end,
+            function() pms_menu.show_margins_menu("t") end,
             { nowait = true },
         },
         {
             "mb",
-            function()
-                pms_menu.show_margins_menu("b")
-            end,
+            function() pms_menu.show_margins_menu("b") end,
             { nowait = true },
         },
 
         ------------------------------------------ spacing
         {
             "sx",
-            function()
-                pms_menu.show_spacing_menu("x")
-            end,
+            function() pms_menu.show_spacing_menu("x") end,
             { nowait = true },
         },
         {
             "sy",
-            function()
-                pms_menu.show_spacing_menu("y")
-            end,
+            function() pms_menu.show_spacing_menu("y") end,
             { nowait = true },
         },
 
         {
             "sX",
-            function()
-                pms_menu.show_spacing_menu("x", "all")
-            end,
+            function() pms_menu.show_spacing_menu("x", "all") end,
             { nowait = true },
         },
         {
             "sY",
-            function()
-                pms_menu.show_spacing_menu("y", "all")
-            end,
+            function() pms_menu.show_spacing_menu("y", "all") end,
             { nowait = true },
         },
 
@@ -649,31 +549,23 @@ Hydra({
 
         {
             "I",
-            function()
-                tag_api.new({ tag = "Image" })
-            end,
+            function() tag_api.new({ tag = "Image" }) end,
             { nowait = true },
         },
 
         {
             "D",
-            function()
-                tag_api.new({ tag = "div", enter = true })
-            end,
+            function() tag_api.new({ tag = "div", enter = true }) end,
             { nowait = true },
         },
         {
             "U",
-            function()
-                tag_api.new({ tag = "ul", enter = true })
-            end,
+            function() tag_api.new({ tag = "ul", enter = true }) end,
             { nowait = true },
         },
         {
             "l",
-            function()
-                tag_api.new({ tag = "li" })
-            end,
+            function() tag_api.new({ tag = "li" }) end,
             { nowait = true },
         },
 
@@ -681,16 +573,12 @@ Hydra({
 
         {
             "j",
-            function()
-                navigation.jump_and_highlight({ direction = "next" })
-            end,
+            function() navigation.jump_and_highlight({ direction = "next" }) end,
             { nowait = true },
         },
         {
             "k",
-            function()
-                navigation.jump_and_highlight({ direction = "previous" })
-            end,
+            function() navigation.jump_and_highlight({ direction = "previous" }) end,
             { nowait = true },
         },
 
@@ -713,23 +601,17 @@ Hydra({
 
         {
             "<C-j>",
-            function()
-                navigation.jump_and_highlight_sibling("next")
-            end,
+            function() navigation.jump_and_highlight_sibling("next") end,
             { nowait = true },
         },
         {
             "<C-k>",
-            function()
-                navigation.jump_and_highlight_sibling("previous")
-            end,
+            function() navigation.jump_and_highlight_sibling("previous") end,
             { nowait = true },
         },
         {
             "<C-h>",
-            function()
-                navigation.jump_and_highlight_sibling("parent")
-            end,
+            function() navigation.jump_and_highlight_sibling("parent") end,
             { nowait = true },
         },
 
