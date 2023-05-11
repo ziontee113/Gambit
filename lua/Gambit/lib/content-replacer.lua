@@ -28,11 +28,9 @@ local replace_jsx_text = function(winnr, bufnr, replacement)
     end
 end
 
-M.replace_jsx_text = function(winnr, bufnr, replacement)
-    replace_jsx_text(winnr, bufnr, replacement)
-end
+M.replace_jsx_text = function(winnr, bufnr, replacement) replace_jsx_text(winnr, bufnr, replacement) end
 
-M.replace_jsx_text_with_expression = function(winnr, bufnr)
+M.replace_jsx_text_with_empty_expression = function(winnr, bufnr)
     local _, opening_node = get_jsx_text_node(winnr)
     local start_row = opening_node:range()
 

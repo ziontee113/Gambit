@@ -4,17 +4,11 @@ local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
 local cosmic_rays = require("Gambit.lib.cosmic-rays")
 
 local ns = vim.api.nvim_create_namespace("stormcaller_navigation")
-M._clear_namespace = function()
-    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-end
+M._clear_namespace = function() vim.api.nvim_buf_clear_namespace(0, ns, 0, -1) end
 
 local destination = "next-to"
-M._destination = function()
-    return destination
-end
-M._update_destination = function(value)
-    destination = value
-end
+M._destination = function() return destination end
+M._update_destination = function(value) destination = value end
 
 M.jump_and_highlight = function(opts)
     local count = require("Gambit.lib.vim-utils").get_count()
@@ -43,7 +37,7 @@ M.jump_and_highlight_sibling = function(direction, hl_group)
     end
 end
 
-M.toggle_inside_or_outside_opt = function()
+M.toggle_new_tag_destination = function()
     if destination == "next-to" then
         destination = "inside"
     else

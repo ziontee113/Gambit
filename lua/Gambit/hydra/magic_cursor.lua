@@ -62,14 +62,16 @@ Hydra({
     mode = "n",
     body = "<Plug>R1 B --down<Plug>",
     heads = {
-        -------------------------------------------- Changing Pseudo Classes
-
+        -- Changing Pseudo Classes
         { "<Tab>", function() pseudo_classes_input.show() end, { nowait = true } },
 
-        -------------------------------------------- Custom Visual Mode Related
-
+        -- Toggle Custom Visual Mode
         { "v", function() visual_mode.toggle() end, { nowait = true } },
+
+        -- Delete current / selected tags
         { "d", function() require("Gambit.api.delete").delete_tags() end, { nowait = true } },
+
+        -- Wrap current / selected tags in another tag
         {
             "w",
             function()
@@ -80,6 +82,8 @@ Hydra({
             end,
             { nowait = true },
         },
+
+        -- Replace current / selected tags' tag names
         {
             "R",
             function()
@@ -92,14 +96,10 @@ Hydra({
             { nowait = true },
         },
 
-        -------------------------------------------- CIT and Toggle Destination
+        -- Toggle new tag destination
+        { "o", function() navigation.toggle_new_tag_destination() end, { nowait = true } },
 
-        {
-            "o",
-            function() navigation.toggle_inside_or_outside_opt() end,
-            { nowait = true },
-        },
-
+        -- Change tag content if user have text object plugin installed
         {
             "i",
             function()
@@ -112,16 +112,18 @@ Hydra({
 
         -------------------------------------------- Replacing Content
 
+        -- Replace current tag's content with empty expression, then enter insert mode.
         {
             "<C-S-;>",
             function()
-                require("Gambit.lib.content-replacer").replace_jsx_text_with_expression(0, 0)
+                require("Gambit.lib.content-replacer").replace_jsx_text_with_empty_expression(0, 0)
             end,
             { nowait = true },
         },
 
+        -- Replace given attribute's content with empty expression, then enter insert mode.
         {
-            "<C-x>",
+            "<C-S-A>",
             function()
                 require("Gambit.lib.attribute-replacer").replace_attribute_with_empty_jsx_expression({
                     winnr = 0,
@@ -132,11 +134,14 @@ Hydra({
             { nowait = true },
         },
 
+        -- Replace current tag's content with contents in `contents.txt` file
         {
             "h",
             function() require("Gambit.ui.text_content_menu").replace_content("contents.txt") end,
             { nowait = true },
         },
+
+        -- Replace current tag's `src` attribute, requires `fd`.
         {
             "sr",
             function() require("Gambit.ui.image_src_menu").replace_img_src() end,
