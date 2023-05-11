@@ -1,8 +1,10 @@
 local Hydra = require("hydra")
 
 local lua_patterns = require("Gambit.lua_patterns")
+
 local navigation = require("Gambit.api.navigation")
 local tag_api = require("Gambit.api.tag")
+local mandatory_events = require("Gambit.api.mandatory_events")
 
 local hints = [[
 move: _k_ / _j_ sibling: _<C-k>_ / _<C-j>_ parent: _<C-h>_
@@ -40,8 +42,6 @@ local pms_menu = require("Gambit.ui.pms_menu")
 local colors_menu = require("Gambit.ui.colors_menu")
 
 PSEUDO_CLASSES = ""
-local indicator = require("Gambit.ui.state_indicator")
-local indicator_popup
 
 local mixer_ui = require("Gambit.ui.pseudo_alias_mixer")
 local visual_mode = require("Gambit.lib.visual-mode")
@@ -57,18 +57,10 @@ Hydra({
             border = "rounded",
         },
         on_enter = function()
-            navigation.jump_and_highlight({ direction = "in-place" })
-
-            PSEUDO_CLASSES = ""
-            indicator_popup = indicator.initiate()
+            mandatory_events.enter()
         end,
         on_exit = function()
-            navigation._clear_namespace()
-            visual_mode.deactivate()
-
-            if indicator_popup then
-                indicator_popup:unmount()
-            end
+            mandatory_events.exit()
         end,
     },
     mode = "n",
