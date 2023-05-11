@@ -217,7 +217,15 @@ Hydra({
             { nowait = true },
         },
 
-        -------------------------------------------- Replacing Classes
+        -------------------------------------------- Replacing Content
+
+        {
+            "<C-;>",
+            function()
+                require("Gambit.lib.content-replacer").replace_jsx_text_with_expression(0, 0)
+            end,
+            { nowait = true },
+        },
 
         {
             "h",
@@ -233,6 +241,8 @@ Hydra({
             end,
             { nowait = true },
         },
+
+        -------------------------------------------- Replacing Classes
 
         {
             "fl",
