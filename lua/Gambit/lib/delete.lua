@@ -10,6 +10,7 @@ M.delete = function(winnr, bufnr)
     vim.cmd("norm! ^")
 
     visual_mode.deactivate()
+    require("Gambit.api.navigation").jump_and_highlight({ direction = "in-place" })
 end
 
 return M

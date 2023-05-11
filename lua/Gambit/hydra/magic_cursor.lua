@@ -66,17 +66,10 @@ Hydra({
 
         { "<Tab>", function() pseudo_classes_input.show() end, { nowait = true } },
 
-        -------------------------------------------- Visual Mode
+        -------------------------------------------- Custom Visual Mode Related
 
         { "v", function() visual_mode.toggle() end, { nowait = true } },
-        {
-            "d",
-            function()
-                require("Gambit.lib.delete").delete(0, 0)
-                navigation.jump_and_highlight({ direction = "in-place" })
-            end,
-            { nowait = true },
-        },
+        { "d", function() require("Gambit.lib.delete").delete(0, 0) end, { nowait = true } },
 
         {
             "w",
