@@ -1,9 +1,8 @@
 local Hydra = require("hydra")
 
-local cosmic_creation = require("Gambit.lib.cosmic-creation")
 local lua_patterns = require("Gambit.lua_patterns")
-
 local navigation = require("Gambit.api.navigation")
+local tag_api = require("Gambit.api.tag")
 
 local hints = [[
 move: _k_ / _j_ sibling: _<C-k>_ / _<C-j>_ parent: _<C-h>_
@@ -32,34 +31,6 @@ _O_: opacity
 
 _._: repeat _u_: undo _q_, _<Esc>_: exit 
 ]]
-
---------------------------------------------
-
-local previous_add_tag_args
-local new_tag = function(tag, enter)
-    local count = require("Gambit.lib.vim-utils").get_count()
-    local added_new_lines =
-        cosmic_creation.create_tag_at_cursor(tag, navigation._destination(), count)
-
-    -- update cursor position to the newly created tag
-    if added_new_lines then
-        vim.cmd("norm! k")
-    else
-        local jump_cmd = "norm! " .. count .. "j"
-        vim.cmd(jump_cmd)
-    end
-    vim.cmd("norm! ^")
-
-    -- update destination for future tags base on `enter` argument
-    local destination = enter and "inside" or "next-to"
-    navigation._update_destination(destination)
-
-    -- update the highlighting
-    navigation.jump_and_highlight({ direction = "in-place" })
-
-    GAMBIT_PREVIOUS_ACTION = "add-tag"
-    previous_add_tag_args = { tag, enter }
-end
 
 --------------------------------------------
 
@@ -382,7 +353,7 @@ Hydra({
                     elseif GAMBIT_PREVIOUS_ACTION == "changing-classes-groups" then
                         require("Gambit.ui.replace_classes_menu").apply_previous_action()
                     elseif GAMBIT_PREVIOUS_ACTION == "add-tag" then
-                        new_tag(unpack(previous_add_tag_args))
+                        tag_api.repeat_previous_action()
                     end
                 end
             end,
@@ -687,7 +658,7 @@ Hydra({
         {
             "I",
             function()
-                new_tag("Image")
+                tag_api.new("Image")
             end,
             { nowait = true },
         },
@@ -695,21 +666,21 @@ Hydra({
         {
             "D",
             function()
-                new_tag("div", true)
+                tag_api.new("div", true)
             end,
             { nowait = true },
         },
         {
             "U",
             function()
-                new_tag("ul", true)
+                tag_api.new("ul", true)
             end,
             { nowait = true },
         },
         {
             "l",
             function()
-                new_tag("li")
+                tag_api.new("li")
             end,
             { nowait = true },
         },
