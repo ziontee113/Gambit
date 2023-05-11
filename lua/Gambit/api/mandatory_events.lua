@@ -6,6 +6,10 @@ local navigation = require("Gambit.api.navigation")
 local indicator = require("Gambit.ui.state_indicator")
 local indicator_popup
 
+M._indicator_popup = function()
+    return indicator_popup
+end
+
 M.enter = function()
     navigation.jump_and_highlight({ direction = "in-place" })
 

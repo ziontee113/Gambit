@@ -43,7 +43,7 @@ local colors_menu = require("Gambit.ui.colors_menu")
 
 PSEUDO_CLASSES = ""
 
-local mixer_ui = require("Gambit.ui.pseudo_alias_mixer")
+local pseudo_classes_input = require("Gambit.ui.pseudo_classes_input")
 local visual_mode = require("Gambit.lib.visual-mode")
 
 Hydra({
@@ -69,7 +69,7 @@ Hydra({
         {
             "<Tab>",
             function()
-                mixer_ui.show(indicator_popup)
+                pseudo_classes_input.show()
             end,
             { nowait = true },
         },

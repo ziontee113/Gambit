@@ -1,9 +1,11 @@
 local M = {}
 
+local mandatory_events = require("Gambit.api.mandatory_events")
 local indicator = require("Gambit.ui.state_indicator")
 local lib_mixer = require("Gambit.lib.pseudo-classes-mixer")
 
-M.show = function(indicator_popup)
+M.show = function()
+    local indicator_popup = mandatory_events._indicator_popup()
     local Input = require("nui.input")
 
     local popup_options = {
@@ -58,5 +60,3 @@ M.show = function(indicator_popup)
 end
 
 return M
-
--- {{{nvim-execute-on-save}}}
