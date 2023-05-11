@@ -233,7 +233,7 @@ Hydra({
                 require("Gambit.lib.attribute-replacer").replace_attribute_with_empty_jsx_expression({
                     winnr = 0,
                     bufnr = 0,
-                    argument = "alt",
+                    attribute = "alt",
                 })
             end,
             { nowait = true },

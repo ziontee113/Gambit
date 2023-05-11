@@ -12,7 +12,7 @@ M.replace_attribute_with_empty_jsx_expression = function(opts)
 (jsx_attribute
   (property_identifier) @prop_ident (#eq? @prop_ident "%s")
 ) ]],
-        opts.argument
+        opts.attribute
     )
 
     local _, matched_identifiers =
@@ -33,7 +33,7 @@ M.replace_attribute_with_empty_jsx_expression = function(opts)
         local jsx_tag_node = lib_ts.get_children_that_matches_types(attr_root, { "identifier" })[1]
         local _, _, end_row, end_col = jsx_tag_node:range()
 
-        replacement = { string.format(" %s={}", opts.argument) }
+        replacement = { string.format(" %s={}", opts.attribute) }
         vim.api.nvim_buf_set_text(opts.bufnr, end_row, end_col, end_row, end_col, replacement)
 
         jump_to_row = end_row + 1
