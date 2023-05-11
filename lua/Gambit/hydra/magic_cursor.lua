@@ -69,7 +69,7 @@ Hydra({
         -------------------------------------------- Custom Visual Mode Related
 
         { "v", function() visual_mode.toggle() end, { nowait = true } },
-        { "d", function() require("Gambit.api.delete").delete(0, 0) end, { nowait = true } },
+        { "d", function() require("Gambit.api.delete").delete_tags() end, { nowait = true } },
         {
             "w",
             function()
@@ -80,7 +80,6 @@ Hydra({
             end,
             { nowait = true },
         },
-
         {
             "R",
             function()
