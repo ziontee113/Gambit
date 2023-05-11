@@ -69,11 +69,11 @@ Hydra({
         -------------------------------------------- Custom Visual Mode Related
 
         { "v", function() visual_mode.toggle() end, { nowait = true } },
-        { "d", function() require("Gambit.lib.delete").delete(0, 0) end, { nowait = true } },
+        { "d", function() require("Gambit.api.delete").delete(0, 0) end, { nowait = true } },
         {
             "w",
             function()
-                require("Gambit.lib.wrap").wrap_selected_nodes_in_tag({
+                require("Gambit.api.wrap").wrap_selected_nodes_in_tag({
                     tag = "div",
                     indent_by = 2,
                 })
