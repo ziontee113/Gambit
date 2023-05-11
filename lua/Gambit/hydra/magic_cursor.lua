@@ -1,9 +1,9 @@
 local Hydra = require("hydra")
 
-local cosmic_cursor = require("Gambit.lib.cosmic-cursor")
-local cosmic_rays = require("Gambit.lib.cosmic-rays")
 local cosmic_creation = require("Gambit.lib.cosmic-creation")
 local lua_patterns = require("Gambit.lua_patterns")
+
+local navigation = require("Gambit.api.navigation")
 
 local hints = [[
 move: _k_ / _j_ sibling: _<C-k>_ / _<C-j>_ parent: _<C-h>_
@@ -35,51 +35,11 @@ _._: repeat _u_: undo _q_, _<Esc>_: exit
 
 --------------------------------------------
 
-local ns = vim.api.nvim_create_namespace("magic_cursor")
-local destination = "next-to"
-
-local jump = function(opts)
-    local count = require("Gambit.lib.vim-utils").get_count()
-
-    for _ = 1, count do
-        local target_node = cosmic_cursor.jump({
-            direction = opts.direction,
-            destination = destination,
-            skip_visual_mode = opts.skip_visual_mode,
-            winnr = 0,
-        })
-        vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-        cosmic_rays.highlight_braces(target_node, destination, ns, 0, opts.hl_group or "DiffText")
-    end
-end
-
-local jump_and_highlight_sibling = function(direction, hl_group)
-    local count = require("Gambit.lib.vim-utils").get_count()
-
-    for _ = 1, count do
-        local sibling = cosmic_cursor.jump_to_jsx_relative(0, direction)
-        if sibling then
-            vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-            cosmic_rays.highlight_braces(sibling, destination, ns, 0, hl_group or "DiffText")
-        end
-    end
-end
-
-local toggle_inside_or_outside_opt = function()
-    if destination == "next-to" then
-        destination = "inside"
-    else
-        destination = "next-to"
-    end
-
-    jump({ direction = "previous" })
-    jump({ direction = "next" })
-end
-
 local previous_add_tag_args
 local new_tag = function(tag, enter)
     local count = require("Gambit.lib.vim-utils").get_count()
-    local added_new_lines = cosmic_creation.create_tag_at_cursor(tag, destination, count)
+    local added_new_lines =
+        cosmic_creation.create_tag_at_cursor(tag, navigation._destination(), count)
 
     -- update cursor position to the newly created tag
     if added_new_lines then
@@ -91,12 +51,11 @@ local new_tag = function(tag, enter)
     vim.cmd("norm! ^")
 
     -- update destination for future tags base on `enter` argument
-    destination = enter and "inside" or "next-to"
+    local destination = enter and "inside" or "next-to"
+    navigation._update_destination(destination)
 
     -- update the highlighting
-    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-    local target_node = cosmic_cursor.get_jump_target("in-place", destination, 0)
-    cosmic_rays.highlight_braces(target_node, destination, ns, 0, "DiffText")
+    navigation.jump_and_highlight({ direction = "in-place" })
 
     GAMBIT_PREVIOUS_ACTION = "add-tag"
     previous_add_tag_args = { tag, enter }
@@ -127,13 +86,13 @@ Hydra({
             border = "rounded",
         },
         on_enter = function()
-            jump({ direction = "in-place" })
+            navigation.jump_and_highlight({ direction = "in-place" })
 
             PSEUDO_CLASSES = ""
             indicator_popup = indicator.initiate()
         end,
         on_exit = function()
-            vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+            navigation._clear_namespace()
             visual_mode.deactivate()
 
             if indicator_popup then
@@ -160,7 +119,7 @@ Hydra({
                 if visual_mode.is_active() then
                     visual_mode.deactivate()
                 else
-                    jump({ direction = "in-place" })
+                    navigation.jump_and_highlight({ direction = "in-place" })
                     visual_mode.activate()
                 end
             end,
@@ -171,7 +130,7 @@ Hydra({
             "d",
             function()
                 require("Gambit.lib.delete").delete(0, 0)
-                jump({ direction = "in-place" })
+                navigation.jump_and_highlight({ direction = "in-place" })
             end,
             { nowait = true },
         },
@@ -180,7 +139,7 @@ Hydra({
             "w",
             function()
                 require("Gambit.lib.wrap").wrap_selected_nodes_in_tag("div", 0, 0, 2)
-                jump({ direction = "in-place" })
+                navigation.jump_and_highlight({ direction = "in-place" })
             end,
             { nowait = true },
         },
@@ -202,7 +161,7 @@ Hydra({
         {
             "o",
             function()
-                toggle_inside_or_outside_opt()
+                navigation.toggle_inside_or_outside_opt()
             end,
             { nowait = true },
         },
@@ -760,14 +719,14 @@ Hydra({
         {
             "j",
             function()
-                jump({ direction = "next" })
+                navigation.jump_and_highlight({ direction = "next" })
             end,
             { nowait = true },
         },
         {
             "k",
             function()
-                jump({ direction = "previous" })
+                navigation.jump_and_highlight({ direction = "previous" })
             end,
             { nowait = true },
         },
@@ -775,14 +734,14 @@ Hydra({
         {
             "J",
             function()
-                jump({ direction = "next", skip_visual_mode = true })
+                navigation.jump_and_highlight({ direction = "next", skip_visual_mode = true })
             end,
             { nowait = true },
         },
         {
             "K",
             function()
-                jump({ direction = "previous", skip_visual_mode = true })
+                navigation.jump_and_highlight({ direction = "previous", skip_visual_mode = true })
             end,
             { nowait = true },
         },
@@ -792,21 +751,21 @@ Hydra({
         {
             "<C-j>",
             function()
-                jump_and_highlight_sibling("next")
+                navigation.jump_and_highlight_sibling("next")
             end,
             { nowait = true },
         },
         {
             "<C-k>",
             function()
-                jump_and_highlight_sibling("previous")
+                navigation.jump_and_highlight_sibling("previous")
             end,
             { nowait = true },
         },
         {
             "<C-h>",
             function()
-                jump_and_highlight_sibling("parent")
+                navigation.jump_and_highlight_sibling("parent")
             end,
             { nowait = true },
         },
@@ -817,8 +776,7 @@ Hydra({
             "u",
             function()
                 vim.cmd("norm! u")
-                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                jump({ direction = "in-place" })
+                navigation.jump_and_highlight({ direction = "in-place" })
             end,
             { nowait = true },
         },
