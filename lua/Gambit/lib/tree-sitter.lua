@@ -140,10 +140,7 @@ end
 
 --------------------------------------------
 
-M.get_tag_and_className_string_nodes = function(winnr, node)
-    local desired_types = { "jsx_element", "jsx_self_closing_element" }
-    local jsx_node = M.find_parent(winnr, desired_types, node)
-
+M.find_attribute_root = function(jsx_node)
     local root
     if jsx_node:type() == "jsx_element" then
         local opening_element =
@@ -152,6 +149,13 @@ M.get_tag_and_className_string_nodes = function(winnr, node)
     elseif jsx_node:type() == "jsx_self_closing_element" then
         root = jsx_node
     end
+    return root
+end
+
+M.get_tag_and_className_string_nodes = function(winnr, node)
+    local desired_types = { "jsx_element", "jsx_self_closing_element" }
+    local jsx_node = M.find_parent(winnr, desired_types, node)
+    local root = M.find_attribute_root(jsx_node)
 
     local _, matched_groups = M.get_all_nodes_matches_query(
         [[ ;query

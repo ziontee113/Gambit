@@ -220,9 +220,21 @@ Hydra({
         -------------------------------------------- Replacing Content
 
         {
-            "<C-;>",
+            "<C-S-;>",
             function()
                 require("Gambit.lib.content-replacer").replace_jsx_text_with_expression(0, 0)
+            end,
+            { nowait = true },
+        },
+
+        {
+            "<C-x>",
+            function()
+                require("Gambit.lib.attribute-replacer").replace_attribute_with_empty_jsx_expression({
+                    winnr = 0,
+                    bufnr = 0,
+                    argument = "alt",
+                })
             end,
             { nowait = true },
         },
