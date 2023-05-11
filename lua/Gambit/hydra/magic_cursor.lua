@@ -70,12 +70,13 @@ Hydra({
 
         { "v", function() visual_mode.toggle() end, { nowait = true } },
         { "d", function() require("Gambit.lib.delete").delete(0, 0) end, { nowait = true } },
-
         {
             "w",
             function()
-                require("Gambit.lib.wrap").wrap_selected_nodes_in_tag("div", 0, 0, 2)
-                navigation.jump_and_highlight({ direction = "in-place" })
+                require("Gambit.lib.wrap").wrap_selected_nodes_in_tag({
+                    tag = "div",
+                    indent_by = 2,
+                })
             end,
             { nowait = true },
         },
