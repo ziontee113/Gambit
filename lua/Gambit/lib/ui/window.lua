@@ -15,22 +15,26 @@ end
 local get_lines_from_items = function(items)
     local lines = {}
     for _, item in ipairs(items) do
-        table.insert(lines, item.text)
+        local keymap_prefix = ""
+        if item.keymaps and item.keymaps[1] then
+            keymap_prefix = item.keymaps[1] .. " "
+        end
+        table.insert(lines, keymap_prefix .. item.text)
     end
     return lines
 end
 
---------------------------------------------
+-------------------------------------------- Buf Related
 
-M.new = function(opts)
-    local buf = vim.api.nvim_create_buf(false, true)
+local set_hide_keymaps = function(win, buf, keymaps)
+    for _, mapping in ipairs(keymaps) do
+        vim.keymap.set("n", mapping, function() vim.api.nvim_win_hide(win) end, { buffer = buf })
+    end
+end
 
-    local lines = get_lines_from_items(opts.items)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+-------------------------------------------- Win Related
 
-    opts.width = find_longest_line(lines)
-    opts.height = #opts.items
-
+local open_win = function(buf, opts)
     local win = vim.api.nvim_open_win(buf, true, {
         relative = "cursor",
         row = 1,
@@ -46,6 +50,24 @@ M.new = function(opts)
     vim.api.nvim_win_set_option(win, "winhl", opts.winhl or "Normal:Normal,FloatBorder:@function")
     vim.api.nvim_win_set_option(win, "cursorline", true)
 
+    return win
+end
+
+--------------------------------------------
+
+M.new = function(opts)
+    local buf = vim.api.nvim_create_buf(false, true)
+
+    local lines = get_lines_from_items(opts.items)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+    opts.width = find_longest_line(lines)
+    opts.height = #opts.items
+
+    local win = open_win(buf, opts)
+
+    set_hide_keymaps(win, buf, opts.keymap and opts.keymap.hide or { "q", "<Esc>" })
+
     return win, buf
 end
 
@@ -56,11 +78,11 @@ vim.keymap.set(
     "<leader>a",
     function()
         M.new({
+            title = "Test",
             items = {
                 { keymaps = { "h" }, text = "hello" },
                 { keymaps = { "v" }, text = "venus" },
             },
-            title = "Test",
         })
     end,
     {}
