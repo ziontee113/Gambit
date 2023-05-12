@@ -34,8 +34,17 @@ PopUp.__index = PopUp
 
 -- Private
 
-function PopUp:_set_hide_keymaps(keymaps)
-    for _, mapping in ipairs(keymaps) do
+function PopUp:_execute_callback(item_index)
+    self.callback(self.items[item_index].text)
+    self:hide()
+end
+
+function PopUp:_set_hide_keymaps()
+    if not self.keymaps.hide then
+        self.keymaps.hide = { "<Esc>", "q" }
+    end
+
+    for _, mapping in ipairs(self.keymaps.hide) do
         vim.keymap.set(
             "n",
             mapping,
@@ -45,14 +54,27 @@ function PopUp:_set_hide_keymaps(keymaps)
     end
 end
 
+function PopUp:_set_confirm_keymaps()
+    if not self.keymaps.confirm then
+        self.keymaps.confirm = { "<CR>" }
+    end
+
+    for _, mapping in ipairs(self.keymaps.confirm) do
+        vim.keymap.set("n", mapping, function()
+            local cursor_line = unpack(vim.api.nvim_win_get_cursor(0))
+            self:_execute_callback(cursor_line)
+        end, { buffer = self.buf, nowait = true })
+    end
+end
+
 function PopUp:_set_user_keymaps()
-    for _, item in ipairs(self.items) do
+    for item_index, item in ipairs(self.items) do
         if item.keymaps then
             for _, keymap in ipairs(item.keymaps) do
                 vim.keymap.set(
                     "n",
                     keymap,
-                    function() self.callback(item.text) end,
+                    function() self:_execute_callback(item_index) end,
                     { buffer = self.buf, nowait = true }
                 )
             end
@@ -74,6 +96,7 @@ function PopUp:new(opts)
     popup.height = #opts.items
 
     popup:_set_user_keymaps()
+    popup:_set_confirm_keymaps()
 
     return popup
 end
@@ -98,10 +121,10 @@ function PopUp:show()
     )
     vim.api.nvim_win_set_option(self.win, "cursorline", true)
 
-    self:_set_hide_keymaps(self.keymaps.hide or { "q", "<Esc>" })
+    self:_set_hide_keymaps()
 end
 
-function PopUp:hide() vim.api.nvim_win_hide(self.winnr) end
+function PopUp:hide() vim.api.nvim_win_hide(self.win) end
 
 -------------------------------------------- Testing
 
