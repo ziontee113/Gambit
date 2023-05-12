@@ -15,11 +15,15 @@ end
 local get_lines_from_items = function(items)
     local lines = {}
     for _, item in ipairs(items) do
-        local keymap_prefix = ""
-        if item.keymaps and item.keymaps[1] then
-            keymap_prefix = item.keymaps[1] .. " "
+        if type(item) == "string" then
+            table.insert(lines, item)
+        else
+            local keymap_prefix = ""
+            if item.keymaps and item.keymaps[1] then
+                keymap_prefix = item.keymaps[1] .. " "
+            end
+            table.insert(lines, keymap_prefix .. item.text)
         end
-        table.insert(lines, keymap_prefix .. item.text)
     end
     return lines
 end
@@ -34,9 +38,45 @@ PopUp.__index = PopUp
 
 -- Private
 
+function PopUp:_find_number_of_jumps(direction)
+    local cursor_linenr = unpack(vim.api.nvim_win_get_cursor(0))
+    local number_of_jumps = direction
+    while type(self.items[cursor_linenr + number_of_jumps]) == "string" do
+        number_of_jumps = number_of_jumps + direction
+    end
+    return math.abs(number_of_jumps)
+end
+
 function PopUp:_execute_callback(item_index)
-    self.callback(self.items[item_index].text)
+    local item = self.items[item_index]
+    if type(item) == "string" then
+        return
+    end
+    self.callback(item.text)
     self:hide()
+end
+
+function PopUp:_set_navigation_keymaps()
+    if not self.keymaps.next then
+        self.keymaps.next = { "j" }
+    end
+    if not self.keymaps.previous then
+        self.keymaps.previous = { "k" }
+    end
+
+    for _, mapping in ipairs(self.keymaps.next) do
+        vim.keymap.set("n", mapping, function()
+            local cmd = string.format("norm! %sj", self:_find_number_of_jumps(1))
+            vim.cmd(cmd)
+        end, { buffer = self.buf, nowait = true })
+    end
+
+    for _, mapping in ipairs(self.keymaps.previous) do
+        vim.keymap.set("n", mapping, function()
+            local cmd = string.format("norm! %sk", self:_find_number_of_jumps(-1))
+            vim.cmd(cmd)
+        end, { buffer = self.buf, nowait = true })
+    end
 end
 
 function PopUp:_set_hide_keymaps()
@@ -96,12 +136,16 @@ function PopUp:new(opts)
     popup.height = #opts.items
 
     popup:_set_user_keymaps()
+    popup:_set_navigation_keymaps()
     popup:_set_confirm_keymaps()
 
     return popup
 end
 
 function PopUp:show()
+    self.target_win = vim.api.nvim_get_current_win()
+    self.target_buf = vim.api.nvim_get_current_buf()
+
     self.win = vim.api.nvim_open_win(self.buf, true, {
         relative = "cursor",
         row = 1,
@@ -132,7 +176,10 @@ local popup = PopUp:new({
     title = "Test",
     items = {
         { keymaps = { "h" }, text = "hello" },
+        "",
         { keymaps = { "v" }, text = "venus" },
+        { keymaps = { "e" }, text = "exa" },
+        { keymaps = { "b" }, text = "boot" },
     },
     keymaps = {
         hide = { "z", "q", "<Esc>" },
