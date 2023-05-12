@@ -1,6 +1,6 @@
 local M = {}
 
---------------------------------------------
+-------------------------------------------- Utility
 
 local find_longest_line = function(lines)
     local longest = 1
@@ -24,23 +24,43 @@ local get_lines_from_items = function(items)
     return lines
 end
 
--------------------------------------------- Buf Related
+-------------------------------------------- PopUp
 
-local set_hide_keymaps = function(win, buf, keymaps)
+local PopUp = {
+    keymaps = {},
+    items = {},
+}
+PopUp.__index = PopUp
+
+-- Private
+
+function PopUp:_set_hide_keymaps(keymaps)
     for _, mapping in ipairs(keymaps) do
         vim.keymap.set(
             "n",
             mapping,
-            function() vim.api.nvim_win_hide(win) end,
-            { buffer = buf, nowait = true }
+            function() vim.api.nvim_win_hide(self.win) end,
+            { buffer = self.buf, nowait = true }
         )
     end
 end
 
--------------------------------------------- Win Related
+function PopUp:_set_user_keymaps()
+    for _, item in ipairs(self.items) do
+        if item.keymaps then
+            for _, keymap in ipairs(item.keymaps) do
+                vim.keymap.set(
+                    "n",
+                    keymap,
+                    function() self.callback(item.text) end,
+                    { buffer = self.buf, nowait = true }
+                )
+            end
+        end
+    end
+end
 
-local PopUp = {}
-PopUp.__index = PopUp
+-- Public
 
 function PopUp:new(opts)
     local popup = setmetatable(opts, PopUp)
@@ -52,6 +72,8 @@ function PopUp:new(opts)
 
     popup.width = find_longest_line(lines)
     popup.height = #opts.items
+
+    popup:_set_user_keymaps()
 
     return popup
 end
@@ -75,10 +97,13 @@ function PopUp:show()
         self.winhl or "Normal:Normal,FloatBorder:@function"
     )
     vim.api.nvim_win_set_option(self.win, "cursorline", true)
-    set_hide_keymaps(self.win, self.buf, self.keymaps and self.keymaps.hide or { "q", "<Esc>" })
+
+    self:_set_hide_keymaps(self.keymaps.hide or { "q", "<Esc>" })
 end
 
---------------------------------------------
+function PopUp:hide() vim.api.nvim_win_hide(self.winnr) end
+
+-------------------------------------------- Testing
 
 local popup = PopUp:new({
     title = "Test",
@@ -89,6 +114,7 @@ local popup = PopUp:new({
     keymaps = {
         hide = { "z", "q", "<Esc>" },
     },
+    callback = function(result) N(result) end,
 })
 
 vim.keymap.set("n", "<leader>a", function() popup:show() end, {})
