@@ -36,8 +36,6 @@ _._: repeat _u_: undo _q_, _<Esc>_: exit
 
 --------------------------------------------
 
-REMAP({ "n", "x", "i" }, "<Plug>R1 B --down<Plug>", "<Nop>")
-
 local pms_menu = require("Gambit.ui.pms_menu")
 local colors_menu = require("Gambit.ui.colors_menu")
 
@@ -630,5 +628,3 @@ Hydra({
         { "q", nil, { exit = true, nowait = true } },
     },
 })
-
--- {{{nvim-execute-on-save}}}
